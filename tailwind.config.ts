@@ -2,7 +2,11 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
   darkMode: "class", // Enable dark mode with the "dark" class
-  content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
+content: [
+  "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+  "./src/Component/**/*.{js,ts,jsx,tsx,mdx}",
+  "./src/**/*.{js,ts,jsx,tsx,mdx}",
+],
   theme: {
     extend: {
       boxShadow: {
@@ -10,7 +14,7 @@ const config: Config = {
         blueSoft: "0px 4px 4px 0px rgba(0, 51, 153, 0.25)",
       },
       colors: {
-        primary: "#003399",
+        primary: "#1121D4",
         darkPrimary: "#001F5C",
         gray1: "#E6EBF5",
         gray2: "#5C6370",
@@ -88,10 +92,18 @@ const config: Config = {
           "50%": { transform: "translateX(5px)" },
           "75%": { transform: "translateX(-5px)" },
         },
+      spinPause: {
+      "0%": { transform: "rotate(0deg)" },
+      "40%": { transform: "rotate(360deg)" },  // spin phase
+      "60%": { transform: "rotate(360deg)" },  // pause phase
+      "100%": { transform: "rotate(720deg)" }, // next spin
+    },
       },
       animation: {
         slideIn: "slideIn 0.5s ease-out forwards",
         shake: "shake 0.5s ease-in-out",
+        spinPause: "spinPause 3s ease-in-out infinite",
+
       },
     },
     fontFamily: {
