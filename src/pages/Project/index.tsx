@@ -12,7 +12,7 @@ import NewProjectModal from "./Components/NewProjectModal";
 import { useGetAllProject } from "../../services/project/useProject";
 import { ProjectCardsGrid } from "../../Component/cards";
 
-
+  
 const Project = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
