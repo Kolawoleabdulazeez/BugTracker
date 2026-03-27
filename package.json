@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "next lint"
   },
@@ -22,10 +22,10 @@
     "lucide-react": "^0.575.0",
     "motion": "^12.35.0",
     "mui": "^0.0.1",
-    "next": "15.3.0",
+    "next": "^16.2.1",
     "next-themes": "^0.4.6",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
     "react-hook-form": "^7.71.2",
     "react-icons": "^5.5.0",
     "react-redux": "^9.2.0",

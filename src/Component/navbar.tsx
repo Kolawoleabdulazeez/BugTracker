@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 
 import TestOrbitLogo from "../../public/OrbitLogo.png";
-import { setActiveSection } from "@/pages/features/Sectionslice";
+import { setActiveSection } from "@/features/Sectionslice";
 import type { RootState } from "@/store";
 
 type Section = {
