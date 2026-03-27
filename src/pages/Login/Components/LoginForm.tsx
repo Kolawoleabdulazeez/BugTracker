@@ -5,8 +5,8 @@ import { AuthPage } from '..'
 import { EMAIL_VALIDATION } from '@/pages/utils'
 import Input from '@/Component/Input/Input'
 import Button from '@/Component/Button/Button'
-import { useLogin } from '@/pages/utils/services/auth/useAuths'
 import { ArrowRightFromLine, ChevronRight, Loader2 } from 'lucide-react'
+import { useLogin } from '@/pages/services/auth/useAuths'
 
 
 
@@ -46,11 +46,11 @@ const LoginForm = ({setAuthPage}:LoginFormProp) => {
         })}
         type="email"
         label="Email"
-        inputClassName="text-sm"
+        inputClassName="text-sm text-white bg-transparent"
         placeholder="user@email.com"
         labelClassName=" font-medium !text-sm py-3 text-white "
-        parentClassName="my-4 text-"
-        className="!h-[40px] mb-2 transition-all shadow-sm text-[#00143D] font-normal text-base sm:text-lg w-full"
+        parentClassName="my-4"
+        className="!h-12 mb-2 transition-all shadow-sm text-[#00143D] font-normal text-base sm:text-lg w-full"
         errortxt={loginForm?.formState?.errors?.email?.message}
       />
 
@@ -62,9 +62,9 @@ const LoginForm = ({setAuthPage}:LoginFormProp) => {
         label="Password"
         placeholder="Enter Password"
         labelClassName="mb-2 font-medium !text-sm text-white"
-        inputClassName="text-sm"
+        inputClassName="text-sm text-white"
         parentClassName="my-1"
-        className="!h-[40px] mb-2 transition-all shadow-sm !bg-disabledBg dark:!bg-disabledBg text-[#00143D] font-normal text-base sm:text-lg w-full"
+        className="!h-12 mb-2 transition-all shadow-sm !bg-disabledBg dark:!bg-disabledBg text-[#00143D] font-normal text-base sm:text-lg w-full"
         errortxt={loginForm?.formState?.errors?.password?.message}
       />
 

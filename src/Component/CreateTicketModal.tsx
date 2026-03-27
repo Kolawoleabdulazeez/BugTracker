@@ -3,6 +3,8 @@
 import { useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import { bugAdded, bugEdited } from "@/pages/features/bugSlice";
+import Image from "next/image";
+import Button from "./Button/Button";
 
 type CreateTicketModalProps = {
   mode: "create" | "edit";
@@ -219,7 +221,7 @@ export default function CreateTicketModal({ mode, ticketToEdit, onClose }: Creat
             <label htmlFor="attachment" className="block mb-1">Attach Screenshots</label>
             {/* Show existing attachment in edit mode */}
             {mode === "edit" && ticketToEdit?.attachment && !formData.attachment && (
-              <img
+              <Image
                 src={ticketToEdit.attachment}
                 alt="Current attachment"
                 className="w-16 h-16 object-cover rounded mb-2"
@@ -237,20 +239,19 @@ export default function CreateTicketModal({ mode, ticketToEdit, onClose }: Creat
         </form>
 
         <div className="flex gap-4 mt-5">
-          <button
+          <Button
+          title="Close"
             onClick={onClose}
             className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100 transition"
-          >
-            Close
-          </button>
-          <button
+          />
+          <Button
+          title={mode === "edit" ? "Edit Ticket" : "Create Ticket"}
             onClick={handleAdded}
             className={`px-4 py-2 ${
               isFormValid() ? "bg-blue-600 hover:bg-blue-700" : "bg-blue-300 cursor-not-allowed"
             } text-white rounded-md transition`}
-          >
-            {mode === "edit" ? "Edit Ticket" : "Create Ticket"}
-          </button>
+          />
+       
         </div>
       </div>
     </div>

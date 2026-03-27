@@ -1,5 +1,5 @@
-import React, { ReactNode } from 'react';
-import Header from './header';
+import React, { ReactNode } from "react";
+import Header from "./header";
 
 interface PageLayoutProps {
   children: ReactNode;
@@ -18,11 +18,10 @@ const PageLayout: React.FC<PageLayoutProps> = ({
   showNotifications = true,
   showUserProfile = true,
   headerClassName,
-  contentClassName = '',
+  contentClassName = "",
 }) => {
   return (
-    <div className="flex flex-col h-full ">
-      {/* Header */}
+    <div className="flex h-full flex-col">
       <Header
         title={title}
         showSearch={showSearch}
@@ -31,8 +30,9 @@ const PageLayout: React.FC<PageLayoutProps> = ({
         className={headerClassName}
       />
 
-      {/* Main Content */}
-      <div className={`flex-1 overflow-auto p-6 bg-gray-50 ${contentClassName}`}>
+      <div
+        className={`flex-1 overflow-auto bg-slate-100 p-4 text-slate-900 sm:p-6 dark:bg-gray-950 dark:text-white ${contentClassName}`}
+      >
         {children}
       </div>
     </div>

@@ -28,7 +28,7 @@ const Search = ({
     >
       {/* Search Icon on the left with styling */}
       <div
-        className="bg-disabledBg w-[58px] flex items-center justify-center p-1"
+        className="bg-disabledBg w-[58px] flex items-center justify-center py-2 mt-2"
         style={{
           borderLeft: "1px solid transparent",
           borderTop: "1px solid transparent",

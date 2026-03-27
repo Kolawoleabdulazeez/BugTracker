@@ -106,12 +106,6 @@ content: [
 
       },
     },
-    fontFamily: {
-      regular: ["Sequel Sans Regular", "sans-serif"],
-      romanDisp: ["Sequel Sans Roman", "sans-serif"],
-      semibold: ["Sequel Sans SemiBold", "sans-serif"],
-      bold: ["Sequel Sans Bold", "sans-serif"],
-    },
   },
   plugins: [],
 };

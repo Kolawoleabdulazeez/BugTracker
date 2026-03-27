@@ -43,3 +43,60 @@ export const formatTimestamp = (
   }).format(date);
 };
 
+
+export const formatLabel = (key: string): string => {
+  return key
+    .replace(/([A-Z])/g, ' $1') // Add space before capital letters
+    .replace(/^./, (str) => str.toUpperCase()) // Capitalize first letter
+    .trim()
+}
+
+
+export const mapActivityDescription = (item: any) => {
+
+  switch (item.action) {
+    case "ProjectCreated":
+      return {
+        action: "created project",
+        target: item.entityTitle,
+      };
+
+    case "ProjectUpdated":
+      return {
+        action: "updated project",
+        target: item.entityTitle,
+      };
+
+    case "MemberInvited":
+      return {
+        action: "invited",
+        target: item.metadata?.email || item.entityTitle,
+      };
+
+    case "MemberAdded":
+      return {
+        action: "added",
+        target: `${item.entityTitle} as ${item.metadata?.role || "member"}`,
+      };
+
+    case "MemberRemoved":
+      return {
+        action: "removed",
+        target: item.entityTitle,
+      };
+
+    default:
+      return {
+        action: "performed an action on",
+        target: item.entityTitle || "this project",
+      };
+  }
+};
+
+
+export const trimWithEllipses = (str: string, length?: number) => {
+  if (!str) return "";
+  return str.length > (length ?? 30)
+    ? `${str.substring(0, length ?? 30)}...`
+    : str;
+};

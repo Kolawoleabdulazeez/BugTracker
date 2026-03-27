@@ -134,7 +134,7 @@ export default function Input(props: InputProps): JSX.Element {
 
   const className = `border border-lightgray flex w-full ${
     props.textarea ? "h-[120px] pt-2" : "h-[50.23px]"
-  } overflow-hidden items-center bg-white transition-all ${props.className || ""} ${returnInputStyle()}`.trim();
+  } overflow-hidden items-center bg-white p-4 shadow-sm dark:border-white/10 dark:bg-white/5 dark:backdrop-blur-sm transition-all ${props.className || ""} ${returnInputStyle()}`.trim();
 
   const renderStatusText = () => {
     if (props.errortxt) {
@@ -155,7 +155,7 @@ export default function Input(props: InputProps): JSX.Element {
             <input
               {...inputProps}
               type="checkbox"
-              className={`peer appearance-none w-4 h-4 bg-white border-2 border-primary rounded cursor-pointer 
+              className={`peer appearance-none w-4 h-4 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-white/5 dark:backdrop-blur-sm border-2 border-primary rounded cursor-pointer 
               checked:bg-primary checked:border-primary
               focus:ring-2 focus:ring-primary focus:ring-opacity-50
               hover:border-blue-600 transition-all duration-200
