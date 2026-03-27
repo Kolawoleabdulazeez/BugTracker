@@ -1,3 +1,5 @@
+import { Activity } from "../services/project/project.api";
+
 export const EMAIL_VALIDATION = (value: string) => {
   if (!value) return "Email is required";
   if (!value.includes("@")) return "Please enter a valid email";
@@ -52,7 +54,7 @@ export const formatLabel = (key: string): string => {
 }
 
 
-export const mapActivityDescription = (item: any) => {
+export const mapActivityDescription = (item: Activity) => {
 
   switch (item.action) {
     case "ProjectCreated":

@@ -5,7 +5,7 @@ import { AuthPage } from '..'
 import { EMAIL_VALIDATION } from '@/pages/utils'
 import Input from '@/Component/Input/Input'
 import Button from '@/Component/Button/Button'
-import { ArrowRightFromLine, ChevronRight, Loader2 } from 'lucide-react'
+import { ArrowRightFromLine, Loader2 } from 'lucide-react'
 import { useLogin } from '@/pages/services/auth/useAuths'
 
 

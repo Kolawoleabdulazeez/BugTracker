@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Button from "@/Component/Button/Button";
 import PageLayout from "@/Component/Layout/PageLayout";
 import { useRouter } from "next/router";
@@ -54,7 +55,7 @@ const developerAnchorRef = useRef<HTMLDivElement>(null);
 
   // Filter members by role
   const developerOptions =
-    membersData?.data
+    membersData
       ?.filter((m: any) => m.role === "Developer")
       .map((member: any) => ({
         id: member.userId,
@@ -64,7 +65,7 @@ const developerAnchorRef = useRef<HTMLDivElement>(null);
       })) ?? [];
 
   const testerOptions =
-    membersData?.data
+    membersData
       ?.filter((m: any) => m.role === "Tester")
       .map((member: any) => ({
         id: member.userId,

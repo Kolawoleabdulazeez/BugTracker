@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createApiInstance } from "@/pages/utils/api";
 
 export type CreateBugPayload = {

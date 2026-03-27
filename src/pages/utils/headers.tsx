@@ -1,4 +1,5 @@
 import { formatLabel, formatTimestamp } from ".";
+import { AssignedDeveloper, AssignedTester } from "../services/bugs/bugs.api";
 
 export const BUG_HEADERS = [
     {
@@ -88,12 +89,12 @@ export const BUG_HEADERS = [
   {
     key: "Assigned To",
     propertyName: "assignedDeveloper",
-  render: (value: any) => <p>{value?.fullName || "Unassigned"}</p>,
+  render: (value: AssignedDeveloper) => <p>{value?.fullName || "Unassigned"}</p>,
   },
   {
     key:"Assignee",
     propertyName:"assignedTester",
-  render: (value: any) => <p>{value?.fullName || "Unassigned"}</p>,
+  render: (value: AssignedTester) => <p>{value?.fullName || "Unassigned"}</p>,
 
   },
   {

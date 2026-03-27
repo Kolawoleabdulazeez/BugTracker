@@ -5,21 +5,6 @@ export type Severity = "Critical" | "High" | "Medium" | "Low";
 export type Status   = "Open" | "In Progress" | "Resolved" | "Closed";
 export type PassFail = "Pass" | "Fail" | "Pending" | "Blocked";
 
-interface Bug       { id: string; title: string; severity: Severity; status: Status; reporter: string; date: string }
-interface TestCase  { id: string; title: string; result: PassFail; assignee: string; duration: string }
-interface Member    { name: string; role: string; avatar: string; bugs: number; resolved: number }
-interface SectionData {
-  title: string;
-  accent: string;
-  icon: string;
-  description: string;
-  stats: { label: string; value: string | number; delta?: string }[];
-  bugs: Bug[];
-  tests: TestCase[];
-  members: Member[];
-}
-
-
 
 export enum Store {
   ACCESS_TOKEN = "a15e952b-cf46-4bf9-8524-38542acffc5a"
@@ -68,6 +53,6 @@ export type Project = {
   priority: string
   projectStartDate: string
   projectDueDate: string
-  tags: any[]
+  tags: string[]
   createdAt: string
 };

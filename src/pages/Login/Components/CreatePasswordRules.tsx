@@ -29,7 +29,7 @@ const CreatePasswordRules = ({
   useEffect(() => {
     const allRulesMet = Object.values(rulesStatus).every((status) => status);
     isComplete(allRulesMet);
-  }, [rulesStatus]);
+  }, []);
 
 return (
   <div>

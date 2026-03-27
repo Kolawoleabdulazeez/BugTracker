@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import {
@@ -112,7 +113,7 @@ const onRemoveMember = (memberId: string, memberName: string) => {
       completedTasks: metricsData?.closed ?? 0,
     totalTasks: metricsData?.totalBugs ?? 0,
     };
-  }, [apiProject, bugsData]);
+  }, [apiProject, bugsData, metricsData]);
 
 const mappedActivities = useMemo(() => {
   const rawActivities = activityData?.activities ?? [];

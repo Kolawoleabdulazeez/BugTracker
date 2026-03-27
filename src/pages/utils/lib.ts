@@ -15,9 +15,9 @@ export type AuthUser = {
     id: string | number;
     fullName: string;
     email: string;
-    [key: string]: any;
+    avatarUrl:string;
+    isEmailVerified:boolean
   };
-  [key: string]: any;
 };
 
 export const saveAuthToStorage = (data: AuthUser) => {

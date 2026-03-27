@@ -315,7 +315,7 @@ export function ProjectCardsGrid({
       </div>
     );
 
-  const projects = (data?.data ?? []).map((project, index) => {
+  const projects = (data?.data ?? []).map((project) => {
 
     return {
       ...project,

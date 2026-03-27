@@ -36,7 +36,7 @@ export default function Input(props: InputProps): JSX.Element {
         <button
           className="outline-none ml-2"
           type="button"
-          onClick={props.lefticonClick}
+          onClick={lefticonClick}
         >
           <Image
             src={lockSvg}
@@ -46,14 +46,14 @@ export default function Input(props: InputProps): JSX.Element {
         </button>
       );
     }
-    if (props.lefticon) {
+    if (lefticon) {
       return (
         <button
           className={`h-full outline-none ${props.leftIconClassName}`}
           type="button"
           onClick={props.lefticonClick}
         >
-          {props.lefticon}
+          {lefticon}
         </button>
       );
     }
@@ -110,7 +110,7 @@ export default function Input(props: InputProps): JSX.Element {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (props.numOnly) {
+    if (numOnly) {
       e.target.value = e.target.value.replace(/[^0-9]/g, "");
       if (props.type === "tel") {
         e.target.value = e.target.value.replace(/^-/, "");
@@ -177,12 +177,12 @@ export default function Input(props: InputProps): JSX.Element {
             </svg>
           </div>
 
-          {props.label && (
+          {label && (
             <label
               htmlFor={props.id}
               className={`text-labelBlue ${props.labelClassName} text-[0.85rem] xss:text-[1rem] font-bold cursor-pointer`}
             >
-              {props.label}
+              {label}
               {props.required && <span className="text-errorRed mx-1">*</span>}
             </label>
           )}
@@ -193,12 +193,12 @@ export default function Input(props: InputProps): JSX.Element {
   }
 
   return (
-    <div className={props.parentClassName}>
-      {props.label && (
+    <div className={parentClassName}>
+      {label && (
         <p
-          className={`text-darkPrimary ${props.labelClassName} text-[0.85rem] xss:text-[1rem] !text-sm font-bold`}
+          className={`text-darkPrimary ${labelClassName} text-[0.85rem] xss:text-[1rem] !text-sm font-bold`}
         >
-          {props.label}
+          {label}
           {props.required && <span className="text-errorRed mx-1">*</span>}
         </p>
       )}
@@ -211,7 +211,7 @@ export default function Input(props: InputProps): JSX.Element {
             className={`text-black bg-inherit w-full ${
               props.lefticon ? "ml-[0.8rem]" : "pl-[0.8rem]"
             } h-full outline-0 border-0 placeholder:text-color4 placeholder:leading-6  font-normal relative placeholder:text-[0.8rem]  sm1:placeholder:text-[0.95rem] placeholder:font-normal  ${
-              props.inputClassName
+              inputClassName
             }`}
             id={props.id}
             placeholder={props.placeholder || ""}

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createApiInstance } from "@/pages/utils/api";
 
 export type ProjectMemberPayload = {
@@ -132,10 +133,24 @@ export async function getProjectMetrics(
   return res.data.data;
 }
 
+export type getProjectMembers_Response = {
+  data: Members[]
+  responseMessage: string
+  responseCode: string
+}
+
+export interface Members {
+  userId: string
+  email: string
+  fullName: string
+  role: string
+  joinedAt: string
+  addedBy: string
+}
 
 export async function getProjectMembers(
   projectId: string
-): Promise<any> {
+): Promise<getProjectMembers_Response[]> {
   const res = await authInstance.get(`/Project/${projectId}/members`);
   console.log(res, "this is project coming for members")
   return res.data;

@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { AuthData, AuthResponse, login, loginParams, signup, SignupParams } from "./auth.api";
+import { AuthResponse, login, loginParams, signup, SignupParams } from "./auth.api";
 import { AuthPage } from "@/pages/Login";
 import { useRouter } from "next/router";
 import { authKeys } from "./auth.key";

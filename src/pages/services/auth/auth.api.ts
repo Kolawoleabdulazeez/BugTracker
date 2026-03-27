@@ -19,7 +19,7 @@ export interface User {
   id: string
   fullName: string
   email: string
-  avatarUrl: any
+  avatarUrl: string
   isEmailVerified: boolean
 }
 
