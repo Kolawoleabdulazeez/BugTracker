@@ -3,7 +3,7 @@ import Image from "next/image";
 import { IoNotifications } from "react-icons/io5";
 import { ChevronDown, Search as SearchIcon } from "lucide-react";
 import ThemeToggle from "../ThemeToggle/ThemeToggle";
-import { useAuthUser } from "@/pages/services/auth/useAuths";
+import { useAuthUser } from "@/services/auth/useAuths";
 
 interface HeaderProps {
   title?: string;

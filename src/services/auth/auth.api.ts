@@ -1,4 +1,4 @@
-import { createApiInstance } from "@/pages/utils/api";
+import { createApiInstance } from "@/utils/api";
 
 export type SignupParams = {
   firstName: string;

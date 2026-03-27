@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { NextApiRequest, NextApiResponse } from "next";
 import axios, { Method } from "axios";
-import { Store } from "@/pages/utils/data";
+import { Store } from "@/utils/data";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const BASE_URL = process.env.API_BASE_URL || "";

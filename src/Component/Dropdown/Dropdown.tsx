@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 import Spinner from "../Spinner/Spinner";
 import Image from "next/image";
@@ -77,33 +77,32 @@ const Dropdown = ({
   const [selectedItem, setSelectedItem] = useState(defaultItem);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const handleSelectItem = (val: any) => {
-    if (!val) {
-      setSelectedItem({
-        ...val,
-        value: (
-          <span
-            className={`text-dis sm1:whitespace-nowrap ${
-              dark ? "dark:!text-white" : ""
-            }`}
-          >
-            {placeholder}
-          </span>
-        ),
-      });
-    } else {
-      setSelectedItem({
-        ...val,
-        value: (
-          <span className="font-semibold sm1:whitespace-nowrap">
-            {val[labelParam] || placeholder}
-          </span>
-        ),
-      });
-    }
-    setShow(false);
-    onValChange && val && onValChange(val);
-  };
+const handleSelectItem = useCallback((val: any) => {
+  if (!val) {
+    setSelectedItem({
+      ...val,
+      value: (
+        <span className={`text-dis sm1:whitespace-nowrap ${dark ? "dark:!text-white" : ""}`}>
+          {placeholder}
+        </span>
+      ),
+    });
+  } else {
+    setSelectedItem({
+      ...val,
+      value: (
+        <span className="font-semibold sm1:whitespace-nowrap">
+          {val[labelParam] || placeholder}
+        </span>
+      ),
+    });
+  }
+
+  setShow(false);
+  if (onValChange && val) {
+  onValChange(val);
+}
+}, [dark, placeholder, labelParam, onValChange]);
 
 useEffect(() => {
   if (selectedValue !== undefined && selectedValue !== null && list.length) {
@@ -130,7 +129,7 @@ useEffect(() => {
   }
 
   setSelectedItem(undefined);
-}, [selectedValue, list, valueParam, labelParam, placeholder, defaultItem]);
+}, [selectedValue, list, valueParam, labelParam, placeholder, defaultItem, handleSelectItem]);
 
   // Filter the list based on the search query
   const filteredList = searchQuery
@@ -145,7 +144,11 @@ useEffect(() => {
   return (
     <div
       className={`relative content-center w-full  ${className}`}
-      onClick={() => (disabled ? setShow(false) : undefined)}
+      onClick={() => {
+          if (disabled) {
+            setShow(false);
+          }
+        }}
     >
       {show && (
         <div

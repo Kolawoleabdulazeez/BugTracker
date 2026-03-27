@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { useFieldArray, useForm } from "react-hook-form";
 import Button from "@/Component/Button/Button";
-import { useCreateProject, useUpdateProject } from "@/pages/services/project/useProject";
+import { useCreateProject, useUpdateProject } from "@/services/project/useProject";
 
 
 type NewProjectModalProps = {

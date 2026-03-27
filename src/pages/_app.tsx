@@ -1,9 +1,9 @@
 import type { AppProps } from "next/app";
-import "./styles/globals.css";
+import "../styles/globals.css";
 import AppProvider from "./Provider";
 import { Toaster } from "sonner";
 import { Provider } from "react-redux";
-import store from "./store";
+import store from "../store";
 import { useRouter } from "next/router";
 import Navbar from "@/Component/navbar";
 import { useState } from "react";

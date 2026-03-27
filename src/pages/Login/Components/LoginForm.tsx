@@ -2,11 +2,11 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { AuthPage } from '..'
-import { EMAIL_VALIDATION } from '@/pages/utils'
+import { EMAIL_VALIDATION } from '@/utils'
 import Input from '@/Component/Input/Input'
 import Button from '@/Component/Button/Button'
 import { ArrowRightFromLine, Loader2 } from 'lucide-react'
-import { useLogin } from '@/pages/services/auth/useAuths'
+import { useLogin } from '@/services/auth/useAuths'
 
 
 

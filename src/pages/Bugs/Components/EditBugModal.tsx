@@ -9,11 +9,10 @@ import {
   Tag,
 } from "lucide-react";
 import { useFieldArray, useForm, Controller } from "react-hook-form";
-import { useUpdateBug } from "@/pages/services/bugs/useBugs";
+import { useUpdateBug } from "@/services/bugs/useBugs";
 import Input from "@/Component/Input/Input";
 import Dropdown from "@/Component/Dropdown/Dropdown";
-import { useGetProjectMembers } from "@/pages/services/project/useProject";
-import { Bug as BugType } from "@/pages/services/bugs/bugs.api";
+import { Bug as BugType } from "@/services/bugs/bugs.api";
 
 type EditBugModalProps = {
   isOpen: boolean;
@@ -114,7 +113,7 @@ const EditBugModal: React.FC<EditBugModalProps> = ({
         environment: bug.environment ?? "",
         version: bug.version ?? "",
         newTag: "",
-        tags: (bug.tags ?? []).map((t: any) =>
+        tags: (bug.tags ?? []).map((t) =>
           typeof t === "string" ? { value: t } : { value: t.name ?? t.value ?? "" }
         ),
       });

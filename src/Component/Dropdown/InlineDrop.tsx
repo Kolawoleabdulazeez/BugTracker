@@ -1,14 +1,18 @@
 import { createPortal } from "react-dom";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
-export const InlineDropdown = ({ anchorRef, children, isOpen }: {
+export const InlineDropdown = ({
+  anchorRef,
+  children,
+  isOpen,
+}: {
   anchorRef: React.RefObject<HTMLDivElement | null>;
   children: React.ReactNode;
   isOpen: boolean;
 }) => {
   const [coords, setCoords] = useState({ top: 0, left: 0, width: 0 });
 
-  const recalculate = () => {
+  const recalculate = useCallback(() => {
     if (anchorRef.current) {
       const rect = anchorRef.current.getBoundingClientRect();
       setCoords({
@@ -17,21 +21,21 @@ export const InlineDropdown = ({ anchorRef, children, isOpen }: {
         width: rect.width,
       });
     }
-  };
+  }, [anchorRef]);
 
   useEffect(() => {
-    if (isOpen) {
-      recalculate();
-      // Reposition on scroll or resize
-      window.addEventListener("scroll", recalculate, true); // true = capture all scroll events including nested containers
-      window.addEventListener("resize", recalculate);
-    }
+    if (!isOpen) return;
+
+    recalculate();
+
+    window.addEventListener("scroll", recalculate, true);
+    window.addEventListener("resize", recalculate);
 
     return () => {
       window.removeEventListener("scroll", recalculate, true);
       window.removeEventListener("resize", recalculate);
     };
-  }, [isOpen, anchorRef]);
+  }, [isOpen, recalculate]);
 
   if (!isOpen) return null;
 

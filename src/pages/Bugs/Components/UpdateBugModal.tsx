@@ -3,8 +3,8 @@ import { X, Bug, ArrowRight, Layers, Cpu, Tag, Plus } from "lucide-react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import Input from "@/Component/Input/Input";
 import Dropdown from "@/Component/Dropdown/Dropdown";
-import { Bug as BugType } from "@/pages/services/bugs/bugs.api";
-import { useUpdateBug } from "@/pages/services/bugs/useBugs";
+import { Bug as BugType } from "@/services/bugs/bugs.api";
+import { useUpdateBug } from "@/services/bugs/useBugs";
 
 type UpdateBugModalProps = {
   isOpen: boolean;

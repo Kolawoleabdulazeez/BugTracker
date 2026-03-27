@@ -1,14 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
-import bugsSliceReducer from './features/bugSlice';
-import modalReducer from "./features/modalSlice";
-import reqestReducer from "./asyncActions"
-import sectionReducer from "./features/Sectionslice"
+import bugsSliceReducer from './pages/features/bugSlice';
+import modalReducer from "./pages/features/modalSlice";
+import sectionReducer from "./pages/features/Sectionslice"
 
  const store = configureStore({
     reducer:{
       bugs: bugsSliceReducer,
       modal:modalReducer,
-      request: reqestReducer,
       section: sectionReducer,
     }
  })

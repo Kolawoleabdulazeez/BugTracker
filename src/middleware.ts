@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Store } from "./pages/utils/data";
+import { Store } from "./utils/data";
 
 export function middleware(req: NextRequest) {
   const token = req.cookies.get(Store.ACCESS_TOKEN)?.value;

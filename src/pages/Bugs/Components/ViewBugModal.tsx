@@ -1,6 +1,6 @@
 import React from "react";
-import { X, Bug, Tag, Layers, Cpu, User, Calendar } from "lucide-react";
-import { Bug as BugType } from "@/pages/services/bugs/bugs.api";
+import { X, Bug, Tag, Cpu, User, Calendar } from "lucide-react";
+import { Bug as BugType } from "@/services/bugs/bugs.api";
 
 type ViewBugModalProps = {
   isOpen: boolean;

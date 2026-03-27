@@ -7,7 +7,7 @@ type SearchProps = {
   placeholder?: string;
   parentClassName?: string;
   inputClassName?: string;
-  endIcon?: any;
+  endIcon?: string;
   searchValue: string;
   setSearchValue: (val: string) => void;
   addFilter?:boolean
@@ -17,7 +17,6 @@ const Search = ({
   placeholder = "Search",
   parentClassName,
   inputClassName,
-  endIcon,
   searchValue,
   setSearchValue,
   addFilter

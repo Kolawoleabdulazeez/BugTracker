@@ -3,14 +3,14 @@ import { Controller, useForm } from "react-hook-form";
 import CreatePasswordRules from "./CreatePasswordRules";
 import { AuthPage } from "..";
 import Input from "@/Component/Input/Input";
-import { EMAIL_VALIDATION, PASSWORD_VALIDATION } from "@/pages/utils";
+import { EMAIL_VALIDATION, PASSWORD_VALIDATION } from "@/utils";
 import Button from "@/Component/Button/Button";
 import { Loader2 } from "lucide-react";
 import FullPane from "../../../../public/fullPane.png";
 import TestOrbitLogo from "../../../../public/OrbitLogo.png";
 import Image from "next/image";
 import EngineersPG from "../../../../public/engineers.png";
-import { useSignup } from "@/pages/services/auth/useAuths";
+import { useSignup } from "@/services/auth/useAuths";
 
 export type signupFormData = {
   firstName: string;

@@ -3,13 +3,13 @@ import PageLayout from "@/Component/Layout/PageLayout";
 import { Filter, Grid3x3, LayoutList, Plus } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
-import { useGetAllProject, useGetProjectMetrics } from "../services/project/useProject";
+import { useGetAllProject, useGetProjectMetrics } from "../../services/project/useProject";
 import { toast } from "sonner";
 import AddBugModal from "./Components/Addbugmodal";
 import Dropdown from "@/Component/Dropdown/Dropdown";
 import PaginatedTable from "@/Component/Table/PaginatedTable";
-import { useGetBugs } from "../services/bugs/useBugs";
-import { BUG_HEADERS } from "../utils/headers";
+import { useGetBugs } from "../../services/bugs/useBugs";
+import { BUG_HEADERS } from "../../utils/headers";
 import BugActionButton from "./Components/Bugactionbutton";
 import { RenderComponent } from "@/Component/RenderComponent";
 
@@ -20,16 +20,16 @@ const Bugs = () => {
   const [showAddBugModal, setShowAddBugModal] = useState(false);
 
   const { data, isLoading } = useGetAllProject();
-  const projects = data?.data ?? [];
   const [selectedProjectId, setSelectedProjectId] = useState<string>("");
-
+  
   const { data: bugsData, isLoading: bugsLoading, refetch: refetchBugs } =
-    useGetBugs(selectedProjectId);
-
-    const { data: metricsData } = useGetProjectMetrics(
+  useGetBugs(selectedProjectId);
+  
+  const { data: metricsData } = useGetProjectMetrics(
       typeof selectedProjectId === "string" ? selectedProjectId : undefined
     );
-
+    
+const projects = useMemo(() => data?.data ?? [], [data]);
     console.log(metricsData, "this is data from metrics ")
 
   const selectedProject = useMemo(
@@ -40,9 +40,10 @@ const Bugs = () => {
 
 useEffect(() => {
   if (!projects.length) return;
+  const { query } = router;
 
   const queryProjectId =
-    typeof router.query.projectId === "string" ? router.query.projectId : "";
+    typeof query.projectId === "string" ? query.projectId : "";
 
   if (queryProjectId) {
     setSelectedProjectId(queryProjectId);
@@ -56,13 +57,13 @@ useEffect(() => {
     router.replace(
       {
         pathname: router.pathname,
-        query: { ...router.query, projectId: firstProjectId },
+        query: { ...query, projectId: firstProjectId },
       },
       undefined,
       { shallow: true }
     );
   }
-}, [projects, router.query.projectId]);
+}, [projects, router]);
 
   // ── Map action column into each bug row ──────────────────────────────────────
 const mappedBugs = useMemo(() => {

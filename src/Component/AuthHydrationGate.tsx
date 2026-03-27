@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { authKeys, AuthUser, getAuthFromStorage } from "@/pages/utils/lib";
+import { authKeys, AuthUser, getAuthFromStorage } from "@/utils/lib";
 
 export default function AuthHydrationGate({
   children,

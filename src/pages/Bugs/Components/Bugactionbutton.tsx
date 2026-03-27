@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { AlertTriangle, ChevronDown, Eye, Pencil, Trash2 } from "lucide-react";
-import { Bug } from "@/pages/services/bugs/bugs.api";
-// import ConfirmActionModal from "./DeleteProjectModal"; // reuse your existing confirm modal
-import { useDeleteBug, useUpdateBugStatus } from "@/pages/services/bugs/useBugs";
+import { AlertTriangle, ChevronDown, Pencil, Trash2 } from "lucide-react";
+import { Bug } from "@/services/bugs/bugs.api";
+import {  useUpdateBugStatus } from "@/services/bugs/useBugs";
 import ViewBugModal from "./ViewBugModal";
 import UpdateBugModal from "./UpdateBugModal";
 import ConfirmActionModal from "@/pages/Project/Components/DeleteProjectModal";
@@ -35,16 +34,10 @@ const [comment, setComment] = useState("");
 const { mutateAsync: updateStatus, isPending: isUpdatingStatus } =
   useUpdateBugStatus(projectId);
 
-  const { mutateAsync: deleteBug, isPending: isDeleting } =
-    useDeleteBug(projectId);
 
   const handleClose = () => setActiveModal(null);
 
-  const handleConfirmDelete = async () => {
-    await deleteBug(item.id);
-    handleClose();
-    onActionSuccess?.();
-  };
+
 
   const menuItems: ActionMenuItem[] = [
     {

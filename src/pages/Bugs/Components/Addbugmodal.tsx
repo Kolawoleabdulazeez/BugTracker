@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect } from "react";
 import {
   X,
@@ -9,10 +10,10 @@ import {
   Tag,
 } from "lucide-react";
 import { useFieldArray, useForm, Controller } from "react-hook-form";
-import { useCreateBug } from "@/pages/services/bugs/useBugs";
+import { useCreateBug } from "@/services/bugs/useBugs";
 import Input from "@/Component/Input/Input";
 import Dropdown from "@/Component/Dropdown/Dropdown";
-import { useGetProjectMembers } from "@/pages/services/project/useProject";
+import { useGetProjectMembers } from "@/services/project/useProject";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -130,7 +131,7 @@ const AddBugModal: React.FC<AddBugModalProps> = ({
   useGetProjectMembers(projectId);
 
     const memberOptions =
-  membersData?.data?.map((member:any) => ({
+  membersData?.map((member:any) => ({
     id: member.userId,
     label: `${member.fullName} (${member.role})`,
     name: member.fullName,

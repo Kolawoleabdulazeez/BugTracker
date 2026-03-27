@@ -4,7 +4,7 @@ import { AuthResponse, login, loginParams, signup, SignupParams } from "./auth.a
 import { AuthPage } from "@/pages/Login";
 import { useRouter } from "next/router";
 import { authKeys } from "./auth.key";
-import { AuthUser, saveAuthToStorage } from "@/pages/utils/lib";
+import { AuthUser, saveAuthToStorage } from "@/utils/lib";
 
 export function useSignup(setAuthPage: (page: any) => void) {
   return useMutation<any, any, SignupParams>({

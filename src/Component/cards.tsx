@@ -11,11 +11,11 @@ import {
   Star,
 } from "lucide-react";
 import { useRouter } from "next/router";
-import { Project } from "@/pages/utils/data";
-import { formatTimestamp } from "@/pages/utils";
-import ConfirmActionModal from "./DeleteProjectModal";
-import { useDeleteProject } from "@/pages/services/project/useProject";
-import { GetProject_Response } from "@/pages/services/project/project.api";
+import { Project } from "@/utils/data";
+import { formatTimestamp } from "@/utils";
+import ConfirmActionModal from "../pages/Project/Components/DeleteProjectModal";
+import { useDeleteProject } from "@/services/project/useProject";
+import { GetProject_Response } from "@/services/project/project.api";
 
 interface ProjectCardProps {
   project: Project;

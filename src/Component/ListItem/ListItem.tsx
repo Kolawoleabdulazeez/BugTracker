@@ -1,4 +1,5 @@
-import { trimWithEllipses } from "@/pages/utils";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { trimWithEllipses } from "@/utils";
 import { IoIosArrowForward } from "react-icons/io";
 
 type ListItemProps = {

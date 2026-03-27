@@ -4,12 +4,12 @@ import PageLayout from "@/Component/Layout/PageLayout";
 import { useRouter } from "next/router";
 import React, { useRef, useState } from "react";
 import { ArrowLeft, Tag, Cpu, Paperclip, MoreHorizontal, Pencil, ChevronDown } from "lucide-react";
-import { useAssignDeveloper, useGetSingleBug, useReassignTester } from "../services/bugs/useBugs";
-import { PRIORITY_COLORS, SEVERITY_COLORS, STATUS_COLORS } from "../utils/helpers";
-import { formatLabel } from "../utils";
+import { useAssignDeveloper, useGetSingleBug, useReassignTester } from "../../services/bugs/useBugs";
+import { PRIORITY_COLORS, SEVERITY_COLORS, STATUS_COLORS } from "../../utils/helpers";
+import { formatLabel } from "../../utils";
 import EditBugModal from "./Components/EditBugModal";
 import Dropdown from "@/Component/Dropdown/Dropdown";
-import { useGetProjectMembers } from "../services/project/useProject";
+import { useGetProjectMembers } from "../../services/project/useProject";
 import { InlineDropdown } from "@/Component/Dropdown/InlineDrop";
 
 const Field = ({

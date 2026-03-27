@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { createApiInstance } from "@/pages/utils/api";
+import { createApiInstance } from "@/utils/api";
 
 export type CreateBugPayload = {
   title: string;

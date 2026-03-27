@@ -1,12 +1,10 @@
-import React, { useState } from 'react'
+import React from 'react'
 import DashboardT from '@/Component/dashboard'
 import AnalyticsChart from './Components/AnalyticsChart'
-import Todo from './Components/Todo'
 import PageLayout from '@/Component/Layout/PageLayout'
 import OverallProgress from './Components/AnalyticsGauge'
 
 const Dashboard = () => {
-    const [searchQuery, setSearchQuery] = useState("")
   return (
     <PageLayout
     title='Dashboard'

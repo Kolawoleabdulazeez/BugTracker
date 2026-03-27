@@ -2,7 +2,7 @@ import React from "react";
 import { X, UserPlus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import Button from "@/Component/Button/Button";
-import { useInviteProjectMember } from "@/pages/services/project/useProject";
+import { useInviteProjectMember } from "@/services/project/useProject";
 
 type AddMemberModalProps = {
   isOpen: boolean;

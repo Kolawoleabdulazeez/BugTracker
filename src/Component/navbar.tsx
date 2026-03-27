@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import TestOrbitLogo from "../../public/OrbitLogo.png";
 import { setActiveSection } from "@/pages/features/Sectionslice";
-import type { RootState } from "@/pages/store";
+import type { RootState } from "@/store";
 
 type Section = {
   label: string;

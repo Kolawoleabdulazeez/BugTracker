@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import {
   Pagination,
@@ -7,8 +8,8 @@ import {
   MenuItem,
 } from "@mui/material";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { PageDetails } from "@/pages/utils/types";
-import { TABLE_ROWS_PER_PAGE } from "@/pages/utils/lib";
+import { PageDetails } from "@/utils/types";
+import { TABLE_ROWS_PER_PAGE } from "@/utils/lib";
 
 
 interface CustomPaginationProps {
@@ -45,10 +46,10 @@ const PaginationControls = ({
   };
   useEffect(() => {
     if (DBPageDetails?.TotalRecords && DBPageDetails?.PageSize) {
-      let pagesFromDB = Math.ceil(
+      const pagesFromDB = Math.ceil(
         DBPageDetails.TotalRecords / DBPageDetails.PageSize
       ); //Number of pages retrievable from DB
-      let arr = [];
+      const arr = [];
       for (let i = 0; i < pagesFromDB; i++) {
         arr.push({
           key: `${i * Number(DBPageDetails?.PageSize) + 1}-${
@@ -60,7 +61,7 @@ const PaginationControls = ({
       setActiveDBPage(arr[0]);
       setPagesLeft(arr);
     }
-  }, []);
+  }, [DBPageDetails]);
   return (
     <div className="gap-2 flex items-center justify-between mt-3 mb-2">
       <Button

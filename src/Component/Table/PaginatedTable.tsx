@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useMemo } from "react";
 import { SortAsc, Square } from "lucide-react";
 
@@ -5,8 +6,8 @@ import NoRecord from "../NoRecord/NoRecord";
 
 import PaginationControls from "./PaginationControls";
 import { Checkbox } from "@mui/material";
-import { TABLE_ROWS_PER_PAGE } from "@/pages/utils/lib";
-import { PageDetails } from "@/pages/utils/types";
+import { TABLE_ROWS_PER_PAGE } from "@/utils/lib";
+import { PageDetails } from "@/utils/types";
 
 export type TableHeader = {
   key: string;
@@ -47,7 +48,7 @@ const PaginatedTable = ({
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
     return data.slice(start, end);
-  }, [data, page]);
+  }, [data, page, rowsPerPage]);
 
   const renderCellContent = (header: TableHeader, item: any) => {
     if (header.render) {

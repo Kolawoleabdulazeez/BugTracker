@@ -12,16 +12,16 @@ import {
   CheckCircle,
 } from "lucide-react";
 import Button from "@/Component/Button/Button";
-import { formatTimestamp, mapActivityDescription } from "../utils";
+import { formatTimestamp, mapActivityDescription } from "../../utils";
 import OverviewTab from "./Components/tabs/OverviewTab";
 import TeamTab from "./Components/tabs/TeamTab";
 import ActivityTab from "./Components/tabs/ActivityTab";
 import NewProjectModal from "./Components/NewProjectModal";
 import AddMemberModal from "./Components/AddMemberModal";
 import ConfirmActionModal from "./Components/DeleteProjectModal";
-import { useGetProjectActivities, useGetProjectById, useGetProjectMetrics, useRemoveProjectMember } from "../services/project/useProject";
+import { useGetProjectActivities, useGetProjectById, useGetProjectMetrics, useRemoveProjectMember } from "../../services/project/useProject";
 import BugsTab from "./Components/tabs/BugsTab";
-import { useGetBugs } from "../services/bugs/useBugs";
+import { useGetBugs } from "../../services/bugs/useBugs";
 
 const ProjectDetails = () => {
   const router = useRouter();

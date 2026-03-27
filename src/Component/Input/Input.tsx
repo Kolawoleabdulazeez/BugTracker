@@ -22,13 +22,16 @@ export type InputProps = {
   inputClassName?: React.HTMLAttributes<HTMLInputElement>["className"];
   parentClassName?: string;
   numOnly?: boolean;
+   onChange?: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
 } & React.DetailedHTMLProps<
   React.InputHTMLAttributes<HTMLInputElement>,
   HTMLInputElement
 >;
 
 export default function Input(props: InputProps): JSX.Element {
-  const { inputClassName, parentClassName, label, errortxt, infotxt, successtxt, lefticon, righticon, leftIconClassName, rightIconClassName, textarea, lefticonClick, righticonClick, numOnly, labelClassName, ...inputProps } = props;
+  const { inputClassName, parentClassName, label, errortxt,  successtxt, lefticon, righticon, leftIconClassName, textarea, lefticonClick, righticonClick, numOnly, labelClassName, ...inputProps } = props;
   const [showpass, setShowPass] = useState(false);
   const returnLeftIcon = () => {
     if (props.type == "password") {
@@ -49,7 +52,7 @@ export default function Input(props: InputProps): JSX.Element {
     if (lefticon) {
       return (
         <button
-          className={`h-full outline-none ${props.leftIconClassName}`}
+          className={`h-full outline-none ${leftIconClassName}`}
           type="button"
           onClick={props.lefticonClick}
         >
@@ -84,14 +87,14 @@ export default function Input(props: InputProps): JSX.Element {
         </button>
       );
     }
-    if (props.righticon) {
+    if (righticon) {
       return (
         <button
           className="h-full outline-none ml-4 mr-4"
-          onClick={props.righticonClick}
+          onClick={righticonClick}
           type="button"
         >
-          {props.righticon}
+          {righticon}
         </button>
       );
     }
@@ -102,45 +105,55 @@ export default function Input(props: InputProps): JSX.Element {
     props.type == "password" ? (showpass ? "text" : "password") : props.type;
 
   const returnInputStyle = () => {
-    if (props.errortxt)
+    if (errortxt)
       return "border-2 border-red-500 hover:border-red-500 focus-within:border-red-500";
-    if (props.successtxt)
+    if (successtxt)
       return "border-2 border-color2 hover:border-color2 focus-within:border-color2";
     return "";
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (numOnly) {
-      e.target.value = e.target.value.replace(/[^0-9]/g, "");
-      if (props.type === "tel") {
-        e.target.value = e.target.value.replace(/^-/, "");
-      }
+const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  if (numOnly) {
+    e.target.value = e.target.value.replace(/[^0-9]/g, "");
+    if (props.type === "tel") {
+      e.target.value = e.target.value.replace(/^-/, "");
     }
-    if (props.maxLength && e.target.value.length > props.maxLength) {
-      e.target.value = e.target.value.slice(0, props.maxLength);
-    }
-    props.onChange && props.onChange(e);
-  };
+  }
 
-  const handleChangeTextArea = (e: any) => {
-    if (props.numOnly) {
-      e.target.value = e.target.value.replace(/[^0-9]/g, "");
-    }
-    if (props.maxLength && e.target.value.length > props.maxLength) {
-      e.target.value = e.target.value.slice(0, props.maxLength);
-    }
-    props.onChange && props.onChange(e);
-  };
+  if (props.maxLength && e.target.value.length > props.maxLength) {
+    e.target.value = e.target.value.slice(0, props.maxLength);
+  }
+
+  if (props.onChange) {
+    props.onChange(e);
+  }
+};
+
+const handleChangeTextArea = (
+  e: React.ChangeEvent<HTMLTextAreaElement>
+) => {
+  if (props.numOnly) {
+    e.target.value = e.target.value.replace(/[^0-9]/g, "");
+  }
+
+  if (props.maxLength && e.target.value.length > props.maxLength) {
+    e.target.value = e.target.value.slice(0, props.maxLength);
+  }
+
+  if (props.onChange) {
+    props.onChange(e);
+  }
+};
 
   const className = `border border-lightgray flex w-full ${
-    props.textarea ? "h-[120px] pt-2" : "h-[50.23px]"
+    textarea ? "h-[120px] pt-2" : "h-[50.23px]"
   } overflow-hidden items-center bg-white p-4 shadow-sm dark:border-white/10 dark:bg-white/5 dark:backdrop-blur-sm transition-all ${props.className || ""} ${returnInputStyle()}`.trim();
 
   const renderStatusText = () => {
-    if (props.errortxt) {
+    if (errortxt) {
       return (
         <span className="font-inter text-xs font-bold leading-4 text-red-500">
-          {props.errortxt}
+          {errortxt}
         </span>
       );
     }

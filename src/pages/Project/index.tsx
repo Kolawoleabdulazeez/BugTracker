@@ -8,9 +8,9 @@ import {
   LayoutList,
 } from "lucide-react";
 import React, { useMemo, useState } from "react";
-import { ProjectCardsGrid } from "./Components/cards";
 import NewProjectModal from "./Components/NewProjectModal";
-import { useGetAllProject } from "../services/project/useProject";
+import { useGetAllProject } from "../../services/project/useProject";
+import { ProjectCardsGrid } from "../../Component/cards";
 
 
 const Project = () => {
@@ -23,9 +23,10 @@ const Project = () => {
 
   console.log(data, "this is the data to get project type")
 
-  const projects= data?.data ?? [];
-
+  
   const stats = useMemo(() => {
+    const projects= data?.data ?? [];
+
     const total = projects.length;
     const completed = projects.filter(
       (p) => p.status?.toLowerCase() === "completed"
@@ -54,7 +55,7 @@ const Project = () => {
       inProgressRate,
       inReviewRate,
     };
-  }, [projects]);
+  }, [data]);
 
   return (
     <>
