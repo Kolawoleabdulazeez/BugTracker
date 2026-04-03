@@ -153,5 +153,5 @@ export async function getProjectMembers(
 ): Promise<getProjectMembers_Response[]> {
   const res = await authInstance.get(`/Project/${projectId}/members`);
   console.log(res, "this is project coming for members")
-  return res.data;
+  return res.data.data;
 }

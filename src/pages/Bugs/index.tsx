@@ -30,7 +30,6 @@ const Bugs = () => {
     );
     
 const projects = useMemo(() => data?.data ?? [], [data]);
-    console.log(metricsData, "this is data from metrics ")
 
   const selectedProject = useMemo(
     () => projects.find((p) => p.id === selectedProjectId),
