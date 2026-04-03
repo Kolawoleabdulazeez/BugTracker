@@ -1,7 +1,7 @@
 "use client";
 
 import { CardBody, CardContainer, CardItem } from "@/Component/UI/3d-card";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Calendar,
   Users,
@@ -16,6 +16,7 @@ import { formatTimestamp } from "@/utils";
 import ConfirmActionModal from "../pages/Project/Components/DeleteProjectModal";
 import { useDeleteProject } from "@/services/project/useProject";
 import { GetProject_Response } from "@/services/project/project.api";
+import { getPriorityStyles, getProjectStatusStyles } from "@/utils/helpers";
 
 interface ProjectCardProps {
   project: Project;
@@ -54,6 +55,10 @@ export function ProjectCard({ project }: ProjectCardProps) {
 };
 
 console.log(project, "this is project type in card")
+const statusStyles = getProjectStatusStyles(project.status);
+const priorityStyles = getPriorityStyles(project.priority);
+
+
 
   return (
     <CardContainer className="inter-var w-full">
@@ -136,18 +141,19 @@ console.log(project, "this is project type in card")
           </div>
 
           <CardItem translateZ="60" className="mb-4 flex items-center gap-2">
-            <span
-              className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold text-white`}
+           <span
+              className={`inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-xs font-medium ${statusStyles.bg} ${statusStyles.text}`}
             >
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
+              <span
+                className={`h-1.5 w-1.5 animate-pulse rounded-full ${statusStyles.dot}`}
+              />
               {project.status}
             </span>
-
             <span
-              className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium text-white`}
-            >
-              {project.priority} Priority
-            </span>
+        className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${priorityStyles.bg} ${priorityStyles.text}`}
+      >
+        {project.priority} Priority
+      </span>
           </CardItem>
 
           <CardItem translateZ="70" className="mb-2 w-full">
@@ -188,7 +194,7 @@ console.log(project, "this is project type in card")
             </div>
           </CardItem>
 
-          <CardItem translateZ="80" className="mb-2 grid grid-cols-3 gap-3">
+          <CardItem translateZ="80" className="mb-2  grid grid-cols-3 gap-3">
             <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-center dark:border-white/10 dark:bg-white/5">
               <Calendar
                 size={16}

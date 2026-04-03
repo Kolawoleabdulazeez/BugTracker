@@ -19,3 +19,65 @@ export const STATUS_COLORS: Record<string, string> = {
   resolved: "bg-emerald-50 text-emerald-700",
   closed: "bg-slate-100 text-slate-500",
 };
+
+export const getProjectStatusStyles = (status: string) => {
+  switch (status.toLowerCase()) {
+    case "active":
+      return {
+        dot: "bg-green-500",
+        text: "text-green-700",
+        bg: "bg-green-100",
+      };
+
+    case "completed":
+      return {
+        dot: "bg-blue-500",
+        text: "text-blue-700",
+        bg: "bg-blue-100",
+      };
+
+    case "archived":
+      return {
+        dot: "bg-gray-500",
+        text: "text-gray-700",
+        bg: "bg-gray-100",
+      };
+
+    default:
+      return {
+        dot: "bg-slate-400",
+        text: "text-slate-700",
+        bg: "bg-slate-100",
+      };
+  }
+};
+
+
+
+export const getPriorityStyles = (priority: string) => {
+  switch (priority.toLowerCase()) {
+    case "low":
+      return {
+        bg: "bg-green-100 dark:bg-green-500/15",
+        text: "text-green-700 dark:text-green-300",
+      };
+
+    case "medium":
+      return {
+        bg: "bg-yellow-100 dark:bg-yellow-500/15",
+        text: "text-yellow-700 dark:text-yellow-300",
+      };
+
+    case "high":
+      return {
+        bg: "bg-red-100 dark:bg-red-500/15",
+        text: "text-red-700 dark:text-red-300",
+      };
+
+    default:
+      return {
+        bg: "bg-gray-100 dark:bg-white/10",
+        text: "text-gray-700 dark:text-gray-300",
+      };
+  }
+};

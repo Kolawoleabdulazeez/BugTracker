@@ -158,7 +158,7 @@ export default function OverallProgress({
   const selectedOption = FILTER_OPTIONS.find(opt => opt.value === selectedFilter);
 
   return (
-    <div className="rounded-2xl bg-[#F5F0EB] p-6 w-full max-w-md">
+    <div className="]  rounded-2xl bg-[#F5F0EB] p-6 w-full h-full">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-bold text-gray-900">Overall Progress</h2>
         
@@ -284,8 +284,8 @@ export default function OverallProgress({
       <div className="mt-4 grid grid-cols-4 gap-4 border-t border-gray-300/50 pt-4">
         {stats.map((stat) => (
           <div key={stat.label}>
-            <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
-            <p className="text-xs text-gray-500">{stat.label}</p>
+            <p className={`text-xl font-bold ${stat.color}`}>{stat.value}</p>
+            <p className="text-[10px] text-gray-500">{stat.label}</p>
           </div>
         ))}
       </div>

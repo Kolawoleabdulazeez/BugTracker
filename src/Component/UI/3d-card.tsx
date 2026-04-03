@@ -141,14 +141,13 @@ export const CardItem = <T extends React.ElementType = "div">({
   ]);
 
   return (
-    <div
+    <Tag
       ref={ref}
-      className={cn("w-fit transition duration-200 ease-linear", className)}
+      className={cn("transition duration-200 ease-linear", className)}
+      {...rest}
     >
-      <Tag {...rest}>
-        {children}
-      </Tag>
-    </div>
+      {children}
+    </Tag>
   );
 };
 

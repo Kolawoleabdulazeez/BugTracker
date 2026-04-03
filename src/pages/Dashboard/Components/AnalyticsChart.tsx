@@ -11,9 +11,19 @@ export default function ProjectAnalyticsBar() {
         borderRadius: 3,
         boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
         border: "1px solid rgba(0,0,0,0.06)",
+        height: "100%",           // fill the flex column
+        display: "flex",
+        flexDirection: "column",
       }}
     >
-      <CardContent sx={{ p: 3 }}>
+      <CardContent
+        sx={{
+          p: 3,
+          flex: 1,               // CardContent grows to fill Card
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
         <Typography variant="h6" sx={{ fontWeight: 700 }}>
           Project Analytics
         </Typography>
@@ -21,8 +31,8 @@ export default function ProjectAnalyticsBar() {
           Weekly activity overview
         </Typography>
 
-        <Box sx={{ width: "100%" }}>
-          <BarChart
+        <Box sx={{ width: "100%", flex: 1, minHeight: 0 }}>  {/* flex:1 + minHeight:0 is key */}
+             <BarChart
             height={240}
             xAxis={[
               {
@@ -43,7 +53,7 @@ export default function ProjectAnalyticsBar() {
               },
             ]}
             grid={{ horizontal: true }}
-            margin={{ top: 10, right: 10, bottom: 30, left: 40 }}
+            margin={{ top: 10, right: 10, bottom: 30, left: 0 }}
             borderRadius={6}
             sx={{
               // soften axis text
@@ -60,9 +70,12 @@ export default function ProjectAnalyticsBar() {
                 strokeDasharray: "3 3",
               },
             }}
-          />
+            />
         </Box>
       </CardContent>
     </Card>
   );
 }
+
+
+
