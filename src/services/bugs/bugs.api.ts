@@ -77,6 +77,7 @@ export interface AssignedDeveloper {
 export interface Comment {
   id: string
   authorId: string
+  authorName: string
   content: string
   isEdited: boolean
   createdAt: string

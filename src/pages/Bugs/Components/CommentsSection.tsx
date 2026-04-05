@@ -107,13 +107,13 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
                   comment.id
                 )}`}
               >
-                {getInitials(comment.id)}
+                {getInitials(comment.authorName)}
               </div>
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-baseline gap-2 mb-1">
                   <span className="text-sm font-semibold dark:text-white text-slate-800 truncate">
-                    {comment.author?.fullName ?? "Unknown"}
+                    {comment.authorName ?? "Unknown"}
                   </span>
                   <span className="text-xs text-slate-400 flex-shrink-0">
                     {formatDate(comment.createdAt)}
