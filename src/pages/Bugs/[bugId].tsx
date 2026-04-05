@@ -3,29 +3,38 @@ import Button from "@/Component/Button/Button";
 import PageLayout from "@/Component/Layout/PageLayout";
 import { useRouter } from "next/router";
 import React, { useRef, useState } from "react";
-import { ArrowLeft, Tag, Cpu, Paperclip, MoreHorizontal, Pencil, ChevronDown } from "lucide-react";
-import { useAssignDeveloper, useGetSingleBug, useReassignTester } from "../../services/bugs/useBugs";
+import {
+  ArrowLeft,
+  Tag,
+  Cpu,
+  Paperclip,
+  MoreHorizontal,
+  Pencil,
+  ChevronDown,
+} from "lucide-react";
+import {
+  useAssignDeveloper,
+  useGetSingleBug,
+  useReassignTester,
+} from "../../services/bugs/useBugs";
 import { PRIORITY_COLORS, SEVERITY_COLORS, STATUS_COLORS } from "../../utils/helpers";
 import { formatLabel } from "../../utils";
 import EditBugModal from "./Components/EditBugModal";
 import Dropdown from "@/Component/Dropdown/Dropdown";
 import { useGetProjectMembers } from "../../services/project/useProject";
 import { InlineDropdown } from "@/Component/Dropdown/InlineDrop";
+import CommentsSection from "./Components/CommentsSection";
 
-const Field = ({
-  label,
-  value,
-}: {
-  label: string;
-  value?: string;
-}) => {
+const Field = ({ label, value }: { label: string; value?: string }) => {
   if (!value) return null;
   return (
     <div>
       <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-400">
         {label}
       </p>
-      <p className="text-sm dark:text-white text-slate-800 whitespace-pre-wrap">{value}</p>
+      <p className="text-sm dark:text-white text-slate-800 whitespace-pre-wrap">
+        {value}
+      </p>
     </div>
   );
 };
@@ -37,23 +46,19 @@ const BugDetailsPage = () => {
   const [showDeveloperDropdown, setShowDeveloperDropdown] = useState(false);
   const [showTesterDropdown, setShowTesterDropdown] = useState(false);
   const testerAnchorRef = useRef<HTMLDivElement>(null);
-const developerAnchorRef = useRef<HTMLDivElement>(null);
+  const developerAnchorRef = useRef<HTMLDivElement>(null);
 
   const safeBugId = typeof bugId === "string" ? bugId : undefined;
   const safeProjectId = typeof projectId === "string" ? projectId : undefined;
 
   const { data: bug, isLoading } = useGetSingleBug(safeBugId, safeProjectId);
-
   const { data: membersData, isLoading: membersLoading } =
     useGetProjectMembers(safeProjectId);
-
   const { mutateAsync: assignDeveloper, isPending: isAssigningDeveloper } =
     useAssignDeveloper(safeProjectId);
-
   const { mutateAsync: reassignTester, isPending: isReassigningTester } =
     useReassignTester(safeProjectId);
 
-  // Filter members by role
   const developerOptions =
     membersData
       ?.filter((m: any) => m.role === "Developer")
@@ -117,7 +122,7 @@ const developerAnchorRef = useRef<HTMLDivElement>(null);
       contentClassName="bg-slate-100 min-h-screen dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900"
     >
       <div className="space-y-6 p-4">
-        {/* Header */}
+        {/* ── Page Header ──────────────────────────────────────────────── */}
         <div className="flex items-start justify-between">
           <div>
             <Button
@@ -131,8 +136,12 @@ const developerAnchorRef = useRef<HTMLDivElement>(null);
               }
               className="mb-3 bg-transparent text-slate-700 dark:text-white"
             />
-            <p className="text-sm dark:text-slate-400 text-slate-500">{bug.bugLabel}</p>
-            <h1 className="text-2xl font-bold dark:text-white text-slate-900">{bug.title}</h1>
+            <p className="text-sm dark:text-slate-400 text-slate-500">
+              {bug.bugLabel}
+            </p>
+            <h1 className="text-2xl font-bold dark:text-white text-slate-900">
+              {bug.title}
+            </h1>
           </div>
           <Button
             title="Edit Bug"
@@ -142,7 +151,7 @@ const developerAnchorRef = useRef<HTMLDivElement>(null);
           />
         </div>
 
-        {/* Status Badges */}
+        {/* ── Status Badges ─────────────────────────────────────────────── */}
         <div className="flex flex-wrap gap-2">
           <span className={`rounded-full border px-3 py-1 text-xs font-semibold ${severityClass}`}>
             {bug.severity}
@@ -155,16 +164,18 @@ const developerAnchorRef = useRef<HTMLDivElement>(null);
           </span>
         </div>
 
-        {/* Main Grid */}
+        {/* ── Main Grid ─────────────────────────────────────────────────── */}
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
 
-          {/* LEFT — Description + Details */}
+          {/* LEFT — Description + Comments */}
           <div className="xl:col-span-2 space-y-4">
 
             {/* Description Card */}
             <div className="rounded-2xl border border-slate-200 bg-white dark:border-white/10 dark:bg-white/5 dark:backdrop-blur-sm p-5 shadow-sm">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-base font-semibold dark:text-white text-slate-900">Description</h2>
+                <h2 className="text-base font-semibold dark:text-white text-slate-900">
+                  Description
+                </h2>
                 <div className="flex gap-2">
                   <button className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10">
                     <MoreHorizontal size={16} className="text-slate-400" />
@@ -181,11 +192,17 @@ const developerAnchorRef = useRef<HTMLDivElement>(null);
               {/* Steps to Reproduce */}
               {bug.stepsToReproduce && (
                 <div className="mb-5">
-                  <p className="mb-2 text-sm font-semibold dark:text-white text-slate-800">Steps to Reproduce</p>
+                  <p className="mb-2 text-sm font-semibold dark:text-white text-slate-800">
+                    Steps to Reproduce
+                  </p>
                   <ol className="list-decimal list-inside space-y-1">
-                    {bug.stepsToReproduce.split("\n").map((step: string, i: number) => (
-                      <li key={i} className="text-sm dark:text-slate-300 text-slate-700">{step}</li>
-                    ))}
+                    {bug.stepsToReproduce
+                      .split("\n")
+                      .map((step: string, i: number) => (
+                        <li key={i} className="text-sm dark:text-slate-300 text-slate-700">
+                          {step}
+                        </li>
+                      ))}
                   </ol>
                 </div>
               )}
@@ -195,27 +212,37 @@ const developerAnchorRef = useRef<HTMLDivElement>(null);
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
                   {bug.expectedBehavior && (
                     <div className="rounded-xl border border-slate-200 dark:border-white/10 p-4">
-                      <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">Expected Behavior</p>
-                      <p className="text-sm dark:text-white text-slate-700">{bug.expectedBehavior}</p>
+                      <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                        Expected Behavior
+                      </p>
+                      <p className="text-sm dark:text-white text-slate-700">
+                        {bug.expectedBehavior}
+                      </p>
                     </div>
                   )}
                   {bug.actualBehavior && (
                     <div className="rounded-xl border border-slate-200 dark:border-white/10 p-4">
-                      <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">Actual Behavior</p>
-                      <p className="text-sm dark:text-white text-slate-700">{bug.actualBehavior}</p>
+                      <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                        Actual Behavior
+                      </p>
+                      <p className="text-sm dark:text-white text-slate-700">
+                        {bug.actualBehavior}
+                      </p>
                     </div>
                   )}
                 </div>
               )}
 
-              {/* Environment / Version / Tags row */}
+              {/* Environment / Version / Tags */}
               <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 {bug.environment && (
                   <div>
                     <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400 flex items-center gap-1">
                       <Cpu size={12} /> Environment
                     </p>
-                    <p className="text-sm dark:text-white text-slate-800">{bug.environment}</p>
+                    <p className="text-sm dark:text-white text-slate-800">
+                      {bug.environment}
+                    </p>
                   </div>
                 )}
                 {bug.version && <Field label="Version" value={bug.version} />}
@@ -239,76 +266,21 @@ const developerAnchorRef = useRef<HTMLDivElement>(null);
               </div>
             </div>
 
-            {/* History Card */}
-            {bug.statusHistory?.length > 0 && (
-              <div className="rounded-2xl border border-slate-200 bg-white dark:border-white/10 dark:bg-white/5 dark:backdrop-blur-sm p-5 shadow-sm">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-base font-semibold dark:text-white text-slate-900">History</h2>
-                  <div className="flex gap-2">
-                    <button className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10">
-                      <Pencil size={14} className="text-slate-400" />
-                    </button>
-                    <button className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10">
-                      <ChevronDown size={16} className="text-slate-400" />
-                    </button>
-                  </div>
-                </div>
-                <div className="space-y-3">
-                  {bug.statusHistory.map((entry: any, i: number) => (
-                    <div key={i} className="flex items-start gap-3">
-                      <div className="mt-1.5 h-2 w-2 rounded-full bg-blue-500 flex-shrink-0" />
-                      <div className="flex-1 flex justify-between items-start">
-                        <p className="text-sm dark:text-slate-300 text-slate-700">
-                          {entry.comment || `Status changed from ${entry.fromStatus} to `}
-                          {!entry.comment && (
-                            <span className="font-semibold dark:text-white text-slate-900">
-                              {entry.toStatus}
-                            </span>
-                          )}
-                          {entry.changedByName && (
-                            <span className="dark:text-slate-400 text-slate-500">
-                              {" "}by{" "}
-                              <span className="font-semibold dark:text-white text-slate-800">
-                                {entry.changedByName}
-                              </span>
-                            </span>
-                          )}
-                        </p>
-                        <span className="text-xs text-slate-400 ml-4 flex-shrink-0">
-                          {new Date(entry.changedAt).toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                            year: "numeric",
-                          })}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {bug.tags?.length > 0 && (
-                  <div className="mt-4 flex flex-wrap gap-2 pt-4 border-t border-slate-100 dark:border-white/10">
-                    {bug.tags.map((tag: any, i: number) => (
-                      <span
-                        key={i}
-                        className="rounded-full border border-slate-200 dark:border-white/10 px-3 py-1 text-xs font-medium dark:text-white text-slate-700"
-                      >
-                        {typeof tag === "string" ? tag : tag.name}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
+            {/* ── Comments Section (replaces history) ───────────────────── */}
+            {safeBugId && safeProjectId && (
+              <CommentsSection bugId={bug.id} comments={bug.comments} projectId={safeProjectId} />
             )}
           </div>
 
-          {/* RIGHT — Assignment + Attachments + History */}
+          {/* RIGHT — Assignment + Attachments */}
           <div className="space-y-4">
 
             {/* Assignment Card */}
             <div className="rounded-2xl border border-slate-200 bg-white dark:border-white/10 dark:bg-white/5 dark:backdrop-blur-sm p-5 shadow-sm space-y-5">
               <div className="flex items-center justify-between">
-                <p className="text-base font-semibold dark:text-white text-slate-900">Assignment</p>
+                <p className="text-base font-semibold dark:text-white text-slate-900">
+                  Assignment
+                </p>
                 <button className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10">
                   <MoreHorizontal size={16} className="text-slate-400" />
                 </button>
@@ -322,7 +294,9 @@ const developerAnchorRef = useRef<HTMLDivElement>(null);
                       {bug.reportedBy.fullName?.charAt(0)}
                     </div>
                     <div>
-                      <p className="text-sm font-semibold dark:text-white text-slate-800">{bug.reportedBy.fullName}</p>
+                      <p className="text-sm font-semibold dark:text-white text-slate-800">
+                        {bug.reportedBy.fullName}
+                      </p>
                       <p className="text-xs text-slate-400">Reporter</p>
                     </div>
                   </div>
@@ -360,22 +334,25 @@ const developerAnchorRef = useRef<HTMLDivElement>(null);
                     {isReassigningTester ? "Saving..." : "Edit"}
                   </button>
                 </div>
-
-                {/* Inline tester dropdown — only shows when Edit is clicked */}
-                    <div ref={testerAnchorRef}>
-  <InlineDropdown anchorRef={testerAnchorRef} isOpen={showTesterDropdown}>
-    <Dropdown
-      hasSearch
-      list={testerOptions}
-      labelParam="label"
-      valueParam="id"
-      placeholder={membersLoading ? "Loading testers..." : "Select tester"}
-      onValChange={handleReassignTester}
-      parentClassName="border rounded-xl border-lightgray px-2 h-[40px] flex items-center w-full bg-white dark:bg-gray-800"
-      dropdownClassName="!h-60"
-    />
-  </InlineDropdown>
-</div>
+                <div ref={testerAnchorRef}>
+                  <InlineDropdown
+                    anchorRef={testerAnchorRef}
+                    isOpen={showTesterDropdown}
+                  >
+                    <Dropdown
+                      hasSearch
+                      list={testerOptions}
+                      labelParam="label"
+                      valueParam="id"
+                      placeholder={
+                        membersLoading ? "Loading testers..." : "Select tester"
+                      }
+                      onValChange={handleReassignTester}
+                      parentClassName="border rounded-xl border-lightgray px-2 h-[40px] flex items-center w-full bg-white dark:bg-gray-800"
+                      dropdownClassName="!h-60"
+                    />
+                  </InlineDropdown>
+                </div>
               </div>
 
               {/* Assigned Developer */}
@@ -402,29 +379,36 @@ const developerAnchorRef = useRef<HTMLDivElement>(null);
                     {isAssigningDeveloper ? "Saving..." : "Edit"}
                   </button>
                 </div>
-
-                {/* Inline developer dropdown — only shows when Edit is clicked */}
-                    <div ref={developerAnchorRef}>
-  <InlineDropdown anchorRef={developerAnchorRef} isOpen={showDeveloperDropdown}>
-    <Dropdown
-      hasSearch
-      list={developerOptions}
-      labelParam="label"
-      valueParam="id"
-      placeholder={membersLoading ? "Loading developers..." : "Select developer"}
-      onValChange={handleAssignDeveloper}
-      parentClassName="border rounded-xl border-lightgray px-2 h-[40px] flex items-center w-full bg-white dark:bg-gray-800"
-      dropdownClassName="!h-60"
-    />
-  </InlineDropdown>
-</div>
+                <div ref={developerAnchorRef}>
+                  <InlineDropdown
+                    anchorRef={developerAnchorRef}
+                    isOpen={showDeveloperDropdown}
+                  >
+                    <Dropdown
+                      hasSearch
+                      list={developerOptions}
+                      labelParam="label"
+                      valueParam="id"
+                      placeholder={
+                        membersLoading
+                          ? "Loading developers..."
+                          : "Select developer"
+                      }
+                      onValChange={handleAssignDeveloper}
+                      parentClassName="border rounded-xl border-lightgray px-2 h-[40px] flex items-center w-full bg-white dark:bg-gray-800"
+                      dropdownClassName="!h-60"
+                    />
+                  </InlineDropdown>
+                </div>
               </div>
 
               {/* Developer Status */}
               {bug.developerStatus && (
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <p className="text-sm font-semibold dark:text-white text-slate-900">Developer Status</p>
+                    <p className="text-sm font-semibold dark:text-white text-slate-900">
+                      Developer Status
+                    </p>
                   </div>
                   <div className="flex items-center justify-between rounded-xl bg-slate-100 dark:bg-white/10 px-4 py-2.5">
                     <span className="text-sm font-medium dark:text-white text-slate-800">
@@ -440,7 +424,9 @@ const developerAnchorRef = useRef<HTMLDivElement>(null);
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <span className="text-slate-400">+</span>
-                  <p className="text-base font-semibold dark:text-white text-slate-900">Attachments</p>
+                  <p className="text-base font-semibold dark:text-white text-slate-900">
+                    Attachments
+                  </p>
                 </div>
                 <button className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10">
                   <MoreHorizontal size={16} className="text-slate-400" />
@@ -450,7 +436,10 @@ const developerAnchorRef = useRef<HTMLDivElement>(null);
               {bug.attachments?.length > 0 ? (
                 <div className="space-y-3">
                   {bug.attachments.map((attachment: any, i: number) => (
-                    <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10">
+                    <div
+                      key={i}
+                      className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10"
+                    >
                       <div className="flex items-center gap-3">
                         <div className="h-9 w-9 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
                           <Paperclip size={16} className="text-blue-500" />
@@ -459,7 +448,9 @@ const developerAnchorRef = useRef<HTMLDivElement>(null);
                           <p className="text-sm font-medium dark:text-white text-slate-800">
                             {attachment.name || attachment.fileName}
                           </p>
-                          <p className="text-xs text-slate-400">{attachment.size}</p>
+                          <p className="text-xs text-slate-400">
+                            {attachment.size}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -468,45 +459,46 @@ const developerAnchorRef = useRef<HTMLDivElement>(null);
               ) : (
                 <p className="text-sm text-slate-400">No attachments</p>
               )}
-
-              {bug.tags?.length > 0 && (
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {bug.tags.map((tag: any, i: number) => (
-                    <span
-                      key={i}
-                      className="rounded-full border border-slate-200 dark:border-white/10 px-3 py-1 text-xs font-medium dark:text-white text-slate-700"
-                    >
-                      {typeof tag === "string" ? tag : tag.name}
-                    </span>
-                  ))}
-                </div>
-              )}
             </div>
 
-            {/* Right History Card */}
+            {/* Status History (right sidebar — kept for audit trail) */}
             {bug.statusHistory?.length > 0 && (
               <div className="rounded-2xl border border-slate-200 bg-white dark:border-white/10 dark:bg-white/5 dark:backdrop-blur-sm p-5 shadow-sm">
                 <div className="flex items-center gap-2 mb-4">
-                  <span className="text-slate-400">↔</span>
-                  <p className="text-base font-semibold dark:text-white text-slate-900">History</p>
+                  <ChevronDown size={16} className="text-slate-400" />
+                  <p className="text-base font-semibold dark:text-white text-slate-900">
+                    Status History
+                  </p>
                 </div>
                 <div className="space-y-4">
                   {bug.statusHistory.map((entry: any, i: number) => (
                     <div key={i} className="flex items-start gap-3">
-                      <div className="h-7 w-7 rounded-full bg-slate-300 dark:bg-slate-600 flex items-center justify-center text-xs text-white font-bold flex-shrink-0">
-                        {bug.reportedBy?.fullName?.charAt(0) ?? "?"}
-                      </div>
-                      <p className="text-xs dark:text-slate-300 text-slate-600 leading-relaxed">
-                        {entry.comment}
-                        {entry.changedByName && (
-                          <>
-                            {" "}by{" "}
-                            <span className="font-semibold dark:text-white text-slate-800">
-                              {entry.changedByName}
+                      <div className="mt-1.5 h-2 w-2 rounded-full bg-blue-500 flex-shrink-0" />
+                      <div className="flex-1 flex justify-between items-start">
+                        <p className="text-xs dark:text-slate-300 text-slate-600 leading-relaxed">
+                          {entry.comment ||
+                            `Status changed from ${entry.fromStatus} to `}
+                          {!entry.comment && (
+                            <span className="font-semibold dark:text-white text-slate-900">
+                              {entry.toStatus}
                             </span>
-                          </>
-                        )}
-                      </p>
+                          )}
+                          {entry.changedByName && (
+                            <span className="dark:text-slate-400 text-slate-500">
+                              {" "}by{" "}
+                              <span className="font-semibold dark:text-white text-slate-800">
+                                {entry.changedByName}
+                              </span>
+                            </span>
+                          )}
+                        </p>
+                        <span className="text-xs text-slate-400 ml-3 flex-shrink-0">
+                          {new Date(entry.changedAt).toLocaleDateString(
+                            "en-US",
+                            { month: "short", day: "numeric" }
+                          )}
+                        </span>
+                      </div>
                     </div>
                   ))}
                 </div>

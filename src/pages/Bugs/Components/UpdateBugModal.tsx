@@ -32,20 +32,26 @@ const PRIORITY_OPTIONS = [
   {
     value: "low",
     label: "Low",
-    color: "border-slate-300 bg-slate-50 text-slate-600 dark:border-gray-600 dark:bg-gray-700/30 dark:text-gray-400",
-    active: "border-blue-500 bg-blue-50 text-blue-700 dark:border-blue-500 dark:bg-blue-500/20 dark:text-blue-300",
+    color:
+      "border-slate-300 bg-slate-50 text-slate-600 dark:border-gray-600 dark:bg-gray-700/30 dark:text-gray-400",
+    active:
+      "border-blue-500 bg-blue-50 text-blue-700 dark:border-blue-500 dark:bg-blue-500/20 dark:text-blue-300",
   },
   {
     value: "normal",
     label: "Normal",
-    color: "border-slate-300 bg-slate-50 text-slate-600 dark:border-gray-600 dark:bg-gray-700/30 dark:text-gray-400",
-    active: "border-yellow-500 bg-yellow-50 text-yellow-700 dark:border-yellow-500 dark:bg-yellow-500/20 dark:text-yellow-300",
+    color:
+      "border-slate-300 bg-slate-50 text-slate-600 dark:border-gray-600 dark:bg-gray-700/30 dark:text-gray-400",
+    active:
+      "border-yellow-500 bg-yellow-50 text-yellow-700 dark:border-yellow-500 dark:bg-yellow-500/20 dark:text-yellow-300",
   },
   {
     value: "urgent",
     label: "Urgent",
-    color: "border-slate-300 bg-slate-50 text-slate-600 dark:border-gray-600 dark:bg-gray-700/30 dark:text-gray-400",
-    active: "border-orange-500 bg-orange-50 text-orange-700 dark:border-orange-500 dark:bg-orange-500/20 dark:text-orange-300",
+    color:
+      "border-slate-300 bg-slate-50 text-slate-600 dark:border-gray-600 dark:bg-gray-700/30 dark:text-gray-400",
+    active:
+      "border-orange-500 bg-orange-50 text-orange-700 dark:border-orange-500 dark:bg-orange-500/20 dark:text-orange-300",
   },
 ];
 
@@ -58,10 +64,13 @@ const SEVERITY_LIST = [
 
 const STATUS_LIST = [
   { id: "open", label: "Open" },
-  { id: "in_progress", label: "In Progress" },
-  { id: "resolved", label: "Resolved" },
+  { id: "inprogress", label: "In Progress" },
   { id: "closed", label: "Closed" },
+  { id: "wontfix", label: "Won't Fix" },
+  { id: "duplicate", label: "Duplicate" },
 ];
+
+const labelClass = "dark:text-white text-darkPrimary mb-2";
 
 const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
   isOpen,
@@ -80,8 +89,12 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
     formState: { errors },
   } = useForm<BugFormValues>();
 
-  const { fields: tagFields, append: appendTag, remove: removeTag, replace } =
-    useFieldArray({ control, name: "tags" });
+  const {
+    fields: tagFields,
+    append: appendTag,
+    remove: removeTag,
+    replace,
+  } = useFieldArray({ control, name: "tags" });
 
   const { mutateAsync: updateBug, isPending } = useUpdateBug(projectId);
 
@@ -89,7 +102,6 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
   const severity = watch("severity");
   const status = watch("status");
 
-  // Pre-fill form when bug changes
   useEffect(() => {
     if (!isOpen || !bug) return;
     reset({
@@ -154,10 +166,17 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
   if (!isOpen || !bug) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-2xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-white/10 dark:bg-[#13151f]">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50 px-6 py-4 dark:border-white/5 dark:bg-white/[0.03]">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 p-0 sm:p-4 backdrop-blur-sm">
+      {/*
+        ─── Modal shell ──────────────────────────────────────────────────────────
+        Key fix: `flex flex-col` + `max-h-[92dvh]` on the shell.
+        The header and footer are flex-shrink-0 (they never collapse).
+        Only the form body gets flex-1 + overflow-y-auto, so only IT scrolls.
+      */}
+      <div className="w-full sm:max-w-2xl flex flex-col overflow-hidden rounded-t-2xl sm:rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-white/10 dark:bg-[#13151f] max-h-[70dvh] sm:max-h-[88vh]">
+
+        {/* ── Header ── flex-shrink-0 keeps it always visible */}
+        <div className="flex-shrink-0 flex items-center justify-between border-b border-slate-100 bg-slate-50 px-6 py-4 dark:border-white/5 dark:bg-white/[0.03]">
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-yellow-500/10 dark:bg-yellow-500/20">
               <Bug size={18} className="text-yellow-500 dark:text-yellow-400" />
@@ -180,10 +199,11 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
           </button>
         </div>
 
-        {/* Form */}
+        {/* ── Scrollable form body ── flex-1 fills remaining space, scrolls internally */}
         <form
+          id="update-bug-form"
           onSubmit={handleSubmit(onSubmit)}
-          className="max-h-[calc(100vh-160px)] space-y-5 overflow-y-auto px-6 py-5"
+          className="flex-1 min-h-0 overflow-y-auto overscroll-contain space-y-5 px-6 py-5"
         >
           {/* Title */}
           <Controller
@@ -198,6 +218,7 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
                 {...field}
                 errortxt={errors.title?.message}
                 parentClassName="w-full"
+                labelClassName={labelClass}
               />
             )}
           />
@@ -216,6 +237,7 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
                 {...field}
                 errortxt={errors.description?.message}
                 parentClassName="w-full"
+                labelClassName={labelClass}
               />
             )}
           />
@@ -223,7 +245,7 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
           {/* Priority + Severity + Status */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div>
-              <p className="text-darkPrimary !text-sm font-bold mb-1.5">
+              <p className="dark:text-white text-darkPrimary text-sm font-bold mb-1.5">
                 Priority <span className="text-errorRed mx-1">*</span>
               </p>
               <div className="flex flex-col gap-1.5">
@@ -247,6 +269,7 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
               isRequired
               list={SEVERITY_LIST}
               labelParam="label"
+              className="dark:text-white"
               valueParam="id"
               placeholder="Select severity"
               selectedValue={severity}
@@ -260,6 +283,7 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
               list={STATUS_LIST}
               labelParam="label"
               valueParam="id"
+              className="dark:text-white"
               placeholder="Select status"
               selectedValue={status}
               onValChange={(item) => setValue("status", item.id)}
@@ -269,7 +293,7 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
 
           {/* Steps to Reproduce */}
           <div>
-            <p className="text-darkPrimary !text-sm font-bold mb-1.5 flex items-center gap-1.5">
+            <p className="dark:text-white text-darkPrimary text-sm font-bold mb-1.5 flex items-center gap-1.5">
               <Layers size={14} />
               Steps to Reproduce
             </p>
@@ -283,6 +307,7 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
                   {...field}
                   inputClassName="font-mono text-xs"
                   parentClassName="w-full"
+                  labelClassName={labelClass}
                 />
               )}
             />
@@ -300,6 +325,7 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
                   placeholder="What should happen..."
                   {...field}
                   parentClassName="w-full"
+                  labelClassName={labelClass}
                 />
               )}
             />
@@ -313,6 +339,7 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
                   placeholder="What actually happens..."
                   {...field}
                   parentClassName="w-full"
+                  labelClassName={labelClass}
                 />
               )}
             />
@@ -330,6 +357,7 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
                   lefticon={<Cpu size={16} className="text-slate-400" />}
                   {...field}
                   parentClassName="w-full"
+                  labelClassName={labelClass}
                 />
               )}
             />
@@ -342,6 +370,7 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
                   placeholder="e.g. v2.4.1"
                   {...field}
                   parentClassName="w-full"
+                  labelClassName={labelClass}
                 />
               )}
             />
@@ -349,7 +378,7 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
 
           {/* Tags */}
           <div>
-            <p className="text-darkPrimary !text-sm font-bold mb-1.5 flex items-center gap-1.5">
+            <p className="dark:text-white text-darkPrimary text-sm font-bold mb-1.5 flex items-center gap-1.5">
               <Tag size={14} /> Tags
             </p>
             <div className="flex gap-2 items-start">
@@ -363,6 +392,7 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
                   }
                 }}
                 parentClassName="flex-1"
+                labelClassName={labelClass}
               />
               <button
                 type="button"
@@ -388,13 +418,23 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
               </div>
             )}
           </div>
+        </form>
 
-          {/* Submit */}
-          <div className="border-t border-slate-100 pt-4 dark:border-white/5">
+        {/* ── Footer ── flex-shrink-0 keeps it always pinned at the bottom */}
+        <div className="flex-shrink-0 border-t border-slate-100 dark:border-white/5 bg-white dark:bg-[#13151f] px-6 py-4">
+          <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-full sm:w-auto sm:px-6 rounded-xl border border-slate-200 bg-white py-3 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10"
+            >
+              Cancel
+            </button>
             <button
               type="submit"
+              form="update-bug-form"
               disabled={isPending}
-              className="group flex w-full items-center justify-center gap-2 rounded-xl bg-yellow-500 py-3.5 text-sm font-semibold text-white shadow-lg shadow-yellow-500/20 transition-all hover:bg-yellow-600 disabled:cursor-not-allowed disabled:opacity-60"
+              className="group flex flex-1 items-center justify-center gap-2 rounded-xl bg-yellow-500 py-3 text-sm font-semibold text-white shadow-lg shadow-yellow-500/20 transition-all hover:bg-yellow-600 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isPending ? (
                 <>
@@ -405,12 +445,16 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
                 <>
                   <Bug size={16} />
                   Update Bug
-                  <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
+                  <ArrowRight
+                    size={16}
+                    className="transition-transform group-hover:translate-x-0.5"
+                  />
                 </>
               )}
             </button>
           </div>
-        </form>
+        </div>
+
       </div>
     </div>
   );

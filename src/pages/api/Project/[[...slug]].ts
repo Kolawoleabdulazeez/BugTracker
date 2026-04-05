@@ -13,13 +13,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const data = req.body;
 
   const slug = req.query.slug;
-  const endpoint = Array.isArray(slug) ? slug.join("/") : slug || "";
-  const url = endpoint ? `${BASE_URL}/${endpoint}` : BASE_URL;
+    const suffix = Array.isArray(slug) ? slug.join("/") : "";
+  const endpoint = suffix ? `Project/${suffix}` : "Project";
+  const url = `${BASE_URL}/${endpoint}`;
 
   const axiosDataPart = data && Object.keys(data).length > 0 ? { data } : {};
 
   const token = req.cookies[Store.ACCESS_TOKEN];
-
+   console.log("slug:", slug);
+  console.log("forwarding to:", url);
   try {
     const response = await axios.request({
       method,

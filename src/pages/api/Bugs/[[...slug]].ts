@@ -14,8 +14,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const { slug, ...queryParams } = req.query; 
 
-  const endpoint = Array.isArray(slug) ? slug.join("/") : slug || "";
-  const url = endpoint ? `${BASE_URL}/${endpoint}` : BASE_URL;
+    const suffix = Array.isArray(slug) ? slug.join("/") : "";
+  const endpoint = suffix ? `Bug/${suffix}` : "Bug";
+  const url = `${BASE_URL}/${endpoint}`;
 
   const axiosDataPart = data && Object.keys(data).length > 0 ? { data } : {};
 

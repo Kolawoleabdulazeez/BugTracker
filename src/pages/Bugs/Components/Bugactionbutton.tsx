@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { AlertTriangle, ChevronDown, Pencil, Trash2 } from "lucide-react";
+import { AlertTriangle, Pencil, Trash2, ChevronDown } from "lucide-react";
 import { Bug } from "@/services/bugs/bugs.api";
-import {  useUpdateBugStatus } from "@/services/bugs/useBugs";
-import ViewBugModal from "./ViewBugModal";
-import UpdateBugModal from "./UpdateBugModal";
+import { useUpdateBugStatus } from "@/services/bugs/useBugs";
 import ConfirmActionModal from "@/pages/Project/Components/DeleteProjectModal";
+import Modal from "@/Component/Modal/Modal";
+import UpdateBugStatusModal from "./UpdateBugStatusModal";
+import UpdateBugModal from "./UpdateBugModal";
 
 interface BugActionButtonProps {
   item: Bug;
@@ -12,129 +13,109 @@ interface BugActionButtonProps {
   onActionSuccess?: () => void;
 }
 
-interface ActionMenuItem {
-  label: string;
-  icon: React.ReactNode;
-  danger?: boolean;
-  onClick: () => void;
-}
-
 const BugActionButton: React.FC<BugActionButtonProps> = ({
   item,
   projectId,
   onActionSuccess,
 }) => {
-  const [menuOpen, setMenuOpen] = useState(false);
-const [activeModal, setActiveModal] = useState<
-  "view" | "update" | "delete" | "status" | null
->(null);
-const [status, setStatus] = useState("");
-const [comment, setComment] = useState("");
+  const [actionModalOpen, setActionModalOpen] = useState(false);
+  const [activeModal, setActiveModal] = useState<
+    "update" | "delete" | "status" | null
+  >(null);
 
-const { mutateAsync: updateStatus, isPending: isUpdatingStatus } =
-  useUpdateBugStatus(projectId);
-
+  const { mutateAsync: updateStatus, isPending: isUpdatingStatus } =
+    useUpdateBugStatus(projectId);
 
   const handleClose = () => setActiveModal(null);
 
+  const handleUpdateStatus = async (status: string, comment: string) => {
+    await updateStatus({
+      bugId: item.id,
+      payload: { status, comment },
+    });
+    handleClose();
+    onActionSuccess?.();
+  };
 
-
-  const menuItems: ActionMenuItem[] = [
+  const actionButtons = [
     {
-  label: "Update Status",
-  icon: <AlertTriangle size={14} />,
-  onClick: () => {
-    setActiveModal("status");
-    setMenuOpen(false);
-  },
-},
+      label: "Update Status",
+      icon: <AlertTriangle size={16} />,
+      onClick: () => {
+        setActionModalOpen(false);
+        setActiveModal("status");
+      },
+    },
     {
       label: "Update Bug",
-      icon: <Pencil size={14} />,
+      icon: <Pencil size={16} />,
       onClick: () => {
+        setActionModalOpen(false);
         setActiveModal("update");
-        setMenuOpen(false);
       },
     },
     {
       label: "Delete Bug",
-      icon: <Trash2 size={14} />,
+      icon: <Trash2 size={16} />,
       danger: true,
       onClick: () => {
+        setActionModalOpen(false);
         setActiveModal("delete");
-        setMenuOpen(false);
       },
     },
   ];
 
-  const handleUpdateStatus = async () => {
-  await updateStatus({
-    bugId: item.id,
-    payload: {
-      status,
-      comment,
-    },
-  });
-
-  handleClose();
-  onActionSuccess?.();
-};
-
   return (
-    <div className="relative">
-      {/* Backdrop */}
-      {menuOpen && (
-        <div
-          className="fixed inset-0 z-10"
-          onClick={() => setMenuOpen(false)}
-        />
-      )}
-
+    <div>
       {/* Trigger */}
       <button
         type="button"
         onClick={(e) => {
           e.stopPropagation();
-          setMenuOpen((prev) => !prev);
+          setActionModalOpen(true);
         }}
         className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-blue-700"
       >
         Action
-        <ChevronDown
-          size={13}
-          className={`transition-transform ${menuOpen ? "rotate-180" : ""}`}
-        />
+        <ChevronDown size={13} />
       </button>
 
-      {/* Dropdown menu */}
-      {menuOpen && (
-        <div className="absolute left-10 z-20 mt-1 w-44 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
-          {menuItems.map((menu) => (
+      {/* Action Selection Modal */}
+      <Modal
+        isOpen={actionModalOpen}
+        onClose={() => setActionModalOpen(false)}
+        onOverlayClose={() => setActionModalOpen(false)}
+        className="w-[400px] px-0 !bg-white dark:!bg-gray-900"
+        headText="Select An Action"
+      >
+        <div className="w-full gap-3 my-5 flex flex-col items-center px-4">
+          {actionButtons.map((btn) => (
             <button
-              key={menu.label}
+              key={btn.label}
               type="button"
-              onClick={menu.onClick}
-              className={`flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-sm font-medium transition-colors ${
-                menu.danger
-                  ? "text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
-                  : "text-slate-700 hover:bg-slate-50 dark:text-gray-300 dark:hover:bg-white/5"
+              onClick={btn.onClick}
+              className={`flex items-center gap-3 w-full px-4 py-3 rounded-lg font-semibold text-sm transition-colors ${
+                btn.danger
+                  ? "bg-red-50 text-red-600 hover:bg-red-600 hover:text-white dark:bg-red-500/10 dark:text-red-400 dark:hover:bg-red-600 dark:hover:text-white"
+                  : "bg-[#CFF8E0] text-darkPrimary hover:bg-blue-600 hover:text-white dark:bg-white/5 dark:text-gray-200 dark:hover:bg-blue-600 dark:hover:text-white"
               }`}
             >
-              {menu.icon}
-              {menu.label}
+              {btn.icon}
+              <span>{btn.label}</span>
             </button>
           ))}
         </div>
-      )}
+      </Modal>
 
-      {/* View Modal */}
-      <ViewBugModal
-        isOpen={activeModal === "view"}
+      {/* Update Status Modal — dedicated component, not ConfirmActionModal */}
+      <UpdateBugStatusModal
+        isOpen={activeModal === "status"}
         onClose={handleClose}
-        bug={item}
+        onConfirm={handleUpdateStatus}
+        isLoading={isUpdatingStatus}
       />
 
-      {/* Update Modal */}
+      {/* Update Bug Modal */}
       <UpdateBugModal
         isOpen={activeModal === "update"}
         onClose={handleClose}
@@ -144,45 +125,18 @@ const { mutateAsync: updateStatus, isPending: isUpdatingStatus } =
 
       {/* Delete Confirm Modal */}
       <ConfirmActionModal
-  isOpen={activeModal === "status"}
-  title="Update Bug Status"
-  confirmText="Update Status"
-  isLoading={isUpdatingStatus}
-  onClose={handleClose}
-  onConfirm={handleUpdateStatus}
-  description={
-    <div className="space-y-4">
-      {/* Status select */}
-      <div>
-        <label className="text-sm font-medium">Status</label>
-        <select
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
-          className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
-        >
-          <option value="">Select status</option>
-          <option value="OPEN">OPEN</option>
-          <option value="IN_PROGRESS">IN_PROGRESS</option>
-          <option value="RESOLVED">RESOLVED</option>
-          <option value="CLOSED">CLOSED</option>
-          <option value="DUPLICATE">DUPLICATE</option>
-        </select>
-      </div>
-
-      {/* Comment */}
-      <div>
-        <label className="text-sm font-medium">Comment</label>
-        <textarea
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          placeholder="Add a comment (optional)"
-          className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
-          rows={3}
-        />
-      </div>
-    </div>
-  }
-/>
+        isOpen={activeModal === "delete"}
+        title="Delete Bug"
+        confirmText="Delete"
+        isLoading={false}
+        onClose={handleClose}
+        onConfirm={() => {
+          // TODO: wire up delete mutation
+          handleClose();
+          onActionSuccess?.();
+        }}
+        description="Are you sure you want to delete this bug? This action cannot be undone."
+      />
     </div>
   );
 };

@@ -144,17 +144,17 @@ const mappedBugs = useMemo(() => {
           <div className="rounded-xl border border-green-200 bg-gradient-to-br from-green-50 to-green-100 p-5 dark:border-green-900/40 dark:from-green-950/40 dark:to-green-900/20">
             <p className="text-sm font-medium text-green-700 dark:text-green-300">Completed</p>
             {isLoading ? <div className="mt-2 h-9 w-12 animate-pulse rounded-lg bg-green-200 dark:bg-green-800/40" /> : <p className="mt-2 text-3xl font-bold text-green-900 dark:text-green-100">{metricsData?.closed}</p>}
-            <p className="mt-1 text-xs text-green-600 dark:text-green-300/80">{isLoading ? "—" : `${metricsData?.completionPercentage}% completion rate`}</p>
+            <p className="mt-1 text-xs text-green-600 dark:text-green-300/80">{isLoading ? "—" : `${metricsData?.completionPercentage ?? 0}% completion rate`}</p>
           </div>
           <div className="rounded-xl border border-yellow-200 bg-gradient-to-br from-yellow-50 to-yellow-100 p-5 dark:border-yellow-900/40 dark:from-yellow-950/40 dark:to-yellow-900/20">
             <p className="text-sm font-medium text-yellow-700 dark:text-yellow-300">In Progress</p>
             {isLoading ? <div className="mt-2 h-9 w-12 animate-pulse rounded-lg bg-yellow-200 dark:bg-yellow-800/40" /> : <p className="mt-2 text-3xl font-bold text-yellow-900 dark:text-yellow-100">{metricsData?.inProgress}</p>}
-            <p className="mt-1 text-xs text-yellow-600 dark:text-yellow-300/80">{isLoading ? "—" : `${(metricsData?.completionPercentage)}% of projects`}</p>
+            <p className="mt-1 text-xs text-yellow-600 dark:text-yellow-300/80">{isLoading ? "—" : `${(metricsData?.completionPercentage)?? 0}% of projects`}</p>
           </div>
           <div className="rounded-xl border border-purple-200 bg-gradient-to-br from-purple-50 to-purple-100 p-5 dark:border-purple-900/40 dark:from-purple-950/40 dark:to-purple-900/20">
             <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Open</p>
             {isLoading ? <div className="mt-2 h-9 w-12 animate-pulse rounded-lg bg-purple-200 dark:bg-purple-800/40" /> : <p className="mt-2 text-3xl font-bold text-purple-900 dark:text-purple-100">{metricsData?.open}</p>}
-            <p className="mt-1 text-xs text-purple-600 dark:text-purple-300/80">{isLoading ? "—" : `${stats.inReviewRate}% of projects`}</p>
+            <p className="mt-1 text-xs text-purple-600 dark:text-purple-300/80">{isLoading ? "—" : `${stats.inReviewRate?? 0}% of projects`}</p>
           </div>
         </div>
 

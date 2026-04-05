@@ -7,6 +7,8 @@ import {
   deleteBug,
   getBugs,
   getSingleBug,
+  postComment,
+  PostCommentPayload,
   reassignTester,
   updateBug,
   UpdateBugPayload,
@@ -169,3 +171,38 @@ export function useReassignTester(projectId?: string) {
     },
   });
 }
+export const COMMENTS_QUERY_KEY = ["bug-comments"];
+
+
+export function usePostComment(
+  bugId?: string,
+  projectId?: string,
+  onSuccessCallback?: () => void
+) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: PostCommentPayload) => {
+      if (!bugId || !projectId) throw new Error("Missing bugId or projectId");
+      return postComment(bugId, projectId, payload);
+    },
+    onSuccess: () => {
+      toast.success("Comment posted!");
+      queryClient.invalidateQueries({
+        queryKey: [...COMMENTS_QUERY_KEY, bugId, projectId],
+      });
+      // Also keep the single bug cache in sync
+      queryClient.invalidateQueries({
+        queryKey: [...SINGLE_BUG_QUERY_KEY, bugId, projectId],
+      });
+      onSuccessCallback?.();
+    },
+    onError: (error: any) => {
+      toast.error(
+        error?.response?.data?.details?.responseMessage ||
+          "Failed to post comment."
+      );
+    },
+  });
+}
+ 

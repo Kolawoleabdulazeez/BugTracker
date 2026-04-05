@@ -29,3 +29,20 @@ export const createApiInstance = (baseKey: UrlKey): AxiosInstance => {
 
   return instance;
 };
+
+// export const logoutAndRedirect = async () => {
+//   try {
+//     // Optional: call backend logout endpoint
+//     // await axios.post("/auth/logout");
+
+//   } catch (err) {
+//     console.log("Logout API failed, continuing...");
+//   } finally {
+//     // Clear stored auth data
+//     localStorage.removeItem("accessToken");
+//     localStorage.removeItem("user");
+
+//     // Redirect to login page
+//     window.location.href = "/Login";
+//   }
+// };

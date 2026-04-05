@@ -33,7 +33,7 @@ const Header: React.FC<HeaderProps> = ({
         <div className="min-w-0 flex-1">
           {title && (
             <div className="space-y-1">
-              <h1 className="truncate text-xl font-semibold tracking-tight text-gray-900 sm:text-2xl dark:text-white">
+              <h1 className="truncate ms-12 text-xl font-semibold tracking-tight text-gray-900 sm:text-2xl dark:text-white">
                 {title}
               </h1>
               {subtitle && (

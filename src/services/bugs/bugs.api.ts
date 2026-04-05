@@ -45,13 +45,14 @@ export interface Bug {
   version: string
   reportedBy: ReportedBy
   assignedTester: AssignedTester
-  assignedDeveloper: AssignedDeveloper
+  assignedDeveloper: any
   testerComment: any
   developerComment: any
   attachments: any[]
   tags: any[]
   duplicateOf: any
   statusHistory: StatusHistory[]
+  comments: Comment[]
   resolvedAt: any
   createdAt: string
   updatedAt: string
@@ -73,6 +74,13 @@ export interface AssignedDeveloper {
   fullName: string
   email: string
 }
+export interface Comment {
+  id: string
+  authorId: string
+  content: string
+  isEdited: boolean
+  createdAt: string
+}
 
 export interface StatusHistory {
   fromStatus: string
@@ -92,7 +100,7 @@ export interface AssignedTester {
 export const authInstance = createApiInstance("BUGS");
 
 export async function getBugs(projectId: string): Promise<GetBugsResponse> {
-  const res = await authInstance.get("/Bug", {
+  const res = await authInstance.get("/", {
     params: { projectId },
   });
   return res.data.data;
@@ -102,7 +110,7 @@ export async function createBug(
   projectId: string,
   payload: CreateBugPayload
 ): Promise<any> {
-  const res = await authInstance.post("/Bug", payload, {
+  const res = await authInstance.post("/", payload, {
     params: { projectId },
   });
   return res.data;
@@ -113,7 +121,7 @@ export async function updateBug(
   projectId: string,    
   payload: UpdateBugPayload
 ): Promise<any> {
-  const res = await authInstance.put(`/Bug/${bugId}`, payload, {
+  const res = await authInstance.put(`/${bugId}`, payload, {
     params: { projectId }, 
   });
   return res.data;
@@ -121,7 +129,7 @@ export async function updateBug(
 
 
 export async function deleteBug(bugId: string, projectId: string): Promise<any> {
-  const res = await authInstance.delete(`/Bug/${bugId}`, {
+  const res = await authInstance.delete(`/${bugId}`, {
     params: { projectId },
   });
   return res.data;
@@ -131,10 +139,10 @@ export async function getSingleBug(
   bugId: string,
   projectId: string
 ): Promise<Bug> {
-  const res = await authInstance.get(`/Bug/${bugId}`, {
+  const res = await authInstance.get(`/${bugId}`, {
     params: { projectId },
   });
-
+  console.log(res.data.data, "this is properties of single bug")
   return res.data.data;
 }
 
@@ -150,7 +158,7 @@ export async function updateBugStatus(
   payload: UpdateBugStatusPayload
 ): Promise<any> {
   const res = await authInstance.patch(
-    `/Bug/${bugId}/status`,
+    `/${bugId}/status`,
     payload,
     {
       params: { projectId },
@@ -166,7 +174,7 @@ export async function assignDeveloper(
   developerId: string
 ): Promise<any> {
   const res = await authInstance.patch(
-    `/Bug/${bugId}/assign-developer`,
+    `/${bugId}/assign-developer`,
     { developerId },
     { params: { projectId } }
   );
@@ -179,9 +187,29 @@ export async function reassignTester(
   newTesterId: string
 ): Promise<any> {
   const res = await authInstance.patch(
-    `/Bug/${bugId}/reassign-tester`,
+    `/${bugId}/reassign-tester`,
     { newTesterId },
     { params: { projectId } }
   );
   return res.data;
 }
+
+
+export type PostCommentPayload = {
+  content: string;
+};
+ 
+export async function postComment(
+  bugId: string,
+  projectId: string,
+  payload: PostCommentPayload
+): Promise<any> {
+  const res = await authInstance.post(
+    `/${bugId}/comments`,
+    payload,
+    { params: { projectId } }
+  );
+  return res.data;
+}
+
+

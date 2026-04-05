@@ -70,7 +70,7 @@ export type ProjectMetrics = {
 export const authInstance = createApiInstance("PROJECT");
 
 export async function createProject(payload: ProjectPayload): Promise<any> {
-  const res = await authInstance.post("/Project/", payload);
+  const res = await authInstance.post("/", payload);
   return res.data;
 }
 
@@ -78,23 +78,23 @@ export async function updateProject(
   projectId: string,
   payload: ProjectPayload
 ): Promise<any> {
-  const res = await authInstance.put(`/Project/${projectId}`, payload);
+  const res = await authInstance.put(`/${projectId}`, payload);
   return res.data;
 }
 
 export async function deleteProject(projectId: string): Promise<any> {
-  const res = await authInstance.delete(`/Project/${projectId}`);
+  const res = await authInstance.delete(`/${projectId}`);
   return res.data;
 }
 
 export async function getAllProject(): Promise<GetProject_Response> {
-  const res = await authInstance.get("/Project/");
+  const res = await authInstance.get("/");
   console.log(res,"this is response coming for all project")
   return res.data;
 }
 
 export async function getProjectById(projectId: string): Promise<any> {
-  const res = await authInstance.get(`/Project/${projectId}`);
+  const res = await authInstance.get(`/${projectId}`);
   return res.data;
 }
 
@@ -103,7 +103,7 @@ export async function inviteProjectMember(
   projectId: string,
   payload: InviteProjectMemberPayload
 ): Promise<any> {
-  const res = await authInstance.post(`/Project/${projectId}/invite`, payload);
+  const res = await authInstance.post(`/${projectId}/invite`, payload);
   return res.data;
 }
 
@@ -112,7 +112,7 @@ export async function removeProjectMember(
   memberId: string
 ): Promise<any> {
   const res = await authInstance.delete(
-    `/Project/${projectId}/members/${memberId}`
+    `/${projectId}/members/${memberId}`
   );
   return res.data;
 }
@@ -120,7 +120,7 @@ export async function removeProjectMember(
 export async function getProjectActivities(
   projectId: string
 ): Promise<GetProjectActivities_Response> {
-  const res = await authInstance.get(`/Project/${projectId}/activities`);
+  const res = await authInstance.get(`/${projectId}/activities`);
   console.log(res, "this is res just like thAT")
   return res.data.data;
 }
@@ -128,7 +128,7 @@ export async function getProjectActivities(
 export async function getProjectMetrics(
   projectId: string
 ): Promise<ProjectMetrics> {
-  const res = await authInstance.get(`/Project/${projectId}/metrics`);
+  const res = await authInstance.get(`/${projectId}/metrics`);
   console.log(res, "this is response coming from the metrics")
   return res.data.data;
 }
@@ -151,7 +151,7 @@ export interface Members {
 export async function getProjectMembers(
   projectId: string
 ): Promise<getProjectMembers_Response[]> {
-  const res = await authInstance.get(`/Project/${projectId}/members`);
+  const res = await authInstance.get(`/${projectId}/members`);
   console.log(res, "this is project coming for members")
   return res.data.data;
 }
