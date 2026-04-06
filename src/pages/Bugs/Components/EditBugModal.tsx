@@ -12,7 +12,7 @@ import { useFieldArray, useForm, Controller } from "react-hook-form";
 import { useUpdateBug } from "@/services/bugs/useBugs";
 import Input from "@/Component/Input/Input";
 import Dropdown from "@/Component/Dropdown/Dropdown";
-import { Bug as BugType } from "@/services/bugs/bugs.api";
+import { BugType } from "@/services/bugs/bugs.api";
 
 type EditBugModalProps = {
   isOpen: boolean;
