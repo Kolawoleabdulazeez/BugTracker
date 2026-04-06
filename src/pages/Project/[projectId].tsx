@@ -44,9 +44,7 @@ const { data: metricsData } = useGetProjectMetrics(
   typeof projectId === "string" ? projectId : undefined
 );
 
-const { data: bugsData} = useGetBugs(
-  typeof projectId === "string" ? projectId : undefined
-);
+
 
   const { mutateAsync: handleRemoveMember, isPending: isRemovingMember } =
   useRemoveProjectMember();
@@ -106,14 +104,13 @@ const onRemoveMember = (memberId: string, memberName: string) => {
           addedBy: member.addedBy,
           avatar: member.fullName?.charAt(0)?.toUpperCase() || "?",
         })) ?? [],
-      tasks: bugsData ?? [],
       activity: apiProject.activity ?? [],
       files: apiProject.files ?? [],
       progress: metricsData?.completionPercentage ?? 0,
       completedTasks: metricsData?.closed ?? 0,
     totalTasks: metricsData?.totalBugs ?? 0,
     };
-  }, [apiProject, bugsData, metricsData]);
+  }, [apiProject, metricsData]);
 
 const mappedActivities = useMemo(() => {
   const rawActivities = activityData?.activities ?? [];
@@ -259,8 +256,12 @@ const mappedActivities = useMemo(() => {
            {activeTab === "overview" && <OverviewTab progress={project.progress} />}
 
               {activeTab === "bugs" && (
-          <BugsTab
-          />
+           <BugsTab
+    projectId={typeof projectId === "string" ? projectId : undefined}
+    completedTasks={project.completedTasks}
+    totalTasks={project.totalTasks}
+    onAddBug={() => { }}
+  />
         )}
 
 

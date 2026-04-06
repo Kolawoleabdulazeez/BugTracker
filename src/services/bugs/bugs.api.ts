@@ -20,14 +20,14 @@ export type UpdateBugPayload = Partial<CreateBugPayload> & {
 };
 
 export type GetBugsResponse = {
-  bugs: Bug[];
+  bugs: BugType[];
   totalCount: number;
   page: number;
   pageSize: number;
   totalPages: number;
 };
 
-export interface Bug {
+export type BugType ={
   id: string
   projectId: string
   bugNumber: number
@@ -104,6 +104,7 @@ export async function getBugs(projectId: string): Promise<GetBugsResponse> {
   const res = await authInstance.get("/", {
     params: { projectId },
   });
+  console.log(res, "this is the result from get bug")
   return res.data.data;
 }
 
@@ -139,7 +140,7 @@ export async function deleteBug(bugId: string, projectId: string): Promise<any> 
 export async function getSingleBug(
   bugId: string,
   projectId: string
-): Promise<Bug> {
+): Promise<BugType> {
   const res = await authInstance.get(`/${bugId}`, {
     params: { projectId },
   });

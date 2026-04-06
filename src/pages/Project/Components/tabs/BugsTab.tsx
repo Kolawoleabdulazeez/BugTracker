@@ -12,36 +12,26 @@ import {
   ArrowUpRight,
   Minus,
 } from "lucide-react";
+import { useGetBugs } from "@/services/bugs/useBugs";
+import { BugType } from "@/services/bugs/bugs.api";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type BugPriority = "critical" | "high" | "medium" | "low";
 type BugStatus = "open" | "in_progress" | "resolved" | "closed";
 
-type Bug = {
-  id: string;
-  title: string;
-  description?: string;
-  priority: BugPriority;
-  status: BugStatus;
-  assignee?: string;
-  assigneeAvatar?: string;
-  createdAt: string;
-  updatedAt?: string;
-  tag?: string;
-};
+
 
 type BugsTabProps = {
+    projectId?: string; // add this
   completedTasks?: number;
   totalTasks?: number;
-  bugs?: Bug[];
   onAddBug?: () => void;
 };
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const PRIORITY_CONFIG: Record<
-  BugPriority,
+  string,
   { label: string; color: string; bg: string; icon: React.ReactNode }
 > = {
   critical: {
@@ -71,7 +61,7 @@ const PRIORITY_CONFIG: Record<
 };
 
 const STATUS_CONFIG: Record<
-  BugStatus,
+  string,
   { label: string; color: string; bg: string; icon: React.ReactNode }
 > = {
   open: {
@@ -100,66 +90,10 @@ const STATUS_CONFIG: Record<
   },
 };
 
-// ─── Mock data (replace with real API data) ───────────────────────────────────
-
-const MOCK_BUGS: Bug[] = [
-  {
-    id: "BUG-001",
-    title: "Dashboard crashes on mobile when sidebar is open",
-    description: "Reproducible on iOS Safari 16+. Screen goes blank.",
-    priority: "critical",
-    status: "in_progress",
-    assignee: "Amara Obi",
-    assigneeAvatar: "A",
-    createdAt: "2025-03-10T08:00:00Z",
-    tag: "UI",
-  },
-  {
-    id: "BUG-002",
-    title: "Export to CSV missing last column headers",
-    priority: "high",
-    status: "open",
-    assignee: "Kofi Mensah",
-    assigneeAvatar: "K",
-    createdAt: "2025-03-12T10:30:00Z",
-    tag: "Export",
-  },
-  {
-    id: "BUG-003",
-    title: "Notifications not clearing after being read",
-    priority: "medium",
-    status: "open",
-    assignee: "Zara Ahmed",
-    assigneeAvatar: "Z",
-    createdAt: "2025-03-14T14:00:00Z",
-    tag: "Notifications",
-  },
-  {
-    id: "BUG-004",
-    title: "Dark mode toggle resets on page refresh",
-    priority: "low",
-    status: "resolved",
-    assignee: "Amara Obi",
-    assigneeAvatar: "A",
-    createdAt: "2025-03-01T09:00:00Z",
-    tag: "Theme",
-  },
-  {
-    id: "BUG-005",
-    title: "Search returns duplicated results on second page",
-    priority: "high",
-    status: "closed",
-    assignee: "Kofi Mensah",
-    assigneeAvatar: "K",
-    createdAt: "2025-02-28T11:00:00Z",
-    tag: "Search",
-  },
-];
-
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-const StatusDot: React.FC<{ status: BugStatus }> = ({ status }) => {
-  const cfg = STATUS_CONFIG[status];
+const StatusDot: React.FC<{ status: string }> = ({ status }) => {
+  const cfg = STATUS_CONFIG[status?.toLowerCase()] ?? STATUS_CONFIG["open"];
   return (
     <span
       className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${cfg.color} ${cfg.bg}`}
@@ -170,8 +104,8 @@ const StatusDot: React.FC<{ status: BugStatus }> = ({ status }) => {
   );
 };
 
-const PriorityBadge: React.FC<{ priority: BugPriority }> = ({ priority }) => {
-  const cfg = PRIORITY_CONFIG[priority];
+const PriorityBadge: React.FC<{ priority: string }> = ({ priority }) => {
+  const cfg = PRIORITY_CONFIG[priority?.toLowerCase()] ?? PRIORITY_CONFIG["low"];
   return (
     <span
       className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${cfg.color} ${cfg.bg}`}
@@ -182,8 +116,15 @@ const PriorityBadge: React.FC<{ priority: BugPriority }> = ({ priority }) => {
   );
 };
 
-const BugRow: React.FC<{ bug: Bug }> = ({ bug }) => {
+const BugRow: React.FC<{ bug: BugType }> = ({ bug }) => {
   const [expanded, setExpanded] = useState(false);
+
+  // assignedTester is an object, grab the name safely
+  const testerName = typeof bug.assignedTester === "object" && bug.assignedTester !== null
+    ? (bug.assignedTester as any).fullName ?? (bug.assignedTester as any).name ?? ""
+    : "";
+
+  const testerInitial = testerName.charAt(0).toUpperCase();
 
   return (
     <div
@@ -216,7 +157,7 @@ const BugRow: React.FC<{ bug: Bug }> = ({ bug }) => {
             />
           </div>
           <span className="font-mono text-xs text-slate-400 dark:text-gray-500">
-            {bug.id}
+            {bug.bugLabel || `#${bug.bugNumber}`}
           </span>
         </div>
 
@@ -231,10 +172,18 @@ const BugRow: React.FC<{ bug: Bug }> = ({ bug }) => {
           >
             {bug.title}
           </p>
-          {bug.tag && (
-            <span className="mt-1 inline-block rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-500 dark:bg-gray-700 dark:text-gray-400">
-              {bug.tag}
-            </span>
+          {/* tags is an array */}
+          {bug.tags && bug.tags.length > 0 && (
+            <div className="mt-1 flex flex-wrap gap-1">
+              {bug.tags.map((tag, i) => (
+                <span
+                  key={i}
+                  className="inline-block rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-500 dark:bg-gray-700 dark:text-gray-400"
+                >
+                  {typeof tag === "string" ? tag : tag.name ?? tag}
+                </span>
+              ))}
+            </div>
           )}
         </div>
 
@@ -243,12 +192,13 @@ const BugRow: React.FC<{ bug: Bug }> = ({ bug }) => {
           <PriorityBadge priority={bug.priority} />
           <StatusDot status={bug.status} />
 
-          {bug.assigneeAvatar && (
+          {/* Use testerInitial derived from the object */}
+          {testerInitial && (
             <div
-              title={bug.assignee}
+              title={testerName}
               className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500 text-xs font-semibold text-white"
             >
-              {bug.assigneeAvatar}
+              {testerInitial}
             </div>
           )}
 
@@ -282,7 +232,7 @@ const BugRow: React.FC<{ bug: Bug }> = ({ bug }) => {
                 day: "numeric",
               })}
             </span>
-            {bug.assignee && <span>Assigned to {bug.assignee}</span>}
+            {testerName && <span>Assigned to {testerName}</span>}
           </div>
         </div>
       )}
@@ -293,13 +243,15 @@ const BugRow: React.FC<{ bug: Bug }> = ({ bug }) => {
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 const BugsTab: React.FC<BugsTabProps> = ({
+  projectId,
   completedTasks = 0,
   totalTasks = 0,
-  bugs = MOCK_BUGS,
   onAddBug,
 }) => {
+    const { data: bugsData, isLoading } = useGetBugs(projectId);
+   const bugs = bugsData?.bugs ?? [];
   const [filterStatus, setFilterStatus] = useState<BugStatus | "all">("all");
-  const [filterPriority, setFilterPriority] = useState<BugPriority | "all">("all");
+  const [filterPriority, setFilterPriority] = useState<string>("all");
 
   const filtered = bugs.filter((b) => {
     const matchStatus = filterStatus === "all" || b.status === filterStatus;
@@ -318,55 +270,7 @@ const BugsTab: React.FC<BugsTabProps> = ({
 
   return (
     <div className="space-y-4">
-      {/* ── Summary Cards ── */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {[
-          {
-            label: "Total Bugs",
-            value: bugs.length || totalTasks,
-            icon: <Bug size={14} className="text-slate-400 dark:text-gray-400" />,
-            color: "text-slate-900 dark:text-white",
-          },
-          {
-            label: "Open",
-            value: openCount,
-            icon: (
-              <AlertCircle size={14} className="text-blue-500 dark:text-blue-400" />
-            ),
-            color: "text-blue-600 dark:text-blue-400",
-          },
-          {
-            label: "Resolved",
-            value: resolvedCount || completedTasks,
-            icon: (
-              <CheckCircle2
-                size={14}
-                className="text-emerald-500 dark:text-emerald-400"
-              />
-            ),
-            color: "text-emerald-600 dark:text-emerald-400",
-          },
-          {
-            label: "Critical",
-            value: criticalCount,
-            icon: <Flame size={14} className="text-red-500 dark:text-red-400" />,
-            color: "text-red-600 dark:text-red-400",
-          },
-        ].map((card, i) => (
-          <div
-            key={i}
-            className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm dark:border-gray-700 dark:bg-gray-800/50 dark:backdrop-blur-sm"
-          >
-            <div className="mb-1 flex items-center gap-1.5">
-              {card.icon}
-              <span className="text-xs text-slate-500 dark:text-gray-400">
-                {card.label}
-              </span>
-            </div>
-            <p className={`text-xl font-bold ${card.color}`}>{card.value}</p>
-          </div>
-        ))}
-      </div>
+
 
       {/* ── Bug List Panel ── */}
       <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6 dark:border-gray-700 dark:bg-gray-800/50 dark:backdrop-blur-sm">
@@ -402,7 +306,7 @@ const BugsTab: React.FC<BugsTabProps> = ({
             <select
               value={filterPriority}
               onChange={(e) =>
-                setFilterPriority(e.target.value as BugPriority | "all")
+                setFilterPriority(e.target.value as string | "all")
               }
               className="h-8 rounded-lg border border-slate-200 bg-white px-3 text-xs text-slate-700 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
             >

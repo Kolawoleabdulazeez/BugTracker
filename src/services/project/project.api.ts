@@ -94,6 +94,7 @@ export async function getAllProject(): Promise<GetProject_Response> {
 
 export async function getProjectById(projectId: string): Promise<any> {
   const res = await authInstance.get(`/${projectId}`);
+  console.log(res, "this is get sinfle brpject")
   return res.data;
 }
 
