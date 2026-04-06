@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { AlertTriangle, Pencil, Trash2, ChevronDown } from "lucide-react";
-import { Bug } from "@/services/bugs/bugs.api";
+import { BugType } from "@/services/bugs/bugs.api";
 import { useUpdateBugStatus } from "@/services/bugs/useBugs";
 import ConfirmActionModal from "@/pages/Project/Components/DeleteProjectModal";
 import Modal from "@/Component/Modal/Modal";
@@ -8,7 +8,7 @@ import UpdateBugStatusModal from "./UpdateBugStatusModal";
 import UpdateBugModal from "./UpdateBugModal";
 
 interface BugActionButtonProps {
-  item: Bug;
+  item: BugType;
   projectId: string;
   onActionSuccess?: () => void;
 }
