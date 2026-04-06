@@ -1,7 +1,6 @@
 import * as signalR from "@microsoft/signalr";
 import { getAuthFromStorage } from "@/utils/lib";
-
-const HUB_URL = process.env.NEXT_PUBLIC_SIGNAL_URL as string;
+const HUB_URL = "https://bugtrackerapi.onrender.com/hubs/chat" as string;
 
 let connection: signalR.HubConnection | null = null;
 
