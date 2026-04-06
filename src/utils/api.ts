@@ -20,7 +20,7 @@ export const createApiInstance = (baseKey: UrlKey): AxiosInstance => {
 
       if (status === 401) {
         toast.error("Session expired. Please login again.");
-        // await logoutAndRedirect();
+        await logoutAndRedirect();
       }
 
       return Promise.reject(error);
@@ -30,19 +30,19 @@ export const createApiInstance = (baseKey: UrlKey): AxiosInstance => {
   return instance;
 };
 
-// export const logoutAndRedirect = async () => {
-//   try {
-//     // Optional: call backend logout endpoint
-//     // await axios.post("/auth/logout");
+export const logoutAndRedirect = async () => {
+  try {
+    // Optional: call backend logout endpoint
+    // await axios.post("/auth/logout");
 
-//   } catch (err) {
-//     console.log("Logout API failed, continuing...");
-//   } finally {
-//     // Clear stored auth data
-//     localStorage.removeItem("accessToken");
-//     localStorage.removeItem("user");
+  } catch (err) {
+    console.log("Logout API failed, continuing...");
+  } finally {
+    // Clear stored auth data
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("user");
 
-//     // Redirect to login page
-//     window.location.href = "/Login";
-//   }
-// };
+    // Redirect to login page
+    window.location.href = "/Login";
+  }
+};

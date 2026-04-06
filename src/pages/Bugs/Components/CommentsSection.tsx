@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Send, Loader2, MessageSquare } from "lucide-react";
 import { usePostComment } from "@/services/bugs/useBugs";
 import { Comment } from "@/services/bugs/bugs.api";
+import { formatDate, getInitials } from "@/utils/helpers";
 
 interface CommentsSectionProps {
   comments: Comment[];
@@ -9,23 +10,8 @@ interface CommentsSectionProps {
   projectId: string;
 }
 
-function getInitials(name?: string) {
-  if (!name) return "?";
-  const parts = name.trim().split(" ");
-  return parts.length >= 2
-    ? `${parts[0][0]}${parts[1][0]}`.toUpperCase()
-    : parts[0][0].toUpperCase();
-}
 
-function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
+
 
 const AVATAR_COLORS = [
   "bg-blue-500",

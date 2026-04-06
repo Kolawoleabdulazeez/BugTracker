@@ -89,7 +89,6 @@ export async function deleteProject(projectId: string): Promise<any> {
 
 export async function getAllProject(): Promise<GetProject_Response> {
   const res = await authInstance.get("/");
-  console.log(res,"this is response coming for all project")
   return res.data;
 }
 
@@ -121,7 +120,6 @@ export async function getProjectActivities(
   projectId: string
 ): Promise<GetProjectActivities_Response> {
   const res = await authInstance.get(`/${projectId}/activities`);
-  console.log(res, "this is res just like thAT")
   return res.data.data;
 }
 
@@ -129,7 +127,6 @@ export async function getProjectMetrics(
   projectId: string
 ): Promise<ProjectMetrics> {
   const res = await authInstance.get(`/${projectId}/metrics`);
-  console.log(res, "this is response coming from the metrics")
   return res.data.data;
 }
 
@@ -152,6 +149,5 @@ export async function getProjectMembers(
   projectId: string
 ): Promise<getProjectMembers_Response[]> {
   const res = await authInstance.get(`/${projectId}/members`);
-  console.log(res, "this is project coming for members")
   return res.data.data;
 }

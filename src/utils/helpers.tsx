@@ -1,3 +1,5 @@
+import { GroupMessages } from "@/services/chat/chat.api";
+
 export const PRIORITY_COLORS: Record<string, string> = {
   low: "bg-blue-50 text-blue-700 border-blue-200",
   medium: "bg-yellow-50 text-yellow-700 border-yellow-200",
@@ -52,7 +54,13 @@ export const getProjectStatusStyles = (status: string) => {
   }
 };
 
-
+export function getInitials(name?: string) {
+  if (!name) return "?";
+  const parts = name.trim().split(" ");
+  return parts.length >= 2
+    ? `${parts[0][0]}${parts[1][0]}`.toUpperCase()
+    : parts[0][0].toUpperCase();
+}
 
 export const getPriorityStyles = (priority: string) => {
   switch (priority.toLowerCase()) {
@@ -81,3 +89,99 @@ export const getPriorityStyles = (priority: string) => {
       };
   }
 };
+
+export function formatDate(dateStr: string) {
+  return new Date(dateStr).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+
+export const AVATAR_COLORS = [
+  "bg-blue-500",
+  "bg-emerald-500",
+  "bg-violet-500",
+  "bg-amber-500",
+  "bg-rose-500",
+  "bg-cyan-500",
+  "bg-pink-500",
+  "bg-indigo-500",
+];
+export function getAvatarColor(str: string): string {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) hash += str.charCodeAt(i);
+  return AVATAR_COLORS[hash % AVATAR_COLORS.length];
+}
+
+
+
+// Human-readable relative time
+export function relativeTime(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return "now";
+  if (mins < 60) return `${mins}m`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h`;
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days}d`;
+  return new Date(dateStr).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+export function formatMessageTime(dateStr: string): string {
+  return new Date(dateStr).toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+// ─── Date divider ─────────────────────────────────────────────────────────────
+export const DateDivider = ({ label }: { label: string }) => (
+  <div className="flex items-center gap-3 my-4">
+    <div className="flex-1 h-px bg-slate-100 dark:bg-white/5" />
+    <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-300 dark:text-white/20 px-1">
+      {label}
+    </span>
+    <div className="flex-1 h-px bg-slate-100 dark:bg-white/5" />
+  </div>
+);
+
+
+export function groupByDate(messages: GroupMessages[]): { date: string; messages: GroupMessages[] }[] {
+  const groups: Record<string, GroupMessages[]> = {};
+  messages.forEach((msg) => {
+    const date = new Date(msg.sentAt).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+    if (!groups[date]) groups[date] = [];
+    groups[date].push(msg);
+  });
+  return Object.entries(groups).map(([date, messages]) => ({ date, messages }));
+}
+
+
+export type ChatMessageUI = {
+  id: string;
+  content: string;
+  sender: string;
+  senderInitials: string;
+  senderColor: string;
+  time: string;
+  isMine: boolean;
+};
+
+export const mapChatMessageToUI = (msg: any): ChatMessageUI => ({
+  id: String(msg.id),
+  content: msg.content,
+  sender: msg.sender?.fullName || "Unknown",
+  senderInitials: getInitials(msg.sender?.fullName || "Unknown"),
+  senderColor: getAvatarColor(msg.sender?.userId || msg.sender?.fullName || "U"),
+  time: formatMessageTime(msg.sentAt),
+  isMine: !!msg.isMine,
+});

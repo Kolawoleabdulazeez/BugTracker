@@ -23,7 +23,7 @@ const sections: Section[] = [
   { label: "Project", route: "/Project", dotClass: "bg-red-500" },
   { label: "Bugs", route: "/Bugs", dotClass: "bg-blue-500" },
   { label: "Teams", route: "/Teams", dotClass: "bg-orange-500" },
-  { label: "Messages", route: "/Messages", dotClass: "bg-gray-500" },
+  { label: "Chatroom", route: "/Chatroom", dotClass: "bg-gray-500" },
 ];
 
 const Navbar = ({ onClose }: NavbarProps) => {
