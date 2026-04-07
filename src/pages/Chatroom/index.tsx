@@ -23,7 +23,7 @@ import {
   groupByDate,
   relativeTime,
 } from "@/utils/helpers";
-import { useChatSocket } from "@/services/socket/useSocket";
+import { useChatSocket } from "@/services/socket/useSignal";
 
 // ─── Sidebar item ─────────────────────────────────────────────────────────────
 const GroupListItem = ({

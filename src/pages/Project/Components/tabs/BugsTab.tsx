@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useGetBugs } from "@/services/bugs/useBugs";
 import { BugType } from "@/services/bugs/bugs.api";
+import Button from "@/Component/Button/Button";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -317,13 +318,14 @@ const BugsTab: React.FC<BugsTabProps> = ({
             </select>
 
             {onAddBug && (
-              <button
+              <Button
+              title="Add Bug"
+              
+              icon={<Plus size={13} />}
                 onClick={onAddBug}
                 className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-slate-900 px-3 text-xs font-medium text-white transition hover:bg-slate-800 dark:bg-blue-600 dark:hover:bg-blue-500"
-              >
-                <Plus size={13} />
-                Add Bug
-              </button>
+              />
+         
             )}
           </div>
         </div>

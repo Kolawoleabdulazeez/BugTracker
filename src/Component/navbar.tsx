@@ -89,12 +89,12 @@ const Navbar = ({ onClose }: NavbarProps) => {
     <div className="h-full overflow-y-auto border-r border-slate-200/80 bg-slate-50 px-5 text-slate-900 md:min-h-0 dark:border-white/10 dark:bg-[#101222] dark:text-white">
       <div className="flex flex-col py-5">
         <div className="hidden items-center justify-center gap-3 md:flex">
-          {/* <Image
+          <Image
             src={TestOrbitLogo}
             alt="Test Orbit Logo"
             height={50}
             width={50}
-          /> */}
+          />
           <p className="text-xl font-semibold text-slate-900 dark:text-white">
             Test<span className="text-[#1121D4]">Orbit</span>
           </p>

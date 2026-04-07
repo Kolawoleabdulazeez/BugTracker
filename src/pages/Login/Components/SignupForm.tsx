@@ -71,12 +71,12 @@ const SignupForm = ({ setAuthPage }: SignupProp) => {
 
           <div className="relative z-10 flex h-full w-full flex-col justify-between p-8 lg:p-10">
             <div className="flex w-fit items-center gap-3">
-              {/* <Image
+              <Image
                 src={TestOrbitLogo}
                 alt="Test Orbit Logo"
                 height={44}
                 width={44}
-              /> */}
+              />
               <p className="text-xl text-white">
                 Test<span className="text-[#1121D4]">Orbit</span>
               </p>
@@ -118,12 +118,12 @@ const SignupForm = ({ setAuthPage }: SignupProp) => {
           <div className="w-full max-w-md">
             {/* Mobile logo */}
             <div className="mb-6 flex items-center justify-center gap-3 md:hidden">
-              {/* <Image
+              <Image
                 src={TestOrbitLogo}
                 alt="Test Orbit Logo"
                 height={36}
                 width={36}
-              /> */}
+              />
               <p className="text-lg text-white">
                 Test<span className="text-[#1121D4]">Orbit</span>
               </p>

@@ -27,7 +27,7 @@ const LandingPage = () => {
             <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col items-center justify-center px-4 py-10 md:px-8">
               {/* Brand */}
               <div className="flex items-center justify-center gap-3">
-                {/* <Image src={TestOrbitLogo} alt="Test Orbit Logo" height={44} width={44} /> */}
+                <Image src={TestOrbitLogo} alt="Test Orbit Logo" height={44} width={44} />
                 <p className="text-white text-xl">
                   Test<span className="text-[#1121D4]">Orbit</span>
                 </p>

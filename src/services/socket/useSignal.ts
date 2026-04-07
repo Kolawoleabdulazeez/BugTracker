@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { CHAT_MESSAGES_QUERY_KEY, GROUP_CHATS_QUERY_KEY } from "../chat/useChat";
-import { getChatConnection } from "./socket";
+import { getChatConnection } from "./signal";
 import { getAuthFromStorage } from "@/utils/lib";
 
 export function useChatSocket(projectId?: string) {
@@ -85,22 +85,16 @@ export function useChatSocket(projectId?: string) {
     const handleUserTyping = (data: any) => {
       console.log("⌨️ UserTyping payload:", data);
 
-      // ✅ Fix: server may send fullName, name, userName, or userId — handle all
       const name =
-        data?.fullName ??
-        data?.name ??
-        data?.userName ??
         data?.senderName ??
         null;
 
-      // Don't show the current user typing to themselves
       if (!name || name === currentUserName) return;
 
       setTypingUsers((prev) =>
         prev.includes(name) ? prev : [...prev, name]
       );
 
-      // Auto-clear after 2.5s (server doesn't send a "stopped typing" event)
       setTimeout(() => {
         setTypingUsers((prev) => prev.filter((n) => n !== name));
       }, 2500);

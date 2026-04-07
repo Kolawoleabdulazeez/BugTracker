@@ -46,11 +46,11 @@ const LoginForm = ({setAuthPage}:LoginFormProp) => {
         })}
         type="email"
         label="Email"
-        inputClassName="text-sm dark:text-white !text-[#00143D] bg-transparent"
+        inputClassName="text-sm dark:text-white text-[#00143D] bg-transparent"
         placeholder="user@email.com"
-        labelClassName=" font-medium !text-sm py-3 text-white "
+        labelClassName=" font-medium !text-sm py-3 "
         parentClassName="my-4"
-        className="!h-12 mb-2 transition-all shadow-sm text-[#00143D] font-normal text-base sm:text-lg w-full"
+        className="!h-12 mb-2 transition-all shadow- text-[#00143D] font-normal text-base sm:text-lg w-full"
         errortxt={loginForm?.formState?.errors?.email?.message}
       />
 
@@ -62,7 +62,7 @@ const LoginForm = ({setAuthPage}:LoginFormProp) => {
         label="Password"
         placeholder="Enter Password"
         labelClassName="mb-2 font-medium !text-sm text-white"
-        inputClassName="text-sm dark:text-white !text-[#00143D]"
+        inputClassName="text-sm dark:text-white text-[#00143D]"
         parentClassName="my-1"
         className="!h-12 mb-2 transition-all shadow-sm !bg-disabledBg dark:!bg-disabledBg !text-[#00143D] font-normal text-base sm:text-lg w-full"
         errortxt={loginForm?.formState?.errors?.password?.message}

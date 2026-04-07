@@ -260,7 +260,7 @@ const mappedActivities = useMemo(() => {
     projectId={typeof projectId === "string" ? projectId : undefined}
     completedTasks={project.completedTasks}
     totalTasks={project.totalTasks}
-    onAddBug={() => { }}
+    onAddBug={() => {router.push("/Bugs") }}
   />
         )}
 
