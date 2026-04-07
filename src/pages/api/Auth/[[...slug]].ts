@@ -27,8 +27,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const payload = response.data;
 
-    console.log(payload, ":first one is payload")
-        console.log(payload.data.accessToken, ":second one is payload")
 
 
 

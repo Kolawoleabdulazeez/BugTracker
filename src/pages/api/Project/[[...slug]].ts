@@ -20,8 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const axiosDataPart = data && Object.keys(data).length > 0 ? { data } : {};
 
   const token = req.cookies[Store.ACCESS_TOKEN];
-   console.log("slug:", slug);
-  console.log("forwarding to:", url);
+
   try {
     const response = await axios.request({
       method,

@@ -48,7 +48,6 @@ export const authInstance = createApiInstance("CHAT");
 
 export async function getGroupChats(): Promise<GroupChatResponse[]> {
   const res = await authInstance.get("/rooms");
-  console.log(res)
   return res.data.data;
 }
 

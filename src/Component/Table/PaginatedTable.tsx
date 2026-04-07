@@ -41,7 +41,6 @@ const PaginatedTable = ({
   onDBPageChange,
   DBPageDetails,
 }: ReusableTableProps) => {
-  console.log(data, "the data");
   const [page, setPage] = useState(1);
 
   const currentItems = useMemo(() => {

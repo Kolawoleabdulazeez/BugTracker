@@ -10,7 +10,10 @@ export function useChatSocket(projectId?: string) {
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const currentUserName = getAuthFromStorage()?.user?.fullName ?? "";
+  // Get current user once — used to compute isMine on incoming socket messages
+  const auth = getAuthFromStorage();
+  const currentUserId = auth?.user?.id ?? "";
+  const currentUserName = auth?.user?.fullName ?? "";
 
   useEffect(() => {
     const connection = getChatConnection();
@@ -24,9 +27,7 @@ export function useChatSocket(projectId?: string) {
           await connection.start();
           console.log("✅ SignalR connected");
         }
-
         if (!isMounted) return;
-
         await connection.invoke("JoinRoom", projectId);
         console.log("Joined room:", projectId);
       } catch (error) {
@@ -34,53 +35,75 @@ export function useChatSocket(projectId?: string) {
       }
     };
 
-  const handleNewMessage = (payload: any) => {
-  console.log("🔥 Incoming message:", payload);
+    // ── ReceiveMessage ─────────────────────────────────────────────────────
+    const handleNewMessage = (payload: any) => {
+      console.log("🔥 Incoming message:", payload);
 
-  const incomingProjectId = String(payload.projectId);
-  const incomingMessage = payload.message;
+      const incomingProjectId = String(payload.projectId);
+      const incomingMessage = payload.message;
 
-  if (!incomingMessage) return;
+      if (!incomingMessage) return;
 
-  queryClient.setQueryData(
-    [...CHAT_MESSAGES_QUERY_KEY, incomingProjectId],
-    (oldData: any[] = []) => {
-      const alreadyExists = oldData.some(
-        (item) => String(item.id) === String(incomingMessage.id)
+      // ✅ Fix: compute isMine by comparing sender.userId to the logged-in user
+      // The server sends the same payload to everyone — it never sets isMine per-recipient
+      const senderId =
+        incomingMessage.sender?.userId ??
+        incomingMessage.sender?.id ??
+        "";
+
+      const messageWithIsMine = {
+        ...incomingMessage,
+        isMine: currentUserId !== "" && String(senderId) === String(currentUserId),
+      };
+
+      queryClient.setQueryData(
+        [...CHAT_MESSAGES_QUERY_KEY, incomingProjectId],
+        (oldData: any[] = []) => {
+          const alreadyExists = oldData.some(
+            (item) => String(item.id) === String(messageWithIsMine.id)
+          );
+          return alreadyExists ? oldData : [...oldData, messageWithIsMine];
+        }
       );
 
-      return alreadyExists ? oldData : [...oldData, incomingMessage];
-    }
-  );
+      queryClient.setQueryData(
+        GROUP_CHATS_QUERY_KEY,
+        (oldRooms: any[] = []) =>
+          oldRooms.map((room) =>
+            String(room.projectId) === incomingProjectId
+              ? {
+                  ...room,
+                  lastMessage: messageWithIsMine,
+                  lastActivityAt: messageWithIsMine.sentAt,
+                }
+              : room
+          )
+      );
+    };
 
-  queryClient.setQueryData(
-    GROUP_CHATS_QUERY_KEY,
-    (oldRooms: any[] = []) =>
-      oldRooms.map((room) =>
-        String(room.projectId) === incomingProjectId
-          ? {
-              ...room,
-              lastMessage: incomingMessage,
-              lastActivityAt: incomingMessage.sentAt,
-            }
-          : room
-      )
-  );
-};
-    const handleUserTyping = (data: {
-      userId: string;
-      fullName: string;
-      isTyping?: boolean;
-    }) => {
-      const name = data.fullName;
+    // ── UserTyping ──────────────────────────────────────────────────────────
+    const handleUserTyping = (data: any) => {
+      console.log("⌨️ UserTyping payload:", data);
+
+      // ✅ Fix: server may send fullName, name, userName, or userId — handle all
+      const name =
+        data?.fullName ??
+        data?.name ??
+        data?.userName ??
+        data?.senderName ??
+        null;
+
+      // Don't show the current user typing to themselves
+      if (!name || name === currentUserName) return;
 
       setTypingUsers((prev) =>
         prev.includes(name) ? prev : [...prev, name]
       );
 
+      // Auto-clear after 2.5s (server doesn't send a "stopped typing" event)
       setTimeout(() => {
         setTypingUsers((prev) => prev.filter((n) => n !== name));
-      }, 2000);
+      }, 2500);
     };
 
     connection.on("ReceiveMessage", handleNewMessage);
@@ -97,16 +120,24 @@ export function useChatSocket(projectId?: string) {
         connection.invoke("LeaveRoom", projectId).catch(console.error);
       }
     };
-  }, [projectId, queryClient]);
+  }, [projectId, queryClient, currentUserId, currentUserName]);
 
-  const sendMessage = async (content: string, replyToId: string | null = null) => {
+  // ── sendMessage ────────────────────────────────────────────────────────────
+  const sendMessage = async (
+    content: string,
+    replyToId: string | null = null
+  ) => {
     if (!projectId || !content.trim()) return;
 
     const connection = getChatConnection();
-
     try {
       setIsSending(true);
-      await connection.invoke("SendMessage", projectId, content.trim(), replyToId);
+      await connection.invoke(
+        "SendMessage",
+        projectId,
+        content.trim(),
+        replyToId
+      );
     } catch (error) {
       console.error("SendMessage failed:", error);
     } finally {
@@ -114,9 +145,9 @@ export function useChatSocket(projectId?: string) {
     }
   };
 
+  // ── typing ─────────────────────────────────────────────────────────────────
   const emitTyping = async () => {
     if (!projectId || !currentUserName) return;
-
     try {
       const connection = getChatConnection();
       await connection.invoke("UserTyping", projectId, currentUserName);
@@ -127,14 +158,9 @@ export function useChatSocket(projectId?: string) {
 
   const handleTypingKeystroke = () => {
     emitTyping();
-
-    if (typingTimeoutRef.current) {
-      clearTimeout(typingTimeoutRef.current);
-    }
-
-    typingTimeoutRef.current = setTimeout(() => {
-      // no "false" call because backend signature does not accept isTyping
-    }, 2000);
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    // Debounce — no "false" call because backend doesn't accept isTyping flag
+    typingTimeoutRef.current = setTimeout(() => {}, 2000);
   };
 
   return { sendMessage, isSending, typingUsers, handleTypingKeystroke };

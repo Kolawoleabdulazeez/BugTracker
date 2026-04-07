@@ -104,7 +104,6 @@ export async function getBugs(projectId: string): Promise<GetBugsResponse> {
   const res = await authInstance.get("/", {
     params: { projectId },
   });
-  console.log(res, "this is the result from get bug")
   return res.data.data;
 }
 
