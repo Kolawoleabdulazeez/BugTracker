@@ -86,6 +86,9 @@ export function useChatSocket(projectId?: string) {
       console.log("⌨️ UserTyping payload:", data);
 
       const name =
+        data?.fullName ??
+        data?.name ??
+        data?.userName ??
         data?.senderName ??
         null;
 
