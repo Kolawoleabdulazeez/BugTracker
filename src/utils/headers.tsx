@@ -63,7 +63,7 @@ export const BUG_HEADERS = [
             : "bg-gray-100 text-gray-600"
         }`}
       >
-        {value}
+        {formatLabel(value)}
       </span>
     ),
   },

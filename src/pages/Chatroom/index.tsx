@@ -293,15 +293,15 @@ const Chats = () => {
     <PageLayout
       title="Chatroom"
       showSearch={false}
-      contentClassName="bg-slate-100 dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900"
+      contentClassName="bg-slate-100  !p-0 dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900"
     >
-      <div className="flex h-[calc(100vh-64px)] p-4 gap-3 overflow-hidden">
+      <div className="flex h-[calc(100vh-64px)]  overflow-hidden">
 
         {/* ── LEFT SIDEBAR ──────────────────────────────────────────────── */}
         <div
           className={`
-            w-full sm:w-[280px] lg:w-[300px] flex-shrink-0 flex flex-col
-            rounded-2xl overflow-hidden
+            w-full sm:w-[280px] lg:w-[300px]  flex-shrink-0 flex flex-col
+             overflow-hidden 
             bg-white dark:bg-[#1a1d2e]
             border border-slate-200/70 dark:border-white/[0.07]
             shadow-sm
@@ -391,7 +391,7 @@ const Chats = () => {
         <div
           className={`
             flex-1 flex flex-col min-w-0
-            rounded-2xl overflow-hidden
+             overflow-hidden
             bg-white dark:bg-[#1a1d2e]
             border border-slate-200/70 dark:border-white/[0.07]
             shadow-sm

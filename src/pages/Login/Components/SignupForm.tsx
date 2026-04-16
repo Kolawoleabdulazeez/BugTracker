@@ -153,7 +153,7 @@ const SignupForm = ({ setAuthPage }: SignupProp) => {
                     placeholder="Enter first name"
                     labelClassName="text-white font-normal"
                     parentClassName="my-0"
-                    inputClassName="text-sm text-white"
+                    inputClassName="text-sm dark:text-white text-darkPrimary"
                     className="!h-12 transition-all shadow-sm text-[#00143D] font-normal text-base w-full"
                     errortxt={signupForm.formState.errors.firstName?.message}
                   />
@@ -166,7 +166,7 @@ const SignupForm = ({ setAuthPage }: SignupProp) => {
                     label="Last Name"
                     placeholder="Enter last name"
                     parentClassName="my-0"
-                    inputClassName="text-sm text-white"
+                    inputClassName="text-sm dark:text-white text-darkPrimary"
                     labelClassName="text-white font-normal"
                     className="!h-12 transition-all shadow-sm text-[#00143D] font-normal text-base w-full"
                     errortxt={signupForm.formState.errors.lastName?.message}
@@ -180,7 +180,7 @@ const SignupForm = ({ setAuthPage }: SignupProp) => {
                     })}
                     type="email"
                     label="Email"
-                    inputClassName="text-sm text-white"
+                    inputClassName="text-sm dark:text-white text-darkPrimary"
                     placeholder="user@email.com"
                     labelClassName="text-white font-normal"
                     parentClassName="my-0"
@@ -199,7 +199,7 @@ const SignupForm = ({ setAuthPage }: SignupProp) => {
                     placeholder="Enter phone number"
                     labelClassName="text-white font-normal"
                     parentClassName="my-0 "
-                    inputClassName="text-sm text-white border border-red-500"
+                    inputClassName="text-sm dark:text-white text-darkPrimary border border-red-500"
                     className="!h-12 transition-all shadow-sm text-[#00143D] font-normal text-base w-full"
                     errortxt={signupForm.formState.errors.phoneNmber?.message}
                   />
@@ -219,7 +219,7 @@ const SignupForm = ({ setAuthPage }: SignupProp) => {
                         labelClassName="mb-2 font-medium !text-sm text-white"
                         parentClassName="my-0"
                         className="!h-12 transition-all shadow-sm w-full"
-                        inputClassName="text-sm text-white"
+                        inputClassName="text-sm dark:text-white text-darkPrimary"
                         errortxt={
                           signupForm.formState.errors.password?.message as
                             | string
@@ -253,7 +253,7 @@ const SignupForm = ({ setAuthPage }: SignupProp) => {
                         labelClassName="mb-2 font-medium !text-sm text-white"
                         parentClassName="my-0"
                         className="!h-12 transition-all shadow-sm w-full"
-                        inputClassName="text-sm text-white"
+                        inputClassName="text-sm dark:text-white text-darkPrimary"
                         errortxt={
                           signupForm.formState.errors.confirmPassword?.message
                         }

@@ -248,7 +248,7 @@ const handleChangeTextArea = (
             ) : (
               <input
                 {...inputProps}
-                className={`text-black bg-transparent w-full pl-[0.8rem] h-full focus:border-primary outline-0 border-0 placeholder:text-color4 placeholder:leading-6 font-normal placeholder:text-[0.8rem]   ${
+                className={`text-black bg-transparent w-full pl-[0.1rem] h-full focus:border-primary outline-0 border-0 placeholder:text-color4 placeholder:leading-6 font-normal placeholder:text-[0.8rem]   ${
                   props.inputClassName
                 }`}
                 placeholder={props.placeholder || ""}

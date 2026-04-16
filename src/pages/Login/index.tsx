@@ -53,7 +53,7 @@ const LandingPage = () => {
                 </div>
 
                 {/* Branding image column */}
-                <div className="flex w-full justify-center">
+                {/* <div className="flex w-full justify-center">
                   <div className="relative w-[160px] sm:w-[120px] md:w-[160px] lg:w-[220px]">
                     <Image
                       src={Globe}
@@ -62,13 +62,13 @@ const LandingPage = () => {
                       priority
                     />
                   </div>
-                </div>
+                </div> */}
               </div>
 
               {/* Optional: footer space */}
-              <div className="mt-10 text-center text-xs text-gray-400">
+              {/* <div className="mt-10 text-center text-xs text-gray-400">
                 © {new Date().getFullYear()} TestOrbit. All rights reserved.
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

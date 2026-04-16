@@ -248,7 +248,7 @@ const EditBugModal: React.FC<EditBugModalProps> = ({
           {/* Priority + Severity */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <p className="text-darkPrimary mb-3 !text-sm font-bold mb-1.5">
+              <p className="text-darkPrimary mb-3 !text-sm font-bold md:mb-1.5">
                 Priority <span className="text-errorRed mx-1">*</span>
               </p>
               <div className="grid grid-cols-3 gap-2">

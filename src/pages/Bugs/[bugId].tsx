@@ -186,7 +186,7 @@ const BugDetailsPage = () => {
                 </div>
               </div>
               <p className="text-sm dark:text-slate-300 text-slate-700 mb-5">
-                {bug.description || "No description provided."}
+                {bug.title || "No description provided."}
               </p>
 
               {/* Steps to Reproduce */}
