@@ -68,7 +68,7 @@ const DmListItem = ({
   );
 };
 
-export const ChatSidebar = ({
+ const  ChatSidebar = ({
   chats,
   userChats,
   isLoading,
@@ -254,3 +254,5 @@ export const ChatSidebar = ({
     </div>
   );
 };
+
+export default ChatSidebar

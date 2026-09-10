@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { CheckCheck, Loader2, Sparkles, Upload, X } from "lucide-react";
 import { useRef, useState } from "react";
-import { PriBadge } from "./PriBadge";
+import { PriBadge } from "../../../Component/TestCase/PriBadge";
 import { useGenerateTestcase } from "@/services/testcases/useTestcases";
 import { TestCase } from "@/utils/types";
 
@@ -60,12 +62,18 @@ const AIModal = ({ onClose, onAdd, projectId, projectOverview }: AIModalProps) =
     }
   };
 
-  const toggle = (i: number) =>
-    setSelected((prev) => {
-      const s = new Set(prev);
-      s.has(i) ? s.delete(i) : s.add(i);
-      return s;
-    });
+const toggle = (i: number) =>
+  setSelected((prev) => {
+    const s = new Set(prev);
+
+    if (s.has(i)) {
+      s.delete(i);
+    } else {
+      s.add(i);
+    }
+
+    return s;
+  });
 
   return (
     <div

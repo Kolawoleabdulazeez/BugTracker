@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { CHAT_MESSAGES_QUERY_KEY, GROUP_CHATS_QUERY_KEY } from "../chat/useChat";

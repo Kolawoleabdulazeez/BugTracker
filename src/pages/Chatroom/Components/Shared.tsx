@@ -118,7 +118,7 @@ export const TypingIndicator = ({ names }: { names: string[] }) => {
   );
 };
 
-export const MessageBubble = ({
+ const MessageBubble = ({
   msg,
   isConsecutive,
   isLastInGroup,
@@ -184,3 +184,5 @@ export const MessageBubble = ({
     </div>
   </div>
 );
+
+export default MessageBubble

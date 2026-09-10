@@ -1,13 +1,13 @@
 import PageLayout from "@/Component/Layout/PageLayout";
 
 import { useChatSocket } from "@/services/socket/useSignal";
-import { ChatSidebar } from "./ChatSidebar";
-import { ChatWindow } from "./ChatWindow";
-import { GroupChatResponse, GroupMessages, Message, UserChats } from "@/services/chat/chat.api";
-import { EmptyState } from "./Shared";
+import { GroupChatResponse, GroupMessages, UserChats } from "@/services/chat/chat.api";
+import { EmptyState } from "./Components/Shared";
 import { useRef, useState } from "react";
 import { useGetChatMessages, useGetDMMessages, useGetGroupChats, useGetUserChats } from "@/services/chat/useChat";
-import { DMWindow } from "./DMWindow";
+import ChatSidebar from "./Components/ChatSidebar";
+import ChatWindow from "./Components/ChatWindow";
+import DMWindow from "./Components/DMWindow";
 
 const Chats = () => {
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);

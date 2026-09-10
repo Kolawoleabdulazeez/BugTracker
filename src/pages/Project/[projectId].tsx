@@ -21,7 +21,6 @@ import AddMemberModal from "./Components/AddMemberModal";
 import ConfirmActionModal from "./Components/DeleteProjectModal";
 import { useGetProjectActivities, useGetProjectById, useGetProjectMetrics, useRemoveProjectMember } from "../../services/project/useProject";
 import BugsTab from "./Components/tabs/BugsTab";
-import { useGetBugs } from "../../services/bugs/useBugs";
 
 const ProjectDetails = () => {
   const router = useRouter();

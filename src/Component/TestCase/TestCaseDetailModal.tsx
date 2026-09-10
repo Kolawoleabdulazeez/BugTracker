@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { useEffect, useState } from "react";
 import { X, Pencil, Loader2, Plus, Trash2 } from "lucide-react";
 import { useGetTestcaseById, useUpdateTestcase } from "@/services/testcases/useTestcases";
 import { Priority, Step } from "@/utils/types";
-import { PRIORITY_CONFIG, STATUS_CONFIG } from "@/utils";
+import { PRIORITY_CONFIG } from "@/utils";
 import { CreateTestcaseParam } from "@/services/testcases/testcases.api";
 import { Chip } from "./Chip";
 import { PriBadge } from "./PriBadge";
@@ -114,7 +116,7 @@ export const TestCaseDetailModal = ({ projectId, testCaseId, onClose, startInEdi
           </div>
         ) : isError || !tc ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
-            <p className="text-[13px] text-slate-400 dark:text-slate-500">Couldn't load this test case.</p>
+            <p className="text-[13px] text-slate-400 dark:text-slate-500">Could not load this test case.</p>
           </div>
         ) : mode === "view" ? (
           <div className="flex max-h-[65vh] flex-col gap-4 overflow-y-auto px-6 py-6">

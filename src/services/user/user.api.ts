@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { createApiInstance } from "@/utils/api";
 
 export const authInstance = createApiInstance("USER");

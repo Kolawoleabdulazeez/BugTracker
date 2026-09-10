@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createApiInstance } from "@/utils/api";
-import { useQuery } from "@tanstack/react-query";
 
 export type GroupChatResponse={
    projectId: string

@@ -5,14 +5,14 @@ import { Priority, TestCaseSummary, TestStatus } from "@/utils/types";
 import { useGetAllProject } from "@/services/project/useProject";
 import { useCreateTestcase, useDeleteTestcase, useGetTestcases } from "@/services/testcases/useTestcases";
 import Button from "@/Component/Button/Button";
-import { ProjectRail } from "./Components/ProjectRail";
-import { ProjectStatsHeader } from "./Components/ProjectStatsHeader";
-import { TestCaseToolbar } from "./Components/TestCaseToolbar";
-import { TestCaseListPanel } from "./Components/TestCaseListPanel";
+import { ProjectRail } from "../../Component/TestCase/ProjectRail";
+import { ProjectStatsHeader } from "../../Component/TestCase/ProjectStatsHeader";
+import { TestCaseToolbar } from "../../Component/TestCase/TestCaseToolbar";
+import { TestCaseListPanel } from "../../Component/TestCase/TestCaseListPanel";
 import AIModal from "./Components/AIModal";
-import { ManualModal } from "./Components/ManualModal";
-import { ProjectRailSkeleton } from "./Components/ProjectRailSkeleton";
-import { TestCaseDetailModal } from "./Components/TestCaseDetailModal";
+import { ManualModal } from "../../Component/TestCase/ManualModal";
+import { ProjectRailSkeleton } from "../../Component/TestCase/ProjectRailSkeleton";
+import { TestCaseDetailModal } from "../../Component/TestCase/TestCaseDetailModal";
 
 const TestCases = () => {
   const [projectId, setProjectId] = useState<string | null>(null);
@@ -28,29 +28,43 @@ const TestCases = () => {
   const proj = projects.find(p => p.id === projectId) ?? projects[0] ?? null;
   const activeProjectId = projectId ?? proj?.id ?? "";
 
-  const { data: casesData, isLoading: casesLoading } = useGetTestcases(activeProjectId);
-  const cases: TestCaseSummary[] = casesData?.testCases ?? [];
+  const { data: casesData } = useGetTestcases(activeProjectId);
+ const cases = useMemo<TestCaseSummary[]>(
+  () => casesData?.testCases ?? [],
+  [casesData?.testCases]
+);
 
-  const { mutate: createTestcase, isPending: isSavingTestcase } = useCreateTestcase(() => setModal(null));
-  const { mutate: deleteTestcase } = useDeleteTestcase();
+const { mutate: createTestcase, isPending: isSavingTestcase } =
+  useCreateTestcase(() => setModal(null));
 
-  const filtered = useMemo(() => cases.filter(tc => {
-    if (filterStatus && tc.status !== filterStatus) return false;
-    if (filterPriority && tc.priority !== filterPriority) return false;
-    if (search &&
+const { mutate: deleteTestcase } = useDeleteTestcase();
+
+const filtered = useMemo(
+  () =>
+    cases.filter((tc) => {
+      if (filterStatus && tc.status !== filterStatus) return false;
+
+      if (filterPriority && tc.priority !== filterPriority) return false;
+
+      if (
+        search &&
         !tc.title.toLowerCase().includes(search.toLowerCase()) &&
         !tc.caseLabel.toLowerCase().includes(search.toLowerCase())
-    ) return false;
-    return true;
-  }), [cases, filterStatus, filterPriority, search]);
+      ) {
+        return false;
+      }
 
-  const stats = {
-    total: cases.length,
-    passed: cases.filter(t => t.status === TestStatus.Passed).length,
-    failed: cases.filter(t => t.status === TestStatus.Failed).length,
-    pending: cases.filter(t => t.status === TestStatus.Pending).length,
-  };
+      return true;
+    }),
+  [cases, filterStatus, filterPriority, search]
+);
 
+const stats = {
+  total: cases.length,
+  passed: cases.filter((t) => t.status === TestStatus.Passed).length,
+  failed: cases.filter((t) => t.status === TestStatus.Failed).length,
+  pending: cases.filter((t) => t.status === TestStatus.Pending).length,
+};
   return (
     <div>
       <PageLayout title="Test Cases" showSearch={false}>

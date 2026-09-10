@@ -36,7 +36,7 @@ export const logoutAndRedirect = async () => {
     // await axios.post("/auth/logout");
 
   } catch (err) {
-    console.log("Logout API failed, continuing...");
+    console.log(err, "Logout API failed, continuing...");
   } finally {
     // Clear stored auth data
     localStorage.removeItem("accessToken");

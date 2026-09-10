@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
 import { IoNotifications } from "react-icons/io5";
-import { ChevronDown, Search as SearchIcon } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import ThemeToggle from "../ThemeToggle/ThemeToggle";
 import { useAuthUser } from "@/services/auth/useAuths";
 
@@ -17,12 +17,10 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({
   title,
   subtitle,
-  showSearch = true,
   showNotifications = true,
   showUserProfile = true,
   className = "",
 }) => {
-  const [searchQuery, setSearchQuery] = useState("");
   const { data: user } = useAuthUser();
 
   return (

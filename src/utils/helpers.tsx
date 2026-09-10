@@ -1,4 +1,6 @@
-import { GroupMessages } from "@/services/chat/chat.api";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { GroupMessages, Message } from "@/services/chat/chat.api";
 import { useEffect, useState } from "react";
 
 // ── Bug priority/severity/status (4-level: low/medium/high/critical) ──
@@ -150,18 +152,33 @@ export const DateDivider = ({ label }: { label: string }) => (
   </div>
 );
 
-export function groupByDate(messages: GroupMessages[]): { date: string; messages: GroupMessages[] }[] {
-  const groups: Record<string, GroupMessages[]> = {};
+type DateGroupedMessage = {
+  sentAt: string;
+};
+
+export function groupByDate<T extends DateGroupedMessage>(
+  messages: T[]
+): { date: string; messages: T[] }[] {
+  const groups: Record<string, T[]> = {};
+
   messages.forEach((msg) => {
     const date = new Date(msg.sentAt).toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
       year: "numeric",
     });
-    if (!groups[date]) groups[date] = [];
+
+    if (!groups[date]) {
+      groups[date] = [];
+    }
+
     groups[date].push(msg);
   });
-  return Object.entries(groups).map(([date, messages]) => ({ date, messages }));
+
+  return Object.entries(groups).map(([date, messages]) => ({
+    date,
+    messages,
+  }));
 }
 
 export type ChatMessageUI = {

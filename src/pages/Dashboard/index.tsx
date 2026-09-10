@@ -39,7 +39,7 @@ const defaultContributors: TopContributor[] = [];
 // ── Component ──────────────────────────────────────────────────────────────────
 
 const Dashboard = () => {
-  const { data, isLoading } = useGetUserMetrics({
+  const { data } = useGetUserMetrics({
     ActivityDays: 30,
     IncludeBugStatusDistribution: true,
     IncludeBugLifecycleTrend: true,

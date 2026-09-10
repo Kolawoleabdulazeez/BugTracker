@@ -16,7 +16,6 @@ const Modal = ({
   isOpen = false,
   children,
   headText,
-  paragraphText,
   className,
   onClose,
   onOverlayClose,
