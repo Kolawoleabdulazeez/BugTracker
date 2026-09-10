@@ -12,6 +12,7 @@ import React, { useMemo, useState } from "react";
 import NewProjectModal from "./Components/NewProjectModal";
 import { useGetAllProject } from "../../services/project/useProject";
 import { ProjectCardsGrid } from "../../Component/cards";
+import { GetProject_Response } from "@/services/project/project.api";
 
 type SortOption = "recent" | "due-date" | "progress";
 type TeamSizeOption = "any" | "1-2" | "3-5" | "6+";
@@ -70,58 +71,77 @@ const Project = () => {
     return { total, completed, inProgress, inReview, completionRate, inProgressRate, inReviewRate };
   }, [data]);
 
-  const filteredData = useMemo(() => {
-    let projects = [...(data?.data ?? [])];
+ const filteredData = useMemo<GetProject_Response | undefined>(() => {
+  if (!data) return undefined;
 
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      projects = projects.filter(
-        (p) =>
-          p.name?.toLowerCase().includes(q) ||
-          p.description?.toLowerCase().includes(q) ||
-          p.status?.toLowerCase().includes(q) ||
-          p.priority?.toLowerCase().includes(q)
-      );
-    }
+  let projects = [...data.data];
 
-    if (filters.status !== "all") {
-      projects = projects.filter(
-        (p) => p.status?.toLowerCase() === filters.status.toLowerCase()
-      );
-    }
+  if (searchQuery.trim()) {
+    const q = searchQuery.toLowerCase();
 
-    if (filters.priority !== "all") {
-      projects = projects.filter(
-        (p) => p.priority?.toLowerCase() === filters.priority.toLowerCase()
-      );
-    }
+    projects = projects.filter(
+      (p) =>
+        p.name?.toLowerCase().includes(q) ||
+        p.description?.toLowerCase().includes(q) ||
+        p.status?.toLowerCase().includes(q) ||
+        p.priority?.toLowerCase().includes(q)
+    );
+  }
 
-    if (filters.teamSize !== "any") {
-      projects = projects.filter((p) => {
-        const count = p.memberCount ?? 0;
-        if (filters.teamSize === "1-2") return count >= 1 && count <= 2;
-        if (filters.teamSize === "3-5") return count >= 3 && count <= 5;
-        if (filters.teamSize === "6+") return count >= 6;
-        return true;
-      });
-    }
+  if (filters.status !== "all") {
+    projects = projects.filter(
+      (p) => p.status?.toLowerCase() === filters.status.toLowerCase()
+    );
+  }
 
-    if (filters.sort === "due-date") {
-      projects = projects.sort((a, b) => {
-        const aDate = a.projectDueDate ? new Date(a.projectDueDate).getTime() : Infinity;
-        const bDate = b.projectDueDate ? new Date(b.projectDueDate).getTime() : Infinity;
-        return aDate - bDate;
-      });
-    } else if (filters.sort === "recent") {
-      projects = projects.sort((a, b) => {
-        const aDate = a.projectStartDate ? new Date(a.projectStartDate).getTime() : 0;
-        const bDate = b.projectStartDate ? new Date(b.projectStartDate).getTime() : 0;
-        return bDate - aDate;
-      });
-    }
+  if (filters.priority !== "all") {
+    projects = projects.filter(
+      (p) => p.priority?.toLowerCase() === filters.priority.toLowerCase()
+    );
+  }
 
-    return { ...data, data: projects };
-  }, [data, searchQuery, filters]);
+  if (filters.teamSize !== "any") {
+    projects = projects.filter((p) => {
+      const count = p.memberCount ?? 0;
+
+      if (filters.teamSize === "1-2") return count >= 1 && count <= 2;
+      if (filters.teamSize === "3-5") return count >= 3 && count <= 5;
+      if (filters.teamSize === "6+") return count >= 6;
+
+      return true;
+    });
+  }
+
+  if (filters.sort === "due-date") {
+    projects.sort((a, b) => {
+      const aDate = a.projectDueDate
+        ? new Date(a.projectDueDate).getTime()
+        : Infinity;
+      const bDate = b.projectDueDate
+        ? new Date(b.projectDueDate).getTime()
+        : Infinity;
+
+      return aDate - bDate;
+    });
+  } else if (filters.sort === "recent") {
+    projects.sort((a, b) => {
+      const aDate = a.projectStartDate
+        ? new Date(a.projectStartDate).getTime()
+        : 0;
+      const bDate = b.projectStartDate
+        ? new Date(b.projectStartDate).getTime()
+        : 0;
+
+      return bDate - aDate;
+    });
+  }
+
+  return {
+    ...data,
+    data: projects,
+  };
+}, [data, searchQuery, filters]);
+
 
   const activeFilterCount = useMemo(() => {
     let count = 0;
@@ -369,7 +389,7 @@ const Project = () => {
             <p className="text-sm text-slate-500 dark:text-secondary-400">
               Showing{" "}
               <span className="font-medium text-slate-700 dark:text-gray-200">
-                {filteredData.data?.length ?? 0}
+                {filteredData?.data?.length ?? 0}
               </span>{" "}
               of{" "}
               <span className="font-medium text-slate-700 dark:text-gray-200">
