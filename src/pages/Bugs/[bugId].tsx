@@ -29,7 +29,7 @@ const Field = ({ label, value }: { label: string; value?: string }) => {
   if (!value) return null;
   return (
     <div>
-      <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-400">
+      <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-secondary-400">
         {label}
       </p>
       <p className="text-sm dark:text-white text-slate-800 whitespace-pre-wrap">
@@ -116,11 +116,7 @@ const BugDetailsPage = () => {
     STATUS_COLORS.open;
 
   return (
-    <PageLayout
-      title="Bug Details"
-      showSearch={false}
-      contentClassName="bg-slate-100 min-h-screen dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900"
-    >
+    <PageLayout title="Bug Details" showSearch={false}>
       <div className="space-y-6 p-4">
         {/* ── Page Header ──────────────────────────────────────────────── */}
         <div className="flex items-start justify-between">
@@ -134,9 +130,9 @@ const BugDetailsPage = () => {
                   query: safeProjectId ? { projectId: safeProjectId } : {},
                 })
               }
-              className="mb-3 bg-transparent text-slate-700 dark:text-white"
+              className="mb-3 bg-transparent text-slate-700 dark:text-white shadow-none"
             />
-            <p className="text-sm dark:text-slate-400 text-slate-500">
+            <p className="text-sm dark:text-secondary-400 text-slate-500">
               {bug.bugLabel}
             </p>
             <h1 className="text-2xl font-bold dark:text-white text-slate-900">
@@ -146,7 +142,7 @@ const BugDetailsPage = () => {
           <Button
             title="Edit Bug"
             icon={<Pencil size={14} />}
-            className="rounded-xl bg-blue-600 px-5 py-2.5 text-white text-sm flex items-center gap-2"
+            className="rounded-xl bg-orange-500 px-5 py-2.5 text-white text-sm flex items-center gap-2 hover:bg-orange-600"
             onClick={() => setShowEditModal(true)}
           />
         </div>
@@ -170,18 +166,17 @@ const BugDetailsPage = () => {
           {/* LEFT — Description + Comments */}
           <div className="xl:col-span-2 space-y-4">
 
-            {/* Description Card */}
-            <div className="rounded-2xl border border-slate-200 bg-white dark:border-white/10 dark:bg-white/5 dark:backdrop-blur-sm p-5 shadow-sm">
+            <div className="glass-card rounded-2xl p-5">
               <div className="flex items-center justify-between mb-3">
                 <h2 className="text-base font-semibold dark:text-white text-slate-900">
                   Description
                 </h2>
                 <div className="flex gap-2">
                   <button className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10">
-                    <MoreHorizontal size={16} className="text-slate-400" />
+                    <MoreHorizontal size={16} className="text-slate-400 dark:text-secondary-500" />
                   </button>
                   <button className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10">
-                    <Pencil size={14} className="text-slate-400" />
+                    <Pencil size={14} className="text-slate-400 dark:text-secondary-500" />
                   </button>
                 </div>
               </div>
@@ -189,7 +184,6 @@ const BugDetailsPage = () => {
                 {bug.title || "No description provided."}
               </p>
 
-              {/* Steps to Reproduce */}
               {bug.stepsToReproduce && (
                 <div className="mb-5">
                   <p className="mb-2 text-sm font-semibold dark:text-white text-slate-800">
@@ -207,12 +201,11 @@ const BugDetailsPage = () => {
                 </div>
               )}
 
-              {/* Expected vs Actual */}
               {(bug.expectedBehavior || bug.actualBehavior) && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
                   {bug.expectedBehavior && (
                     <div className="rounded-xl border border-slate-200 dark:border-white/10 p-4">
-                      <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                      <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-secondary-500">
                         Expected Behavior
                       </p>
                       <p className="text-sm dark:text-white text-slate-700">
@@ -222,7 +215,7 @@ const BugDetailsPage = () => {
                   )}
                   {bug.actualBehavior && (
                     <div className="rounded-xl border border-slate-200 dark:border-white/10 p-4">
-                      <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                      <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-secondary-500">
                         Actual Behavior
                       </p>
                       <p className="text-sm dark:text-white text-slate-700">
@@ -233,11 +226,10 @@ const BugDetailsPage = () => {
                 </div>
               )}
 
-              {/* Environment / Version / Tags */}
               <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 {bug.environment && (
                   <div>
-                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400 flex items-center gap-1">
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-secondary-500 flex items-center gap-1">
                       <Cpu size={12} /> Environment
                     </p>
                     <p className="text-sm dark:text-white text-slate-800">
@@ -248,14 +240,14 @@ const BugDetailsPage = () => {
                 {bug.version && <Field label="Version" value={bug.version} />}
                 {bug.tags?.length > 0 && (
                   <div>
-                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400 flex items-center gap-1">
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-secondary-500 flex items-center gap-1">
                       <Tag size={12} /> Tags
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {bug.tags.map((tag: any, i: number) => (
                         <span
                           key={i}
-                          className="rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700"
+                          className="rounded-full border border-orange-100 bg-orange-50 px-3 py-1 text-xs font-medium text-orange-700 dark:border-orange-500/20 dark:bg-orange-500/10 dark:text-orange-300"
                         >
                           {typeof tag === "string" ? tag : tag.name}
                         </span>
@@ -266,7 +258,6 @@ const BugDetailsPage = () => {
               </div>
             </div>
 
-            {/* ── Comments Section (replaces history) ───────────────────── */}
             {safeBugId && safeProjectId && (
               <CommentsSection bugId={bug.id} comments={bug.comments} projectId={safeProjectId} />
             )}
@@ -275,32 +266,30 @@ const BugDetailsPage = () => {
           {/* RIGHT — Assignment + Attachments */}
           <div className="space-y-4">
 
-            {/* Assignment Card */}
-            <div className="rounded-2xl border border-slate-200 bg-white dark:border-white/10 dark:bg-white/5 dark:backdrop-blur-sm p-5 shadow-sm space-y-5">
+            <div className="glass-card rounded-2xl p-5 space-y-5">
               <div className="flex items-center justify-between">
                 <p className="text-base font-semibold dark:text-white text-slate-900">
                   Assignment
                 </p>
                 <button className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10">
-                  <MoreHorizontal size={16} className="text-slate-400" />
+                  <MoreHorizontal size={16} className="text-slate-400 dark:text-secondary-500" />
                 </button>
               </div>
 
-              {/* Reporter */}
               {bug.reportedBy && (
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+                    <div className="h-9 w-9 rounded-full bg-orange-500 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
                       {bug.reportedBy.fullName?.charAt(0)}
                     </div>
                     <div>
                       <p className="text-sm font-semibold dark:text-white text-slate-800">
                         {bug.reportedBy.fullName}
                       </p>
-                      <p className="text-xs text-slate-400">Reporter</p>
+                      <p className="text-xs text-slate-400 dark:text-secondary-500">Reporter</p>
                     </div>
                   </div>
-                  <span className="text-xs text-slate-400">
+                  <span className="text-xs text-slate-400 dark:text-secondary-500">
                     {new Date(bug.createdAt).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
@@ -310,18 +299,17 @@ const BugDetailsPage = () => {
                 </div>
               )}
 
-              {/* Assigned Tester */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-full bg-purple-500 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+                    <div className="h-9 w-9 rounded-full bg-info-500 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
                       {bug.assignedTester?.fullName?.charAt(0) ?? "?"}
                     </div>
                     <div>
                       <p className="text-sm font-semibold dark:text-white text-slate-800">
                         {bug.assignedTester?.fullName ?? "No tester assigned"}
                       </p>
-                      <p className="text-xs text-slate-400">Tester</p>
+                      <p className="text-xs text-slate-400 dark:text-secondary-500">Tester</p>
                     </div>
                   </div>
                   <button
@@ -335,38 +323,32 @@ const BugDetailsPage = () => {
                   </button>
                 </div>
                 <div ref={testerAnchorRef}>
-                  <InlineDropdown
-                    anchorRef={testerAnchorRef}
-                    isOpen={showTesterDropdown}
-                  >
+                  <InlineDropdown anchorRef={testerAnchorRef} isOpen={showTesterDropdown}>
                     <Dropdown
                       hasSearch
                       list={testerOptions}
                       labelParam="label"
                       valueParam="id"
-                      placeholder={
-                        membersLoading ? "Loading testers..." : "Select tester"
-                      }
+                      placeholder={membersLoading ? "Loading testers..." : "Select tester"}
                       onValChange={handleReassignTester}
-                      parentClassName="border rounded-xl border-lightgray px-2 h-[40px] flex items-center w-full bg-white dark:bg-gray-800"
+                      parentClassName="border rounded-xl border-lightgray px-2 h-[40px] flex items-center w-full bg-white dark:bg-secondary-800"
                       dropdownClassName="!h-60"
                     />
                   </InlineDropdown>
                 </div>
               </div>
 
-              {/* Assigned Developer */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-full bg-green-500 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+                    <div className="h-9 w-9 rounded-full bg-success-500 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
                       {bug.assignedDeveloper?.fullName?.charAt(0) ?? "?"}
                     </div>
                     <div>
                       <p className="text-sm font-semibold dark:text-white text-slate-800">
                         {bug.assignedDeveloper?.fullName ?? "No developer assigned"}
                       </p>
-                      <p className="text-xs text-slate-400">Developer</p>
+                      <p className="text-xs text-slate-400 dark:text-secondary-500">Developer</p>
                     </div>
                   </div>
                   <button
@@ -380,29 +362,21 @@ const BugDetailsPage = () => {
                   </button>
                 </div>
                 <div ref={developerAnchorRef}>
-                  <InlineDropdown
-                    anchorRef={developerAnchorRef}
-                    isOpen={showDeveloperDropdown}
-                  >
+                  <InlineDropdown anchorRef={developerAnchorRef} isOpen={showDeveloperDropdown}>
                     <Dropdown
                       hasSearch
                       list={developerOptions}
                       labelParam="label"
                       valueParam="id"
-                      placeholder={
-                        membersLoading
-                          ? "Loading developers..."
-                          : "Select developer"
-                      }
+                      placeholder={membersLoading ? "Loading developers..." : "Select developer"}
                       onValChange={handleAssignDeveloper}
-                      parentClassName="border rounded-xl border-lightgray px-2 h-[40px] flex items-center w-full bg-white dark:bg-gray-800"
+                      parentClassName="border rounded-xl border-lightgray px-2 h-[40px] flex items-center w-full bg-white dark:bg-secondary-800"
                       dropdownClassName="!h-60"
                     />
                   </InlineDropdown>
                 </div>
               </div>
 
-              {/* Developer Status */}
               {bug.developerStatus && (
                 <div>
                   <div className="flex items-center justify-between mb-2">
@@ -419,17 +393,16 @@ const BugDetailsPage = () => {
               )}
             </div>
 
-            {/* Attachments Card */}
-            <div className="rounded-2xl border border-slate-200 bg-white dark:border-white/10 dark:bg-white/5 dark:backdrop-blur-sm p-5 shadow-sm">
+            <div className="glass-card rounded-2xl p-5">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <span className="text-slate-400">+</span>
+                  <span className="text-slate-400 dark:text-secondary-500">+</span>
                   <p className="text-base font-semibold dark:text-white text-slate-900">
                     Attachments
                   </p>
                 </div>
                 <button className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10">
-                  <MoreHorizontal size={16} className="text-slate-400" />
+                  <MoreHorizontal size={16} className="text-slate-400 dark:text-secondary-500" />
                 </button>
               </div>
 
@@ -441,14 +414,14 @@ const BugDetailsPage = () => {
                       className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/10"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="h-9 w-9 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                          <Paperclip size={16} className="text-blue-500" />
+                        <div className="h-9 w-9 rounded-lg bg-orange-100 dark:bg-orange-500/20 flex items-center justify-center">
+                          <Paperclip size={16} className="text-orange-500" />
                         </div>
                         <div>
                           <p className="text-sm font-medium dark:text-white text-slate-800">
                             {attachment.name || attachment.fileName}
                           </p>
-                          <p className="text-xs text-slate-400">
+                          <p className="text-xs text-slate-400 dark:text-secondary-500">
                             {attachment.size}
                           </p>
                         </div>
@@ -457,15 +430,14 @@ const BugDetailsPage = () => {
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-slate-400">No attachments</p>
+                <p className="text-sm text-slate-400 dark:text-secondary-500">No attachments</p>
               )}
             </div>
 
-            {/* Status History (right sidebar — kept for audit trail) */}
             {bug.statusHistory?.length > 0 && (
-              <div className="rounded-2xl border border-slate-200 bg-white dark:border-white/10 dark:bg-white/5 dark:backdrop-blur-sm p-5 shadow-sm">
+              <div className="glass-card rounded-2xl p-5">
                 <div className="flex items-center gap-2 mb-4">
-                  <ChevronDown size={16} className="text-slate-400" />
+                  <ChevronDown size={16} className="text-slate-400 dark:text-secondary-500" />
                   <p className="text-base font-semibold dark:text-white text-slate-900">
                     Status History
                   </p>
@@ -473,7 +445,7 @@ const BugDetailsPage = () => {
                 <div className="space-y-4">
                   {bug.statusHistory.map((entry: any, i: number) => (
                     <div key={i} className="flex items-start gap-3">
-                      <div className="mt-1.5 h-2 w-2 rounded-full bg-blue-500 flex-shrink-0" />
+                      <div className="mt-1.5 h-2 w-2 rounded-full bg-orange-500 flex-shrink-0" />
                       <div className="flex-1 flex justify-between items-start">
                         <p className="text-xs dark:text-slate-300 text-slate-600 leading-relaxed">
                           {entry.comment ||
@@ -484,7 +456,7 @@ const BugDetailsPage = () => {
                             </span>
                           )}
                           {entry.changedByName && (
-                            <span className="dark:text-slate-400 text-slate-500">
+                            <span className="dark:text-secondary-400 text-slate-500">
                               {" "}by{" "}
                               <span className="font-semibold dark:text-white text-slate-800">
                                 {entry.changedByName}
@@ -492,11 +464,11 @@ const BugDetailsPage = () => {
                             </span>
                           )}
                         </p>
-                        <span className="text-xs text-slate-400 ml-3 flex-shrink-0">
-                          {new Date(entry.changedAt).toLocaleDateString(
-                            "en-US",
-                            { month: "short", day: "numeric" }
-                          )}
+                        <span className="text-xs text-slate-400 dark:text-secondary-500 ml-3 flex-shrink-0">
+                          {new Date(entry.changedAt).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                          })}
                         </span>
                       </div>
                     </div>

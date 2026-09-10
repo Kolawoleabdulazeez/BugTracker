@@ -16,11 +16,11 @@ import {
   getProjectMembers,
 } from "./project.api";
 
-type ApiSuccessResponse = {
+export type ApiSuccessResponse = {
   responseMessage?: string;
 };
 
-type ApiErrorResponse = {
+export type ApiErrorResponse = {
   details?: {
     responseMessage?: string;
   };

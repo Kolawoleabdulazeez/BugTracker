@@ -13,6 +13,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const data = req.body;
 
   const slug = req.query.slug;
+  console.log(slug, "this is slug check want to see if this is the cause of redirect")
     const suffix = Array.isArray(slug) ? slug.join("/") : "";
   const endpoint = suffix ? `Project/${suffix}` : "Project";
   const url = `${BASE_URL}/${endpoint}`;

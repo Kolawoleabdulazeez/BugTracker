@@ -4,6 +4,15 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  --canvas-bg-light: radial-gradient(1200px 600px at 20% -10%, rgba(237, 98, 20, 0.06), transparent 60%),
+    radial-gradient(1000px 500px at 100% 0%, rgba(35, 154, 60, 0.05), transparent 60%),
+    #f7f5f2;
+
+   --canvas-bg-dark: radial-gradient(1200px 600px at 15% -10%, rgba(237, 98, 20, 0.18), transparent 60%),
+    radial-gradient(900px 500px at 100% 10%, rgba(35, 154, 60, 0.08), transparent 55%),
+    radial-gradient(800px 500px at 50% 130%, rgba(120, 8, 40, 0.1), transparent 60%),
+    linear-gradient(180deg, #191919 0%, #120c0d 100%);
 }
 
 @theme inline {
@@ -37,4 +46,43 @@ body {
   color: var(--foreground);
   margin: 0;
   padding: 0;
+}
+
+/* ── App canvas: sits once at the page-shell level. Cards glass over this. ── */
+.app-canvas {
+  background: var(--canvas-bg-light);
+  background-attachment: fixed;
+}
+.dark .app-canvas {
+  background: var(--canvas-bg-dark);
+  background-attachment: fixed;
+}
+
+/* ── Glass primitives ── */
+.glass-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0.4));
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba(17, 23, 42, 0.06);
+  box-shadow: 0 8px 32px rgba(17, 23, 42, 0.06);
+}
+.dark .glass-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  border: 1px solid rgba(17, 23, 42, 0.06);
+}
+.dark .glass-panel {
+  background: rgba(25, 25, 25, 0.55); /* #191919 */
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }

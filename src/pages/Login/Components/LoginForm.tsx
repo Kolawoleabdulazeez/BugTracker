@@ -1,102 +1,120 @@
-
-import React from 'react'
-import { useForm } from 'react-hook-form'
-import { AuthPage } from '..'
-import { EMAIL_VALIDATION } from '@/utils'
-import Input from '@/Component/Input/Input'
-import Button from '@/Component/Button/Button'
-import { ArrowRightFromLine, Loader2 } from 'lucide-react'
-import { useLogin } from '@/services/auth/useAuths'
-
-
+import React from "react";
+import { useForm } from "react-hook-form";
+import { AuthPage } from "..";
+import { EMAIL_VALIDATION } from "@/utils";
+import Input from "@/Component/Input/Input";
+import Button from "@/Component/Button/Button";
+import { ArrowRightFromLine, Loader2 } from "lucide-react";
+import { useLogin } from "@/services/auth/useAuths";
 
 export type loginFormData = {
-  email:string,
-  password:string
-}
+  email: string;
+  password: string;
+};
 
 interface LoginFormProp {
-    setAuthPage:React.Dispatch<React.SetStateAction<AuthPage>>
+  setAuthPage: React.Dispatch<React.SetStateAction<AuthPage>>;
 }
 
-const LoginForm = ({setAuthPage}:LoginFormProp) => {
-      const {mutateAsync, isPending} = useLogin()
-      const loginForm = useForm<loginFormData>({
-        mode:"onChange",
-        reValidateMode:"onChange",
-        defaultValues:{
-          email:"",
-          password:""
-        }
-      })
+const LoginForm = ({ setAuthPage }: LoginFormProp) => {
+  const { mutateAsync, isPending } = useLogin();
 
-    
-      const onSubmit = async(data: loginFormData)=>{
-        await mutateAsync(data)
-      }
+  const loginForm = useForm<loginFormData>({
+    mode: "onChange",
+    reValidateMode: "onChange",
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const onSubmit = async (data: loginFormData) => {
+    await mutateAsync(data);
+  };
+
   return (
-<div className="z-10 flex w-full flex-col items-center rounded-2xl border border-white/10 bg-[#191B33]/40 p-5 sm:p-6 backdrop-blur-md">
-              <p className='text-xl font-bold text-white text-left'>Welcome Back</p>
-              <p className='text-gray-50 text-base'>Log in to your account</p>
+    <div
+      className="glass-card relative z-10 flex w-full max-w-md flex-col items-center rounded-2xl border border-orange-200/70 p-6 sm:p-7 shadow-[0_12px_40px_rgba(237,98,20,0.08)]">
+      {/* Header */}
+      <div className="mb-5 text-center">
+        <p className="font-sans text-2xl font-semibold tracking-tight text-secondary-800">
+          Welcome Back
+        </p>
 
-          <form onSubmit={loginForm?.handleSubmit(onSubmit)} className=' w-full   '>
-      <Input
-        {...loginForm?.register("email", {
-          validate: EMAIL_VALIDATION,
-        })}
-        type="email"
-        label="Email"
-        inputClassName="text-sm dark:text-white text-[#00143D] bg-transparent"
-        placeholder="user@email.com"
-        labelClassName=" font-medium !text-sm py-3 "
-        parentClassName="my-4"
-        className="!h-12 mb-2 transition-all shadow- text-[#00143D] font-normal text-base sm:text-lg w-full"
-        errortxt={loginForm?.formState?.errors?.email?.message}
-      />
-
-      <Input
-        {...loginForm?.register("password", {
-          required: "Password is required",
-        })}
-        type="password"
-        label="Password"
-        placeholder="Enter Password"
-        labelClassName="mb-2 font-medium !text-sm text-white"
-        inputClassName="text-sm dark:text-white text-[#00143D]"
-        parentClassName="my-1"
-        className="!h-12 mb-2 transition-all shadow-sm !bg-disabledBg dark:!bg-disabledBg !text-[#00143D] font-normal text-base sm:text-lg w-full"
-        errortxt={loginForm?.formState?.errors?.password?.message}
-      />
-
-    
-
-      <div className="mt-5">
-      <Button
-  disabled={isPending}
-  title={
-    isPending ? (
-      <Loader2 className="w-4 h-4 animate-spin" />
-    ) : (<>
-        Launch Console <ArrowRightFromLine className="inline w-4 h-4 ml-1" /> </>
-    )
-  }
-  type="submit"
-  className="w-full !bg-[#1121D4] !h-12 !text-base text-white"
-/>
-        
+        <p className="mt-1 font-sans text-sm text-secondary-500">
+          Log in to your account
+        </p>
       </div>
 
+      {/* Form */}
+      <form
+        onSubmit={loginForm.handleSubmit(onSubmit)}
+        className="w-full"
+      >
+        {/* Email */}
+        <Input
+          {...loginForm.register("email", {
+            validate: EMAIL_VALIDATION,
+          })}
+          type="email"
+          label="Email"
+          placeholder="user@email.com"
+          inputClassName="!bg-white/80 !text-secondary-800 placeholder:!text-secondary-300 focus:!border-orange-500 focus:!ring-1 focus:!ring-orange-500/2"
+          labelClassName=" !mb-2 !text-sm !font-medium !text-secondary-800"
+          parentClassName="my-4"
+          className="!h-12 w-full rounded-xl border border-secondary-200 !bg-white/80 font-normal text-base shadow-sm transition-all duration-200 hover:border-orange-300 focus-within:border-orange-500"
+          errortxt={loginForm.formState.errors.email?.message}
+        />
 
-   
-    </form>
+        {/* Password */}
+        <Input
+          {...loginForm.register("password", {
+            required: "Password is required",
+          })}
+          type="password"
+          label="Password"
+          placeholder="Enter Password"
+          labelClassName="!mb-2 !text-sm !font-medium !text-secondary-800"
+          inputClassName="!bg-white/80 !text-secondary-800 placeholder:!text-secondary-300 focus:!ring-orange-500/20"
+          parentClassName="my-4"
+          className="!h-12 w-full rounded-xl border border-secondary-200 !bg-white/80 font-normal text-base shadow-sm transition-all duration-200 hover:border-orange-300 focus-within:border-orange-500"
+          errortxt={loginForm.formState.errors.password?.message}
+        />
 
-    
-    <div className='flex my-3 items-center justify-center'>
-      <p className='!text-base text-white font-normal'>New to TestOrbit</p>
-    <Button className='!text-[#1121D4] !p-1 bg-transparent !text-base' title="Sign Up" onClick={()=>setAuthPage(AuthPage.SignUp)}/>
+        {/* Login Button */}
+        <div className="mt-6">
+          <Button
+            disabled={isPending}
+            title={
+              isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <>
+                  Launch Console
+                  <ArrowRightFromLine className="ml-1 inline h-4 w-4" />
+                </>
+              )
+            }
+            type="submit"
+            className="!h-12 w-full !rounded-xl !border-0 !bg-gradient-to-r !from-orange-500 !to-orange-600 !text-base !font-semibold !text-white shadow-[0_8px_20px_rgba(237,98,20,0.22)] transition-all duration-200 hover:!from-orange-600 hover:!to-orange-700 hover:-translate-y-[1px] hover:shadow-[0_10px_25px_rgba(237,98,20,0.28)] active:translate-y-0"
+          />
+        </div>
+      </form>
+
+      {/* Sign Up */}
+      <div className="mt-5 flex items-center justify-center">
+        <p className="font-sans text-sm font-normal text-secondary-500">
+          New to TestOrbit?
+        </p>
+
+        <Button
+          className="!ml-1 !p-1 !bg-transparent border-transparent !text-sm !font-semibold !text-orange-500 hover:!text-orange-600"
+          title="Sign Up"
+          onClick={() => setAuthPage(AuthPage.SignUp)}
+        />
+      </div>
     </div>
-    </div>
-  )
-}
+  );
+};
 
-export default LoginForm
+export default LoginForm;

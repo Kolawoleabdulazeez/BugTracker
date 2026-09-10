@@ -1,13 +1,5 @@
 import React, { useEffect } from "react";
-import {
-  X,
-  Bug,
-  ArrowRight,
-  Plus,
-  Layers,
-  Cpu,
-  Tag,
-} from "lucide-react";
+import { X, Bug, ArrowRight, Plus, Layers, Cpu, Tag } from "lucide-react";
 import { useFieldArray, useForm, Controller } from "react-hook-form";
 import { useUpdateBug } from "@/services/bugs/useBugs";
 import Input from "@/Component/Input/Input";
@@ -44,20 +36,20 @@ const PRIORITY_OPTIONS: {
   {
     value: "low",
     label: "Low",
-    color: "border-slate-300 bg-slate-50 text-slate-600 dark:border-gray-600 dark:bg-gray-700/30 dark:text-gray-400",
-    active: "border-blue-500 bg-blue-50 text-blue-700 dark:border-blue-500 dark:bg-blue-500/20 dark:text-blue-300",
+    color: "border-slate-300 bg-slate-50 text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-secondary-400",
+    active: "border-success-500 bg-success-50 text-success-700 dark:border-success-500 dark:bg-success-500/20 dark:text-success-300",
   },
   {
     value: "normal",
     label: "Normal",
-    color: "border-slate-300 bg-slate-50 text-slate-600 dark:border-gray-600 dark:bg-gray-700/30 dark:text-gray-400",
-    active: "border-yellow-500 bg-yellow-50 text-yellow-700 dark:border-yellow-500 dark:bg-yellow-500/20 dark:text-yellow-300",
+    color: "border-slate-300 bg-slate-50 text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-secondary-400",
+    active: "border-orange-500 bg-orange-50 text-orange-700 dark:border-orange-500 dark:bg-orange-500/20 dark:text-orange-300",
   },
   {
     value: "urgent",
     label: "Urgent",
-    color: "border-slate-300 bg-slate-50 text-slate-600 dark:border-gray-600 dark:bg-gray-700/30 dark:text-gray-400",
-    active: "border-orange-500 bg-orange-50 text-orange-700 dark:border-orange-500 dark:bg-orange-500/20 dark:text-orange-300",
+    color: "border-slate-300 bg-slate-50 text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-secondary-400",
+    active: "border-danger-500 bg-danger-50 text-danger-700 dark:border-danger-500 dark:bg-danger-500/20 dark:text-danger-300",
   },
 ];
 
@@ -99,7 +91,6 @@ const EditBugModal: React.FC<EditBugModalProps> = ({
     },
   });
 
-  // Pre-fill form when bug data is available
   useEffect(() => {
     if (isOpen && bug) {
       reset({
@@ -125,11 +116,10 @@ const EditBugModal: React.FC<EditBugModalProps> = ({
     register("severity");
   }, [register]);
 
-  const {
-    fields: tagFields,
-    append: appendTag,
-    remove: removeTag,
-  } = useFieldArray({ control, name: "tags" });
+  const { fields: tagFields, append: appendTag, remove: removeTag } = useFieldArray({
+    control,
+    name: "tags",
+  });
 
   const { mutateAsync: updateBug, isPending } = useUpdateBug(projectId);
 
@@ -177,19 +167,18 @@ const EditBugModal: React.FC<EditBugModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-2xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-white/10 dark:bg-[#13151f]">
+      <div className="w-full max-w-2xl overflow-hidden rounded-2xl border border-white/20 bg-white/95 shadow-2xl backdrop-blur-2xl dark:border-white/10 dark:bg-secondary-900/95">
 
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50 px-6 py-4 dark:border-white/5 dark:bg-white/[0.03]">
+        <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/60 px-6 py-4 dark:border-white/5 dark:bg-white/[0.03]">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-500/10 dark:bg-blue-500/20">
-              <Bug size={18} className="text-blue-500 dark:text-blue-400" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-500/10 dark:bg-orange-500/20">
+              <Bug size={18} className="text-orange-500 dark:text-orange-400" />
             </div>
             <div>
               <h2 className="text-base font-bold text-slate-900 dark:text-white">
                 Edit Bug
               </h2>
-              <p className="text-xs text-slate-500 dark:text-gray-400">
+              <p className="text-xs text-slate-500 dark:text-secondary-400">
                 {bug.bugLabel}
               </p>
             </div>
@@ -197,18 +186,16 @@ const EditBugModal: React.FC<EditBugModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-gray-500 dark:hover:bg-white/5 dark:hover:text-gray-300"
+            className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-secondary-500 dark:hover:bg-white/5 dark:hover:text-gray-300"
           >
             <X size={18} />
           </button>
         </div>
 
-        {/* Form */}
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="max-h-[calc(100vh-160px)] space-y-5 overflow-y-auto px-6 py-5"
         >
-          {/* Title */}
           <Controller
             name="title"
             control={control}
@@ -226,7 +213,6 @@ const EditBugModal: React.FC<EditBugModalProps> = ({
             )}
           />
 
-          {/* Description */}
           <Controller
             name="description"
             control={control}
@@ -245,7 +231,6 @@ const EditBugModal: React.FC<EditBugModalProps> = ({
             )}
           />
 
-          {/* Priority + Severity */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <p className="text-darkPrimary mb-3 !text-sm font-bold md:mb-1.5">
@@ -283,7 +268,6 @@ const EditBugModal: React.FC<EditBugModalProps> = ({
             />
           </div>
 
-          {/* Steps to Reproduce */}
           <div>
             <p className="text-darkPrimary !text-sm font-bold mb-1.5 flex items-center gap-1.5">
               <Layers size={14} />
@@ -299,14 +283,13 @@ const EditBugModal: React.FC<EditBugModalProps> = ({
                   placeholder={"1. Go to...\n2. Click on...\n3. Observe..."}
                   {...field}
                   errortxt={errors.stepsToReproduce?.message}
-                  inputClassName="font-mono text-xs text-white"
+                  inputClassName=" text-xs text-white"
                   parentClassName="w-full"
                 />
               )}
             />
           </div>
 
-          {/* Expected vs Actual */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Controller
               name="expectedBehavior"
@@ -344,7 +327,6 @@ const EditBugModal: React.FC<EditBugModalProps> = ({
             />
           </div>
 
-          {/* Environment + Version */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Input
               label="Environment"
@@ -362,7 +344,6 @@ const EditBugModal: React.FC<EditBugModalProps> = ({
             />
           </div>
 
-          {/* Tags */}
           <div>
             <p className="text-darkPrimary !text-sm font-bold mb-1.5 flex items-center gap-1.5">
               <Tag size={14} />
@@ -378,7 +359,7 @@ const EditBugModal: React.FC<EditBugModalProps> = ({
               <button
                 type="button"
                 onClick={handleAddTag}
-                className="flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-600 transition-colors hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:border-blue-500 dark:hover:bg-blue-500/10 dark:hover:text-blue-400"
+                className="flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-600 transition-colors hover:border-orange-500 hover:bg-orange-50 hover:text-orange-600 dark:border-white/10 dark:bg-white/5 dark:text-secondary-400 dark:hover:border-orange-500 dark:hover:bg-orange-500/10 dark:hover:text-orange-400"
               >
                 <Plus size={18} />
               </button>
@@ -389,13 +370,13 @@ const EditBugModal: React.FC<EditBugModalProps> = ({
                 {tagFields.map((field, index) => (
                   <span
                     key={field.id}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 dark:border-blue-500/20 dark:bg-blue-500/10 dark:text-blue-300"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-orange-100 bg-orange-50 px-3 py-1 text-xs font-medium text-orange-700 dark:border-orange-500/20 dark:bg-orange-500/10 dark:text-orange-300"
                   >
                     {field.value}
                     <button
                       type="button"
                       onClick={() => removeTag(index)}
-                      className="text-blue-400 hover:text-red-500 dark:hover:text-red-400"
+                      className="text-orange-400 hover:text-danger-500 dark:hover:text-danger-400"
                     >
                       <X size={11} />
                     </button>
@@ -405,12 +386,11 @@ const EditBugModal: React.FC<EditBugModalProps> = ({
             )}
           </div>
 
-          {/* Submit */}
           <div className="border-t border-slate-100 pt-4 dark:border-white/5">
             <button
               type="submit"
               disabled={isPending}
-              className="group flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 transition-all hover:bg-blue-700 hover:shadow-blue-500/30 disabled:cursor-not-allowed disabled:opacity-60"
+              className="group flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 py-3.5 text-sm font-semibold text-white shadow-lg shadow-orange-500/20 transition-all hover:bg-orange-600 hover:shadow-orange-500/30 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isPending ? (
                 <>

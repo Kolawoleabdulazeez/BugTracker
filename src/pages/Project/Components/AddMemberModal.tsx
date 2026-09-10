@@ -28,10 +28,7 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({
     reset,
     formState: { errors },
   } = useForm<AddMemberFormValues>({
-    defaultValues: {
-      email: "",
-      role: "",
-    },
+    defaultValues: { email: "", role: "" },
   });
 
   const { mutateAsync, isPending } = useInviteProjectMember(() => {
@@ -64,17 +61,17 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-md overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-white/10 dark:bg-[#1a1d2e]">
-        <div className="flex items-center justify-between border-b border-slate-200 p-5 dark:border-gray-700">
+      <div className="w-full max-w-md overflow-hidden rounded-2xl border border-white/20 bg-white/90 shadow-2xl backdrop-blur-2xl dark:border-white/10 dark:bg-secondary-900/90">
+        <div className="flex items-center justify-between border-b border-slate-200 p-5 dark:border-white/10">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-500/15">
-              <UserPlus size={18} className="text-blue-600 dark:text-blue-400" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-500/15">
+              <UserPlus size={18} className="text-orange-600 dark:text-orange-400" />
             </div>
             <div>
               <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
                 Add Member
               </h2>
-              <p className="text-sm text-slate-500 dark:text-gray-400">
+              <p className="text-sm text-slate-500 dark:text-secondary-400">
                 {projectName
                   ? `Invite a new member to ${projectName}`
                   : "Invite a new member to this project"}
@@ -85,14 +82,13 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({
           <button
             type="button"
             onClick={handleClose}
-            className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white"
+            className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 dark:text-secondary-400 dark:hover:bg-white/10 dark:hover:text-white"
           >
             <X size={18} />
           </button>
         </div>
 
         <form onSubmit={handleSubmit(submitForm)} className="space-y-5 p-5">
-
           <div>
             <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-gray-300">
               Email Address
@@ -100,13 +96,11 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({
             <input
               type="email"
               placeholder="Enter member email"
-              {...register("email", {
-                required: "Email is required",
-              })}
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 placeholder-slate-400 transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-700 dark:bg-[#0f1219] dark:text-white dark:placeholder-gray-500"
+              {...register("email", { required: "Email is required" })}
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 placeholder-slate-400 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder-secondary-500"
             />
             {errors.email && (
-              <p className="mt-2 text-sm text-red-500 dark:text-red-400">
+              <p className="mt-2 text-sm text-danger-500 dark:text-danger-400">
                 {errors.email.message}
               </p>
             )}
@@ -117,20 +111,17 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({
               Role
             </label>
             <select
-              {...register("role", {
-                required: "Role is required",
-              })}
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-700 dark:bg-[#0f1219] dark:text-white"
+              {...register("role", { required: "Role is required" })}
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 transition-all focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 dark:border-white/10 dark:bg-white/5 dark:text-white"
             >
               <option value="">Select role</option>
               <option value="owner">Owner</option>
               <option value="viewer">Viewer</option>
               <option value="tester">Tester</option>
               <option value="developer">Developer</option>
-
             </select>
             {errors.role && (
-              <p className="mt-2 text-sm text-red-500 dark:text-red-400">
+              <p className="mt-2 text-sm text-danger-500 dark:text-danger-400">
                 {errors.role.message}
               </p>
             )}
@@ -141,13 +132,13 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({
               title="Cancel"
               type="button"
               onClick={handleClose}
-              className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-slate-700 hover:bg-slate-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+              className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-slate-700 hover:bg-slate-50 dark:border-white/10 dark:bg-secondary-800 dark:text-gray-200 dark:hover:bg-secondary-700"
             />
 
             <button
               type="submit"
               disabled={isPending}
-              className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-xl bg-orange-500 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isPending ? "Inviting..." : "Invite Member"}
             </button>

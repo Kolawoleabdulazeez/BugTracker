@@ -19,9 +19,7 @@ const BugActionButton: React.FC<BugActionButtonProps> = ({
   onActionSuccess,
 }) => {
   const [actionModalOpen, setActionModalOpen] = useState(false);
-  const [activeModal, setActiveModal] = useState<
-    "update" | "delete" | "status" | null
-  >(null);
+  const [activeModal, setActiveModal] = useState<"update" | "delete" | "status" | null>(null);
 
   const { mutateAsync: updateStatus, isPending: isUpdatingStatus } =
     useUpdateBugStatus(projectId);
@@ -67,25 +65,23 @@ const BugActionButton: React.FC<BugActionButtonProps> = ({
 
   return (
     <div>
-      {/* Trigger */}
       <button
         type="button"
         onClick={(e) => {
           e.stopPropagation();
           setActionModalOpen(true);
         }}
-        className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-blue-700"
+        className="inline-flex items-center gap-1.5 rounded-lg bg-orange-500 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-orange-600"
       >
         Action
         <ChevronDown size={13} />
       </button>
 
-      {/* Action Selection Modal */}
       <Modal
         isOpen={actionModalOpen}
         onClose={() => setActionModalOpen(false)}
         onOverlayClose={() => setActionModalOpen(false)}
-        className="w-[400px] px-0 !bg-white dark:!bg-gray-900"
+        className="w-[400px] px-0 !bg-white dark:!bg-secondary-900"
         headText="Select An Action"
       >
         <div className="w-full gap-3 my-5 flex flex-col items-center px-4">
@@ -96,8 +92,8 @@ const BugActionButton: React.FC<BugActionButtonProps> = ({
               onClick={btn.onClick}
               className={`flex items-center gap-3 w-full px-4 py-3 rounded-lg font-semibold text-sm transition-colors ${
                 btn.danger
-                  ? "bg-red-50 text-red-600 hover:bg-red-600 hover:text-white dark:bg-red-500/10 dark:text-red-400 dark:hover:bg-red-600 dark:hover:text-white"
-                  : "bg-[#CFF8E0] text-darkPrimary hover:bg-blue-600 hover:text-white dark:bg-white/5 dark:text-gray-200 dark:hover:bg-blue-600 dark:hover:text-white"
+                  ? "bg-danger-50 text-danger-600 hover:bg-danger-600 hover:text-white dark:bg-danger-500/10 dark:text-danger-400 dark:hover:bg-danger-600 dark:hover:text-white"
+                  : "bg-orange-50 text-orange-700 hover:bg-orange-500 hover:text-white dark:bg-white/5 dark:text-gray-200 dark:hover:bg-orange-500 dark:hover:text-white"
               }`}
             >
               {btn.icon}
@@ -107,7 +103,6 @@ const BugActionButton: React.FC<BugActionButtonProps> = ({
         </div>
       </Modal>
 
-      {/* Update Status Modal — dedicated component, not ConfirmActionModal */}
       <UpdateBugStatusModal
         isOpen={activeModal === "status"}
         onClose={handleClose}
@@ -115,7 +110,6 @@ const BugActionButton: React.FC<BugActionButtonProps> = ({
         isLoading={isUpdatingStatus}
       />
 
-      {/* Update Bug Modal */}
       <UpdateBugModal
         isOpen={activeModal === "update"}
         onClose={handleClose}
@@ -123,7 +117,6 @@ const BugActionButton: React.FC<BugActionButtonProps> = ({
         projectId={projectId}
       />
 
-      {/* Delete Confirm Modal */}
       <ConfirmActionModal
         isOpen={activeModal === "delete"}
         title="Delete Bug"
@@ -131,7 +124,6 @@ const BugActionButton: React.FC<BugActionButtonProps> = ({
         isLoading={false}
         onClose={handleClose}
         onConfirm={() => {
-          // TODO: wire up delete mutation
           handleClose();
           onActionSuccess?.();
         }}

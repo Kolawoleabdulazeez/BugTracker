@@ -21,7 +21,7 @@ const PageLayout: React.FC<PageLayoutProps> = ({
   contentClassName = "",
 }) => {
   return (
-    <div className="flex h-full flex-col">
+    <div className="app-canvas flex h-full flex-col">
       <Header
         title={title}
         showSearch={showSearch}
@@ -31,7 +31,7 @@ const PageLayout: React.FC<PageLayoutProps> = ({
       />
 
       <div
-        className={`flex-1 overflow-auto bg-slate-100 p-4 text-slate-900 sm:p-6 dark:bg-gray-950 dark:text-white ${contentClassName}`}
+        className={`flex-1 overflow-auto p-4 text-slate-900 sm:p-6 dark:text-white ${contentClassName}`}
       >
         {children}
       </div>

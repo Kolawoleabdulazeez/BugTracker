@@ -3,7 +3,7 @@ import { X, Bug, ArrowRight, Layers, Cpu, Tag, Plus } from "lucide-react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import Input from "@/Component/Input/Input";
 import Dropdown from "@/Component/Dropdown/Dropdown";
-import {  BugType } from "@/services/bugs/bugs.api";
+import { BugType } from "@/services/bugs/bugs.api";
 import { useUpdateBug } from "@/services/bugs/useBugs";
 
 type UpdateBugModalProps = {
@@ -32,26 +32,20 @@ const PRIORITY_OPTIONS = [
   {
     value: "low",
     label: "Low",
-    color:
-      "border-slate-300 bg-slate-50 text-slate-600 dark:border-gray-600 dark:bg-gray-700/30 dark:text-gray-400",
-    active:
-      "border-blue-500 bg-blue-50 text-blue-700 dark:border-blue-500 dark:bg-blue-500/20 dark:text-blue-300",
+    color: "border-slate-300 bg-slate-50 text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-secondary-400",
+    active: "border-success-500 bg-success-50 text-success-700 dark:border-success-500 dark:bg-success-500/20 dark:text-success-300",
   },
   {
     value: "normal",
     label: "Normal",
-    color:
-      "border-slate-300 bg-slate-50 text-slate-600 dark:border-gray-600 dark:bg-gray-700/30 dark:text-gray-400",
-    active:
-      "border-yellow-500 bg-yellow-50 text-yellow-700 dark:border-yellow-500 dark:bg-yellow-500/20 dark:text-yellow-300",
+    color: "border-slate-300 bg-slate-50 text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-secondary-400",
+    active: "border-orange-500 bg-orange-50 text-orange-700 dark:border-orange-500 dark:bg-orange-500/20 dark:text-orange-300",
   },
   {
     value: "urgent",
     label: "Urgent",
-    color:
-      "border-slate-300 bg-slate-50 text-slate-600 dark:border-gray-600 dark:bg-gray-700/30 dark:text-gray-400",
-    active:
-      "border-orange-500 bg-orange-50 text-orange-700 dark:border-orange-500 dark:bg-orange-500/20 dark:text-orange-300",
+    color: "border-slate-300 bg-slate-50 text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-secondary-400",
+    active: "border-danger-500 bg-danger-50 text-danger-700 dark:border-danger-500 dark:bg-danger-500/20 dark:text-danger-300",
   },
 ];
 
@@ -167,25 +161,18 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 p-0 sm:p-4 backdrop-blur-sm">
-      {/*
-        ─── Modal shell ──────────────────────────────────────────────────────────
-        Key fix: `flex flex-col` + `max-h-[92dvh]` on the shell.
-        The header and footer are flex-shrink-0 (they never collapse).
-        Only the form body gets flex-1 + overflow-y-auto, so only IT scrolls.
-      */}
-      <div className="w-full sm:max-w-2xl flex flex-col overflow-hidden rounded-t-2xl sm:rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-white/10 dark:bg-[#13151f] max-h-[70dvh] sm:max-h-[88vh]">
+      <div className="w-full sm:max-w-2xl flex flex-col overflow-hidden rounded-t-2xl sm:rounded-2xl border border-white/20 bg-white/95 shadow-2xl backdrop-blur-2xl dark:border-white/10 dark:bg-secondary-900/95 max-h-[70dvh] sm:max-h-[88vh]">
 
-        {/* ── Header ── flex-shrink-0 keeps it always visible */}
-        <div className="flex-shrink-0 flex items-center justify-between border-b border-slate-100 bg-slate-50 px-6 py-4 dark:border-white/5 dark:bg-white/[0.03]">
+        <div className="flex-shrink-0 flex items-center justify-between border-b border-slate-100 bg-slate-50/60 px-6 py-4 dark:border-white/5 dark:bg-white/[0.03]">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-yellow-500/10 dark:bg-yellow-500/20">
-              <Bug size={18} className="text-yellow-500 dark:text-yellow-400" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-500/10 dark:bg-orange-500/20">
+              <Bug size={18} className="text-orange-500 dark:text-orange-400" />
             </div>
             <div>
               <h2 className="text-base font-bold text-slate-900 dark:text-white">
                 Update Bug
               </h2>
-              <p className="font-mono text-xs text-slate-400 dark:text-gray-500">
+              <p className=" text-xs text-slate-400 dark:text-secondary-500">
                 {bug.bugLabel}
               </p>
             </div>
@@ -193,19 +180,17 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-gray-500 dark:hover:bg-white/5 dark:hover:text-gray-300"
+            className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-secondary-500 dark:hover:bg-white/5 dark:hover:text-gray-300"
           >
             <X size={18} />
           </button>
         </div>
 
-        {/* ── Scrollable form body ── flex-1 fills remaining space, scrolls internally */}
         <form
           id="update-bug-form"
           onSubmit={handleSubmit(onSubmit)}
           className="flex-1 min-h-0 overflow-y-auto overscroll-contain space-y-5 px-6 py-5"
         >
-          {/* Title */}
           <Controller
             name="title"
             control={control}
@@ -223,7 +208,6 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
             )}
           />
 
-          {/* Description */}
           <Controller
             name="description"
             control={control}
@@ -242,7 +226,6 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
             )}
           />
 
-          {/* Priority + Severity + Status */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div>
               <p className="dark:text-white text-darkPrimary text-sm font-bold mb-1.5">
@@ -291,7 +274,6 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
             />
           </div>
 
-          {/* Steps to Reproduce */}
           <div>
             <p className="dark:text-white text-darkPrimary text-sm font-bold mb-1.5 flex items-center gap-1.5">
               <Layers size={14} />
@@ -305,7 +287,7 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
                   textarea
                   placeholder={"1. Go to...\n2. Click on...\n3. Observe..."}
                   {...field}
-                  inputClassName="font-mono text-xs"
+                  inputClassName=" text-xs"
                   parentClassName="w-full"
                   labelClassName={labelClass}
                 />
@@ -313,7 +295,6 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
             />
           </div>
 
-          {/* Expected vs Actual */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Controller
               name="expectedBehavior"
@@ -345,7 +326,6 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
             />
           </div>
 
-          {/* Environment + Version */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Controller
               name="environment"
@@ -376,7 +356,6 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
             />
           </div>
 
-          {/* Tags */}
           <div>
             <p className="dark:text-white text-darkPrimary text-sm font-bold mb-1.5 flex items-center gap-1.5">
               <Tag size={14} /> Tags
@@ -397,7 +376,7 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
               <button
                 type="button"
                 onClick={handleAddTag}
-                className="flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-600 transition-colors hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:border-blue-500"
+                className="flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-600 transition-colors hover:border-orange-500 hover:bg-orange-50 hover:text-orange-600 dark:border-white/10 dark:bg-white/5 dark:text-secondary-400 dark:hover:border-orange-500"
               >
                 <Plus size={18} />
               </button>
@@ -407,11 +386,11 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
                 {tagFields.map((field, index) => (
                   <span
                     key={field.id}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 dark:border-blue-500/20 dark:bg-blue-500/10 dark:text-blue-300"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-orange-100 bg-orange-50 px-3 py-1 text-xs font-medium text-orange-700 dark:border-orange-500/20 dark:bg-orange-500/10 dark:text-orange-300"
                   >
                     {field.value}
                     <button type="button" onClick={() => removeTag(index)}>
-                      <X size={11} className="text-blue-400 hover:text-red-500" />
+                      <X size={11} className="text-orange-400 hover:text-danger-500" />
                     </button>
                   </span>
                 ))}
@@ -420,8 +399,7 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
           </div>
         </form>
 
-        {/* ── Footer ── flex-shrink-0 keeps it always pinned at the bottom */}
-        <div className="flex-shrink-0 border-t border-slate-100 dark:border-white/5 bg-white dark:bg-[#13151f] px-6 py-4">
+        <div className="flex-shrink-0 border-t border-slate-100 dark:border-white/5 bg-white/60 dark:bg-secondary-900/60 px-6 py-4">
           <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3">
             <button
               type="button"
@@ -434,7 +412,7 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
               type="submit"
               form="update-bug-form"
               disabled={isPending}
-              className="group flex flex-1 items-center justify-center gap-2 rounded-xl bg-yellow-500 py-3 text-sm font-semibold text-white shadow-lg shadow-yellow-500/20 transition-all hover:bg-yellow-600 disabled:cursor-not-allowed disabled:opacity-60"
+              className="group flex flex-1 items-center justify-center gap-2 rounded-xl bg-orange-500 py-3 text-sm font-semibold text-white shadow-lg shadow-orange-500/20 transition-all hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isPending ? (
                 <>
@@ -445,10 +423,7 @@ const UpdateBugModal: React.FC<UpdateBugModalProps> = ({
                 <>
                   <Bug size={16} />
                   Update Bug
-                  <ArrowRight
-                    size={16}
-                    className="transition-transform group-hover:translate-x-0.5"
-                  />
+                  <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
                 </>
               )}
             </button>

@@ -24,20 +24,17 @@ const ConfirmActionModal: React.FC<ConfirmActionModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-md overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-white/10 dark:bg-[#1a1d2e]">
-        <div className="flex items-center justify-between border-b border-slate-200 p-5 dark:border-gray-700">
+      <div className="w-full max-w-md overflow-hidden rounded-2xl border border-white/20 bg-white/90 shadow-2xl backdrop-blur-2xl dark:border-white/10 dark:bg-secondary-900/90">
+        <div className="flex items-center justify-between border-b border-slate-200 p-5 dark:border-white/10">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 dark:bg-red-500/15">
-              <AlertTriangle
-                size={20}
-                className="text-red-600 dark:text-red-400"
-              />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-danger-100 dark:bg-danger-500/15">
+              <AlertTriangle size={20} className="text-danger-600 dark:text-danger-400" />
             </div>
             <div>
               <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
                 {title}
               </h2>
-              <p className="text-sm text-slate-500 dark:text-gray-400">
+              <p className="text-sm text-slate-500 dark:text-secondary-400">
                 This action cannot be undone
               </p>
             </div>
@@ -46,7 +43,7 @@ const ConfirmActionModal: React.FC<ConfirmActionModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white"
+            className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 dark:text-secondary-400 dark:hover:bg-white/10 dark:hover:text-white"
           >
             <X size={18} />
           </button>
@@ -62,7 +59,7 @@ const ConfirmActionModal: React.FC<ConfirmActionModalProps> = ({
               type="button"
               onClick={onClose}
               disabled={isLoading}
-              className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+              className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-white/10 dark:bg-secondary-800 dark:text-gray-200 dark:hover:bg-secondary-700"
             >
               Cancel
             </button>
@@ -71,7 +68,7 @@ const ConfirmActionModal: React.FC<ConfirmActionModalProps> = ({
               type="button"
               onClick={onConfirm}
               disabled={isLoading}
-              className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex items-center gap-2 rounded-xl bg-danger-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-danger-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
               <Trash2 size={16} />
               {isLoading ? "Processing..." : confirmText}

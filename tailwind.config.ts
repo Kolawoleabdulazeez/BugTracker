@@ -1,17 +1,19 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  darkMode: "class", // Enable dark mode with the "dark" class
-content: [
-  "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-  "./src/Component/**/*.{js,ts,jsx,tsx,mdx}",
-  "./src/**/*.{js,ts,jsx,tsx,mdx}",
-],
+  darkMode: "class",
+  content: [
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/Component/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
   theme: {
     extend: {
       boxShadow: {
         black: "",
         blueSoft: "0px 4px 4px 0px rgba(0, 51, 153, 0.25)",
+        glow: "0px 8px 30px 0px rgba(237, 98, 20, 0.25)",
+        glass: "0 8px 32px 0 rgba(0, 0, 0, 0.25)",
       },
       colors: {
         primary: "#1121D4",
@@ -21,12 +23,9 @@ content: [
         gray3: "#98A2B3",
         gray4: "#E6EBF5",
         secondaryGreen: "#CFF8E0",
-        ////////////////////////////////////
         darkBackground: "#1A1A1A",
         darkText: "#E6EBF5",
         darkLBg: "#333333",
-
-        ////////////////////////////////////
         darkPrimary1: "#00297A",
         labelBlue: "#00143D",
         grayText: "#8F96A3",
@@ -38,31 +37,86 @@ content: [
         grayBg: "#E6EBF5",
         grayBg1: "#E3E5E8",
         grayBg2: "#EDF0F8",
-
         primaryGreen: "#0DDE65",
-
         tertiaryGreen: "#08853D",
         placeholderText: "#C7CBD1",
         lightred: "#fbd0cf",
         errorRed: "#FF2424",
         layoutBg: "#F0F3F9",
         activeCarousel: "#C4CFE7",
-        ////yellow
         yellow: "#ffff00",
         amber1: "#FF9B19",
         amber2: "#FFE4C2",
-        ////blue
         blue1: "#E6F8FE",
         blue2: "#9AE0F8",
         blue3: "#016A8F",
         blue4: "#6685C2",
-        ///// red
         red1: "#FF5051",
-
-        ////dark mode
         darkBgLayout: "#17191C",
         darkBgPrimary: "#454A54",
         darkBgSecondary: "#5C6370",
+
+        orange: {
+          50: "#FFF6EC",
+          100: "#FEEBCF",
+          200: "#FCCEA0",
+          300: "#F9B270",
+          400: "#F4934C",
+          500: "#ED6214",
+          600: "#CB460E",
+          700: "#AA2F0A",
+          800: "#891D06",
+          900: "#711003",
+        },
+        success: {
+          50: "#EFFAF1",
+          100: "#DCF3E0",
+          200: "#B3E0BB",
+          300: "#7FCB8D",
+          400: "#4CB562",
+          500: "#239A3C",
+          600: "#1B8F3F",
+          700: "#127A3A",
+          800: "#0D6630",
+          900: "#0B4F25",
+        },
+        danger: {
+          50: "#FDF0F1",
+          100: "#FADEE0",
+          200: "#F3B4B9",
+          300: "#E8818A",
+          400: "#DA4F5C",
+          500: "#C92438",
+          600: "#B51629",
+          700: "#96102F",
+          800: "#780828",
+          900: "#5A0620",
+        },
+        info: {
+          50: "#F2F6FE",
+          100: "#E3EDFC",
+          200: "#C3D5F7",
+          300: "#9AB6F1",
+          400: "#6B93EA",
+          500: "#3B6FE0",
+          600: "#2348B2",
+          700: "#1A3A8F",
+          800: "#122B6B",
+          900: "#0B1D4D",
+        },
+        secondary: {
+          50: "#F5F5F5",
+          100: "#E0E0E0",
+          200: "#BDBDBD",
+          300: "#9E9E9E",
+          400: "#757575",
+          500: "#616161",
+          600: "#424242",
+          700: "#2C2C2C",
+          800: "#191919",
+          900: "#120C0D",
+          950: "#0A0708",
+        },
       },
       screens: {
         xs: "400px",
@@ -81,10 +135,14 @@ content: [
         "3xl": "1920px",
         "4xl": "2560px",
       },
-      keyframes: {
+            keyframes: {
         slideIn: {
           "0%": { transform: "translateX(-100%)", opacity: "0" },
           "100%": { transform: "translateX(0)", opacity: "1" },
+        },
+        shimmer: {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(250%)" },
         },
         shake: {
           "0%, 100%": { transform: "translateX(0)" },
@@ -92,19 +150,36 @@ content: [
           "50%": { transform: "translateX(5px)" },
           "75%": { transform: "translateX(-5px)" },
         },
-      spinPause: {
-      "0%": { transform: "rotate(0deg)" },
-      "40%": { transform: "rotate(360deg)" },  // spin phase
-      "60%": { transform: "rotate(360deg)" },  // pause phase
-      "100%": { transform: "rotate(720deg)" }, // next spin
-    },
+        spinPause: {
+          "0%": { transform: "rotate(0deg)" },
+          "40%": { transform: "rotate(360deg)" },
+          "60%": { transform: "rotate(360deg)" },
+          "100%": { transform: "rotate(720deg)" },
+        },
+        pulseGlow: {
+          "0%, 100%": {
+            transform: "scale(1)",
+            filter: "drop-shadow(0 0 0px rgba(237,98,20,0))",
+          },
+          "50%": {
+            transform: "scale(1.08)",
+            filter: "drop-shadow(0 0 10px rgba(237,98,20,0.55))",
+          },
+        },
+        fadeIn: {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
       },
       animation: {
         slideIn: "slideIn 0.5s ease-out forwards",
         shake: "shake 0.5s ease-in-out",
         spinPause: "spinPause 3s ease-in-out infinite",
-
+        shimmer: "shimmer 1.6s ease-in-out infinite",
+        pulseGlow: "pulseGlow 1.8s ease-in-out infinite",
+        fadeIn: "fadeIn 0.15s ease-out",
       },
+
     },
   },
   plugins: [],

@@ -11,7 +11,6 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { PageDetails } from "@/utils/types";
 import { TABLE_ROWS_PER_PAGE } from "@/utils/lib";
 
-
 interface CustomPaginationProps {
   totalItems: number;
   page: number;
@@ -20,6 +19,7 @@ interface CustomPaginationProps {
   DBPageDetails: PageDetails | undefined;
   onDBPageChange?: (val: number) => void;
 }
+
 const PaginationControls = ({
   totalItems,
   page,
@@ -36,6 +36,7 @@ const PaginationControls = ({
     if (newPage < 1 || newPage > totalPages) return;
     setPage(newPage);
   };
+
   const handleDBPageChange = (val: number) => {
     const selectedPage = pagesLeft.find((p) => p.value === val);
     if (selectedPage) {
@@ -44,11 +45,12 @@ const PaginationControls = ({
     setPage(1);
     onDBPageChange?.(val);
   };
+
   useEffect(() => {
     if (DBPageDetails?.TotalRecords && DBPageDetails?.PageSize) {
       const pagesFromDB = Math.ceil(
         DBPageDetails.TotalRecords / DBPageDetails.PageSize
-      ); //Number of pages retrievable from DB
+      );
       const arr = [];
       for (let i = 0; i < pagesFromDB; i++) {
         arr.push({
@@ -62,14 +64,23 @@ const PaginationControls = ({
       setPagesLeft(arr);
     }
   }, [DBPageDetails]);
+
   return (
     <div className="gap-2 flex items-center justify-between mt-3 mb-2">
       <Button
         disabled={page === 1}
         onClick={() => handlePageChange(page - 1)}
-        className="!pl-[7px] !pr-[14px] !py-[18px]  h-[30px] rounded-lg w-[100px] font-bold flex items-center justify-center gap-[2px] !bg-gray1 !text-black"
-        startIcon={<ArrowLeft size={16} className="text-black ml-3" />}
-        sx={{ textTransform: "none", border: "1px solid darkgray" }}
+        className="!pl-[7px] !pr-[14px] !py-[18px] h-[30px] rounded-lg w-[100px] font-bold flex items-center justify-center gap-[2px]"
+        startIcon={<ArrowLeft size={16} />}
+        sx={{
+          textTransform: "none",
+          border: "1px solid",
+          borderColor: "rgba(148, 163, 184, 0.4)",
+          backgroundColor: "transparent",
+          color: "inherit",
+          ".dark &": { color: "#ededed" },
+          "&:hover": { backgroundColor: "rgba(237, 98, 20, 0.08)" },
+        }}
       >
         Previous
       </Button>
@@ -81,18 +92,25 @@ const PaginationControls = ({
         renderItem={(item) => (
           <PaginationItem
             {...item}
-            className={`px-3 py-1 rounded ${
-              item.selected
-                ? "!bg-gray1 text-primary font-bold !rounded-[7px]"
-                : "bg-gray-100 text-gray-700"
-            }`}
             slots={{ previous: () => null, next: () => null }}
+            sx={{
+              borderRadius: "7px",
+              fontWeight: item.selected ? 700 : 400,
+              color: item.selected ? "#ED6214" : "inherit",
+              backgroundColor: item.selected
+                ? "rgba(237, 98, 20, 0.12)"
+                : "transparent",
+              "&:hover": {
+                backgroundColor: "rgba(237, 98, 20, 0.08)",
+              },
+            }}
           />
         )}
       />
+
       <div className="flex items-center gap-6">
         {DBPageDetails?.TotalRecords && (
-          <div className="text-xs">
+          <div className="text-xs text-slate-600 dark:text-secondary-400">
             Showing
             <Select
               className="mx-1"
@@ -100,6 +118,9 @@ const PaginationControls = ({
                 "& > div": {
                   padding: "0px 10px",
                   fontSize: "0.8rem",
+                },
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "rgba(148, 163, 184, 0.4)",
                 },
               }}
               value={activeDBPage?.value ?? ""}
@@ -116,11 +137,18 @@ const PaginationControls = ({
           </div>
         )}
         <Button
-          className="px-[7px] !py-[18px] h-[30px] cursor-pointer border border-gray-300 rounded-lg w-[100px] font-bold flex items-center justify-center gap-[10px] !bg-gray1 !text-black"
-          endIcon={<ArrowRight size={16} className="text-black" />}
+          className="px-[7px] !py-[18px] h-[30px] rounded-lg w-[100px] font-bold flex items-center justify-center gap-[10px]"
+          endIcon={<ArrowRight size={16} />}
           disabled={page === totalPages}
           onClick={() => handlePageChange(page + 1)}
-          sx={{ textTransform: "none", border: "1px solid darkgray" }}
+          sx={{
+            textTransform: "none",
+            border: "1px solid",
+            borderColor: "rgba(148, 163, 184, 0.4)",
+            backgroundColor: "transparent",
+            color: "inherit",
+            "&:hover": { backgroundColor: "rgba(237, 98, 20, 0.08)" },
+          }}
         >
           Next
         </Button>

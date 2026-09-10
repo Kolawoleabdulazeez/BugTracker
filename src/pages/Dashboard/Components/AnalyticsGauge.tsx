@@ -5,7 +5,7 @@ interface OverallProgressProps {
   completed: number;
   delayed: number;
   ongoing: number;
-  onFilterChange?: (filter: string) => void; // NEW: Callback for filter changes
+  onFilterChange?: (filter: string) => void;
 }
 
 const CX = 130;
@@ -15,10 +15,10 @@ const STROKE_WIDTH = 14;
 const TICK_COUNT = 50;
 
 const SEGMENTS = [
-  { min: 0, max: 25, color: "#2D8B2D" },
-  { min: 25, max: 50, color: "#D4A017" },
-  { min: 50, max: 75, color: "#E8651A" },
-  { min: 75, max: 100, color: "#D1D5DB" },
+  { min: 0, max: 25, color: "#239A3C" },  // success-500
+  { min: 25, max: 50, color: "#ED6214" }, // orange-500
+  { min: 50, max: 75, color: "#CB460E" }, // orange-600
+  { min: 75, max: 100, color: "#3D3D3D" },
 ];
 
 const LABEL_VALUES = [0, 25, 50, 100];
@@ -35,26 +35,12 @@ function valueToAngle(value: number): number {
   return 180 - (value / 100) * 180;
 }
 
-function polarToCartesian(
-  cx: number,
-  cy: number,
-  r: number,
-  angleDeg: number
-) {
+function polarToCartesian(cx: number, cy: number, r: number, angleDeg: number) {
   const angleRad = (angleDeg * Math.PI) / 180;
-  return {
-    x: cx + r * Math.cos(angleRad),
-    y: cy - r * Math.sin(angleRad),
-  };
+  return { x: cx + r * Math.cos(angleRad), y: cy - r * Math.sin(angleRad) };
 }
 
-function describeArc(
-  cx: number,
-  cy: number,
-  r: number,
-  startValue: number,
-  endValue: number
-): string {
+function describeArc(cx: number, cy: number, r: number, startValue: number, endValue: number): string {
   const startAngle = valueToAngle(startValue);
   const endAngle = valueToAngle(endValue);
   const start = polarToCartesian(cx, cy, r, startAngle);
@@ -63,13 +49,7 @@ function describeArc(
   return `M ${start.x} ${start.y} A ${r} ${r} 0 ${largeArcFlag} 1 ${end.x} ${end.y}`;
 }
 
-export default function OverallProgress({
-  total,
-  completed,
-  delayed,
-  ongoing,
-  onFilterChange, // NEW
-}: OverallProgressProps) {
+export default function OverallProgress({ total, completed, delayed, ongoing, onFilterChange }: OverallProgressProps) {
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -80,7 +60,6 @@ export default function OverallProgress({
         setIsDropdownOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
@@ -92,17 +71,12 @@ export default function OverallProgress({
 
   const filledArcs = useMemo(() => {
     const arcs: { d: string; color: string }[] = [];
-
     for (const seg of SEGMENTS) {
-      if (seg.color === "#D1D5DB") continue;
+      if (seg.color === "#3D3D3D") continue;
       if (percentage <= seg.min) break;
       const end = Math.min(percentage, seg.max);
-      arcs.push({
-        d: describeArc(CX, CY, RADIUS, seg.min, end),
-        color: seg.color,
-      });
+      arcs.push({ d: describeArc(CX, CY, RADIUS, seg.min, end), color: seg.color });
     }
-
     return arcs;
   }, [percentage]);
 
@@ -129,74 +103,54 @@ export default function OverallProgress({
       const angle = valueToAngle(value);
       const labelR = RADIUS + STROKE_WIDTH / 2 + 20;
       const pos = polarToCartesian(CX, CY, labelR, angle);
-
       let anchor: string = "middle";
       if (value === 0) anchor = "end";
       if (value === 100) anchor = "start";
-
       return { value, pos, anchor };
     });
   }, []);
 
   const stats = [
-    { value: total, label: "Total projects", color: "text-gray-900" },
-    { value: completed, label: "Completed", color: "text-green-700" },
-    { value: delayed, label: "Delayed", color: "text-red-600" },
-    { value: ongoing, label: "Ongoing", color: "text-yellow-700" },
+    { value: total, label: "Total projects", color: "text-slate-900 dark:text-white" },
+    { value: completed, label: "Completed", color: "text-success-600 dark:text-success-400" },
+    { value: delayed, label: "Delayed", color: "text-danger-600 dark:text-danger-400" },
+    { value: ongoing, label: "Ongoing", color: "text-orange-600 dark:text-orange-400" },
   ];
 
   const handleFilterChange = (value: string) => {
     setSelectedFilter(value);
     setIsDropdownOpen(false);
-    
-    // Call parent's callback to trigger data filtering
-    if (onFilterChange) {
-      onFilterChange(value);
-    }
+    if (onFilterChange) onFilterChange(value);
   };
 
-  const selectedOption = FILTER_OPTIONS.find(opt => opt.value === selectedFilter);
+  const selectedOption = FILTER_OPTIONS.find((opt) => opt.value === selectedFilter);
 
   return (
-    <div className="]  rounded-2xl bg-[#F5F0EB] p-6 w-full h-full">
+    <div className="glass-card rounded-2xl p-6 w-full h-full" style={{ fontFamily: "'DM Sans', sans-serif" }}>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-bold text-gray-900">Overall Progress</h2>
-        
+        <h2 className="text-lg font-bold text-slate-900 dark:text-white">Overall Progress</h2>
+
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+            className="flex items-center gap-1.5 rounded-lg border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 px-3 py-1.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-white/80 dark:hover:bg-white/10 transition-colors"
           >
             {selectedOption?.label}
-            <svg
-              width="10"
-              height="6"
-              viewBox="0 0 10 6"
-              fill="none"
-              className={`mt-0.5 transition-transform duration-200 ${
-                isDropdownOpen ? "rotate-180" : ""
-              }`}
-            >
-              <path
-                d="M1 1L5 5L9 1"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
+            <svg width="10" height="6" viewBox="0 0 10 6" fill="none" className={`mt-0.5 transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`}>
+              <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
 
           {isDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10 animate-in fade-in slide-in-from-top-2 duration-200">
+            <div className="glass-panel absolute right-0 mt-2 w-40 rounded-lg py-1 z-10 animate-in fade-in slide-in-from-top-2 duration-200">
               {FILTER_OPTIONS.map((option) => (
                 <button
                   key={option.value}
                   onClick={() => handleFilterChange(option.value)}
                   className={`w-full text-left px-4 py-2 text-sm transition-colors ${
                     selectedFilter === option.value
-                      ? "bg-gray-100 text-gray-900 font-medium"
-                      : "text-gray-600 hover:bg-gray-50"
+                      ? "bg-orange-500/10 text-orange-700 dark:text-orange-400 font-medium"
+                      : "text-slate-600 dark:text-slate-300 hover:bg-black/5 dark:hover:bg-white/5"
                   }`}
                 >
                   {option.label}
@@ -207,85 +161,39 @@ export default function OverallProgress({
         </div>
       </div>
 
-      {/* Rest of component remains the same */}
       <svg viewBox="0 0 260 165" className="mx-auto w-full">
         {unfilledArc && (
-          <path
-            d={unfilledArc}
-            fill="none"
-            stroke="#D1D5DB"
-            strokeWidth={STROKE_WIDTH}
-            strokeLinecap="butt"
-          />
+          <path d={unfilledArc} fill="none" stroke="#D1D5DB" strokeWidth={STROKE_WIDTH} strokeLinecap="butt" className="dark:opacity-20" />
         )}
 
         {filledArcs.map((arc, i) => (
-          <path
-            key={i}
-            d={arc.d}
-            fill="none"
-            stroke={arc.color}
-            strokeWidth={STROKE_WIDTH}
-            strokeLinecap="butt"
-          />
+          <path key={i} d={arc.d} fill="none" stroke={arc.color} strokeWidth={STROKE_WIDTH} strokeLinecap="butt" />
         ))}
 
         {ticks.map((tick, i) => (
-          <line
-            key={i}
-            x1={tick.p1.x}
-            y1={tick.p1.y}
-            x2={tick.p2.x}
-            y2={tick.p2.y}
-            stroke="#9CA3AF"
-            strokeWidth={tick.isMajor ? 1.5 : 0.8}
-          />
+          <line key={i} x1={tick.p1.x} y1={tick.p1.y} x2={tick.p2.x} y2={tick.p2.y} stroke="#757575" strokeWidth={tick.isMajor ? 1.5 : 0.8} />
         ))}
 
         {labels.map((label) => (
-          <text
-            key={label.value}
-            x={label.pos.x}
-            y={label.pos.y}
-            textAnchor={label.anchor}
-            dominantBaseline="middle"
-            fill="#6B7280"
-            fontSize="11"
-            fontWeight="500"
-          >
+          <text key={label.value} x={label.pos.x} y={label.pos.y} textAnchor={label.anchor} dominantBaseline="middle" fill="#757575" fontSize="11" fontWeight="500">
             {label.value}
           </text>
         ))}
 
-        <text
-          x={CX}
-          y={CY - 32}
-          textAnchor="middle"
-          dominantBaseline="middle"
-          fill="#1F2937"
-          fontSize="36"
-          fontWeight="700"
-        >
+        <text x={CX} y={CY - 32} textAnchor="middle" dominantBaseline="middle" fill="#ED6214" fontSize="36" fontWeight="700">
           {percentage}%
         </text>
 
-        <text
-          x={CX}
-          y={CY - 4}
-          textAnchor="middle"
-          dominantBaseline="middle"
-          fill="#9CA3AF"
-          fontSize="13"
-        >
+        <text x={CX} y={CY - 4} textAnchor="middle" dominantBaseline="middle" fill="#757575" fontSize="13">
           Completed
         </text>
       </svg>
 
-      <div className="mt-4 grid grid-cols-4 gap-4 border-t border-gray-300/50 pt-4">
+      <div className="mt-4 grid grid-cols-4 gap-4 border-t border-black/10 dark:border-white/10 pt-4">
         {stats.map((stat) => (
           <div key={stat.label}>
             <p className={`text-xl font-bold ${stat.color}`}>{stat.value}</p>
-            <p className="text-[10px] text-gray-500">{stat.label}</p>
+            <p className="text-[10px] text-slate-500 dark:text-slate-500">{stat.label}</p>
           </div>
         ))}
       </div>

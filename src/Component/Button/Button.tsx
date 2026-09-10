@@ -1,5 +1,6 @@
 import React from "react";
 import clsx from "clsx";
+import { twMerge } from "tailwind-merge";
 
 type ButtonProps = {
   title?: string | React.ReactElement;
@@ -24,16 +25,18 @@ const Button: React.FC<ButtonProps> = ({
   iconClassName,
   onClick,
 }) => {
-  const baseClasses = clsx(
-    "min-h-[2.5rem] px-3 py-2 rounded-lg font-bold text-sm transition-all duration-300 ease-in flex items-center whitespace-nowrap text-[12px]",
-    "bg-primary text-white dark:darkBgSecondary",
-    {
-      "opacity-30 cursor-not-allowed": disabled,
-      "cursor-pointer": !disabled,
-      "justify-between": endIcon,
-      "justify-center": !endIcon,
-    },
-    className
+  const baseClasses = twMerge(
+    clsx(
+      "min-h-[2.5rem] px-3 py-2 rounded-lg font-bold text-sm transition-all duration-300 ease-in flex items-center whitespace-nowrap text-[12px]",
+      "bg-orange-500 text-white shadow-sm shadow-orange-500/20 hover:bg-orange-600 dark:bg-orange-500 dark:hover:bg-orange-600",
+      {
+        "opacity-30 cursor-not-allowed": disabled,
+        "cursor-pointer": !disabled,
+        "justify-between": endIcon,
+        "justify-center": !endIcon,
+      },
+      className
+    )
   );
 
   return (

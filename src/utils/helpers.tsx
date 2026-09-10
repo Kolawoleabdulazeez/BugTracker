@@ -1,55 +1,58 @@
 import { GroupMessages } from "@/services/chat/chat.api";
+import { useEffect, useState } from "react";
 
+// ── Bug priority/severity/status (4-level: low/medium/high/critical) ──
 export const PRIORITY_COLORS: Record<string, string> = {
-  low: "bg-blue-50 text-blue-700 border-blue-200",
-  medium: "bg-yellow-50 text-yellow-700 border-yellow-200",
-  high: "bg-orange-50 text-orange-700 border-orange-200",
-  critical: "bg-red-50 text-red-700 border-red-200",
+  low: "bg-success-50 text-success-700 border-success-200 dark:bg-success-500/10 dark:text-success-300 dark:border-success-500/20",
+  medium: "bg-info-50 text-info-700 border-info-200 dark:bg-info-500/10 dark:text-info-300 dark:border-info-500/20",
+  high: "bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-500/10 dark:text-orange-300 dark:border-orange-500/20",
+  critical: "bg-danger-50 text-danger-700 border-danger-200 dark:bg-danger-500/10 dark:text-danger-300 dark:border-danger-500/20",
 };
 
 export const SEVERITY_COLORS: Record<string, string> = {
-  low: "bg-slate-100 text-slate-600 border-slate-200",
-  medium: "bg-yellow-50 text-yellow-700 border-yellow-200",
-  high: "bg-orange-50 text-orange-700 border-orange-200",
-  critical: "bg-red-50 text-red-700 border-red-200",
+  low: "bg-secondary-100 text-secondary-600 border-secondary-200 dark:bg-white/5 dark:text-secondary-300 dark:border-white/10",
+  medium: "bg-info-50 text-info-700 border-info-200 dark:bg-info-500/10 dark:text-info-300 dark:border-info-500/20",
+  high: "bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-500/10 dark:text-orange-300 dark:border-orange-500/20",
+  critical: "bg-danger-50 text-danger-700 border-danger-200 dark:bg-danger-500/10 dark:text-danger-300 dark:border-danger-500/20",
 };
 
 export const STATUS_COLORS: Record<string, string> = {
-  open: "bg-blue-50 text-blue-700",
-  inprogress: "bg-purple-50 text-purple-700",
-  in_progress: "bg-purple-50 text-purple-700",
-  resolved: "bg-emerald-50 text-emerald-700",
-  closed: "bg-slate-100 text-slate-500",
+  open: "bg-danger-50 text-danger-700 dark:bg-danger-500/10 dark:text-danger-300",
+  inprogress: "bg-orange-50 text-orange-700 dark:bg-orange-500/10 dark:text-orange-300",
+  in_progress: "bg-orange-50 text-orange-700 dark:bg-orange-500/10 dark:text-orange-300",
+  resolved: "bg-success-50 text-success-700 dark:bg-success-500/10 dark:text-success-300",
+  closed: "bg-secondary-100 text-secondary-500 dark:bg-white/5 dark:text-secondary-400",
 };
 
+// ── Project status (active/completed/archived) — used by cards.tsx ──
 export const getProjectStatusStyles = (status: string) => {
   switch (status.toLowerCase()) {
     case "active":
       return {
-        dot: "bg-green-500",
-        text: "text-green-700",
-        bg: "bg-green-100",
+        dot: "bg-success-500",
+        text: "text-success-700 dark:text-success-300",
+        bg: "bg-success-100 dark:bg-success-500/15",
       };
 
     case "completed":
       return {
-        dot: "bg-blue-500",
-        text: "text-blue-700",
-        bg: "bg-blue-100",
+        dot: "bg-info-500",
+        text: "text-info-700 dark:text-info-300",
+        bg: "bg-info-100 dark:bg-info-500/15",
       };
 
     case "archived":
       return {
-        dot: "bg-gray-500",
-        text: "text-gray-700",
-        bg: "bg-gray-100",
+        dot: "bg-secondary-400",
+        text: "text-secondary-700 dark:text-secondary-300",
+        bg: "bg-secondary-100 dark:bg-white/5",
       };
 
     default:
       return {
-        dot: "bg-slate-400",
-        text: "text-slate-700",
-        bg: "bg-slate-100",
+        dot: "bg-slate-400 dark:bg-secondary-500",
+        text: "text-slate-700 dark:text-secondary-300",
+        bg: "bg-slate-100 dark:bg-white/5",
       };
   }
 };
@@ -62,30 +65,31 @@ export function getInitials(name?: string) {
     : parts[0][0].toUpperCase();
 }
 
+// ── Project priority (low/medium/high) — used by cards.tsx ──
 export const getPriorityStyles = (priority: string) => {
   switch (priority.toLowerCase()) {
     case "low":
       return {
-        bg: "bg-green-100 dark:bg-green-500/15",
-        text: "text-green-700 dark:text-green-300",
+        bg: "bg-success-100 dark:bg-success-500/15",
+        text: "text-success-700 dark:text-success-300",
       };
 
     case "medium":
       return {
-        bg: "bg-yellow-100 dark:bg-yellow-500/15",
-        text: "text-yellow-700 dark:text-yellow-300",
+        bg: "bg-orange-100 dark:bg-orange-500/15",
+        text: "text-orange-700 dark:text-orange-300",
       };
 
     case "high":
       return {
-        bg: "bg-red-100 dark:bg-red-500/15",
-        text: "text-red-700 dark:text-red-300",
+        bg: "bg-danger-100 dark:bg-danger-500/15",
+        text: "text-danger-700 dark:text-danger-300",
       };
 
     default:
       return {
-        bg: "bg-gray-100 dark:bg-white/10",
-        text: "text-gray-700 dark:text-gray-300",
+        bg: "bg-slate-100 dark:bg-white/10",
+        text: "text-slate-700 dark:text-gray-300",
       };
   }
 };
@@ -100,16 +104,16 @@ export function formatDate(dateStr: string) {
   });
 }
 
-
+// ── Avatar palette — now built from your actual theme scales ──
 export const AVATAR_COLORS = [
-  "bg-blue-500",
-  "bg-emerald-500",
-  "bg-violet-500",
-  "bg-amber-500",
-  "bg-rose-500",
-  "bg-cyan-500",
-  "bg-pink-500",
-  "bg-indigo-500",
+  "bg-orange-500",
+  "bg-success-500",
+  "bg-info-500",
+  "bg-danger-500",
+  "bg-orange-700",
+  "bg-info-700",
+  "bg-success-700",
+  "bg-danger-400",
 ];
 export function getAvatarColor(str: string): string {
   let hash = 0;
@@ -117,9 +121,6 @@ export function getAvatarColor(str: string): string {
   return AVATAR_COLORS[hash % AVATAR_COLORS.length];
 }
 
-
-
-// Human-readable relative time
 export function relativeTime(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
   const mins = Math.floor(diff / 60000);
@@ -139,17 +140,15 @@ export function formatMessageTime(dateStr: string): string {
   });
 }
 
-// ─── Date divider ─────────────────────────────────────────────────────────────
 export const DateDivider = ({ label }: { label: string }) => (
   <div className="flex items-center gap-3 my-4">
     <div className="flex-1 h-px bg-slate-100 dark:bg-white/5" />
-    <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-300 dark:text-white/20 px-1">
+    <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-300 dark:text-secondary-600 px-1">
       {label}
     </span>
     <div className="flex-1 h-px bg-slate-100 dark:bg-white/5" />
   </div>
 );
-
 
 export function groupByDate(messages: GroupMessages[]): { date: string; messages: GroupMessages[] }[] {
   const groups: Record<string, GroupMessages[]> = {};
@@ -164,7 +163,6 @@ export function groupByDate(messages: GroupMessages[]): { date: string; messages
   });
   return Object.entries(groups).map(([date, messages]) => ({ date, messages }));
 }
-
 
 export type ChatMessageUI = {
   id: string;
@@ -185,3 +183,18 @@ export const mapChatMessageToUI = (msg: any): ChatMessageUI => ({
   time: formatMessageTime(msg.sentAt),
   isMine: !!msg.isMine,
 });
+
+export function AnimatedNumber({ target }: { target: number }) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    let start = 0;
+    const step = Math.ceil(target / 40);
+    const timer = setInterval(() => {
+      start += step;
+      if (start >= target) { setCount(target); clearInterval(timer); }
+      else setCount(start);
+    }, 80);
+    return () => clearInterval(timer);
+  }, [target]);
+  return <>{count}</>;
+}

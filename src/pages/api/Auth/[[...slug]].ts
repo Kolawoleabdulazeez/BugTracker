@@ -25,15 +25,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       headers: { "Content-Type": "application/json" },
     });
 
-    const payload = response.data;
+    const responseData = response.data;
+
+    console.log(responseData, "this is response data")
 
 
-
-
-          if (payload) {
+          if (responseData.data) {
         res.setHeader(
           "Set-Cookie",
-          cookie.serialize(Store.ACCESS_TOKEN, payload.data.accessToken, {
+          cookie.serialize(Store.ACCESS_TOKEN, responseData.data.accessToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
@@ -44,8 +44,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
     // ✅ normalize backend business errors (even if backend returns 201)
-    const code = String(payload?.responseCode ?? "");
-    const message = payload?.responseMessage || "Request failed";
+    const code = String(responseData?.responseCode ?? "");
+    const message = responseData?.responseMessage || "Request failed";
 
     if (code && code !== "00") {
       // 409 fits "already exists", but 400 is also okay
@@ -54,12 +54,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(httpStatus).json({
         message,
         responseCode: code,
-        details: payload,
+        details: responseData,
       });
     }
 
     // ✅ success
-    return res.status(200).json(payload);
+    return res.status(200).json(responseData);
   } catch (error: any) {
     return res.status(error.response?.status || 500).json({
       message: error.response?.data?.message || error.message || "Server error",
