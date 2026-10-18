@@ -48,7 +48,7 @@ const AIModal = ({ onClose, onAdd, projectId, projectOverview }: AIModalProps) =
         projectId,
         payload: {
           projectOverview,
-          isDocUpload: true,
+          isDocUpload: false,
           fileUpload: { base64File, fileType: file.type },
         },
       });

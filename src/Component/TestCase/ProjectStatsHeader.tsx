@@ -1,7 +1,7 @@
 interface ProjectStatsHeaderProps {
   projectName?: string;
   isLoading: boolean;
-  stats: { total: number; passed: number; failed: number; pending: number };
+  stats: { total: number; active: number; draft: number; deprecated: number };
 }
 
 export const ProjectStatsHeader = ({ projectName, isLoading, stats }: ProjectStatsHeaderProps) => {
@@ -11,9 +11,9 @@ export const ProjectStatsHeader = ({ projectName, isLoading, stats }: ProjectSta
 
   const items = [
     ["TOTAL", stats.total, "text-slate-500 dark:text-secondary-400"],
-    ["PASSED", stats.passed, "text-success-600 dark:text-success-400"],
-    ["FAILED", stats.failed, "text-danger-600 dark:text-danger-400"],
-    ["PENDING", stats.pending, "text-orange-600 dark:text-orange-400"],
+    ["ACTIVE", stats.active, "text-emerald-600 dark:text-emerald-400"],
+    ["DRAFT", stats.draft, "text-slate-500 dark:text-secondary-400"],
+    ["DEPRECATED", stats.deprecated, "text-amber-600 dark:text-amber-400"],
   ] as const;
 
   return (

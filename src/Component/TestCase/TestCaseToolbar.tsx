@@ -1,12 +1,17 @@
-import { PRIORITY_CONFIG, PRIORITY_FILTERS, STATUS_CONFIG, STATUS_FILTERS } from "@/utils";
-import { Priority, TestStatus } from "@/utils/types";
+import {
+  LIFECYCLE_CONFIG,
+  LIFECYCLE_FILTERS,
+  PRIORITY_CONFIG,
+  PRIORITY_FILTERS,
+} from "@/utils";
+import { Priority, TestCaseLifecycleStatus } from "@/utils/types";
 import { Search } from "lucide-react";
 
 interface TestCaseToolbarProps {
   search: string;
   onSearchChange: (v: string) => void;
-  filterStatus: TestStatus | null;
-  onFilterStatusChange: (v: TestStatus | null) => void;
+  filterStatus: TestCaseLifecycleStatus | null;
+  onFilterStatusChange: (v: TestCaseLifecycleStatus | null) => void;
   filterPriority: Priority | null;
   onFilterPriorityChange: (v: Priority | null) => void;
 }
@@ -16,12 +21,11 @@ export const TestCaseToolbar = ({
   filterStatus, onFilterStatusChange,
   filterPriority, onFilterPriorityChange,
 }: TestCaseToolbarProps) => {
-  const statusClass = (s: TestStatus | null) => {
+  const statusClass = (s: TestCaseLifecycleStatus | null) => {
     const active = filterStatus === s;
     if (!active) return "bg-transparent border-slate-200 dark:border-white/[0.05] text-slate-500 dark:text-secondary-500";
     if (s === null) return "bg-orange-500/10 border-orange-500/20 text-orange-600 dark:text-orange-400";
-    const c = STATUS_CONFIG[s];
-    return `${c.chipBg} ${c.chipBorder} ${c.chipText}`;
+    return LIFECYCLE_CONFIG[s].chip;
   };
 
   const priorityClass = (p: Priority | null) => {
@@ -45,13 +49,13 @@ export const TestCaseToolbar = ({
       </div>
 
       <div className="flex gap-1 overflow-x-auto pb-0.5">
-        {STATUS_FILTERS.map(s => (
+        {LIFECYCLE_FILTERS.map(s => (
           <button
             key={s ?? "all"}
             onClick={() => onFilterStatusChange(s)}
             className={`flex-shrink-0 px-2.5 py-1.5 rounded-[7px] border cursor-pointer text-[9px] font-bold tracking-[0.07em] uppercase transition-all duration-100 ${statusClass(s)}`}
           >
-            {s === null ? "ALL" : STATUS_CONFIG[s].label}
+            {s === null ? "ALL" : LIFECYCLE_CONFIG[s].label}
           </button>
         ))}
       </div>

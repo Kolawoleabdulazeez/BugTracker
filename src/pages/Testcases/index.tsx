@@ -1,9 +1,15 @@
 import PageLayout from "@/Component/Layout/PageLayout";
 import { useState, useMemo } from "react";
 import { Plus, Sparkles } from "lucide-react";
-import { Priority, TestCaseSummary, TestStatus } from "@/utils/types";
+import { Priority, TestCaseSummary, TestCaseLifecycleStatus } from "@/utils/types";
 import { useGetAllProject } from "@/services/project/useProject";
-import { useCreateTestcase, useDeleteTestcase, useGetTestcases } from "@/services/testcases/useTestcases";
+import {
+  useCreateTestcase,
+  useCreateTestRun,
+  useDeleteTestcase,
+  useGetTestcases,
+  useUpdateTestcaseStatus,
+} from "@/services/testcases/useTestcases";
 import Button from "@/Component/Button/Button";
 import { ProjectRail } from "../../Component/TestCase/ProjectRail";
 import { ProjectStatsHeader } from "../../Component/TestCase/ProjectStatsHeader";
@@ -13,58 +19,77 @@ import AIModal from "./Components/AIModal";
 import { ManualModal } from "../../Component/TestCase/ManualModal";
 import { ProjectRailSkeleton } from "../../Component/TestCase/ProjectRailSkeleton";
 import { TestCaseDetailModal } from "../../Component/TestCase/TestCaseDetailModal";
+import { LogRunModal } from "../../Component/TestCase/LogRunModal";
 
 const TestCases = () => {
   const [projectId, setProjectId] = useState<string | null>(null);
   const [modal, setModal] = useState<null | "ai" | "manual">(null);
   const [search, setSearch] = useState("");
-  const [filterStatus, setFilterStatus] = useState<TestStatus | null>(null);
+  const [filterStatus, setFilterStatus] = useState<TestCaseLifecycleStatus | null>(null);
   const [filterPriority, setFilterPriority] = useState<Priority | null>(null);
   const [railOpen, setRailOpen] = useState(false);
   const [openTestCaseId, setOpenTestCaseId] = useState<string | null>(null);
+  const [runTarget, setRunTarget] = useState<TestCaseSummary | null>(null);
 
   const { data: projectData, isLoading: projectsLoading } = useGetAllProject();
   const projects = projectData?.data ?? [];
   const proj = projects.find(p => p.id === projectId) ?? projects[0] ?? null;
   const activeProjectId = projectId ?? proj?.id ?? "";
 
-  const { data: casesData } = useGetTestcases(activeProjectId);
- const cases = useMemo<TestCaseSummary[]>(
-  () => casesData?.testCases ?? [],
-  [casesData?.testCases]
-);
+  const {
+    data: casesData,
+    isLoading: casesLoading,
+    isFetching: casesFetching,
+  } = useGetTestcases(activeProjectId);
 
-const { mutate: createTestcase, isPending: isSavingTestcase } =
-  useCreateTestcase(() => setModal(null));
+  const listLoading = projectsLoading || casesLoading;
 
-const { mutate: deleteTestcase } = useDeleteTestcase();
+  const cases = useMemo<TestCaseSummary[]>(
+    () => casesData?.testCases ?? [],
+    [casesData?.testCases]
+  );
 
-const filtered = useMemo(
-  () =>
-    cases.filter((tc) => {
-      if (filterStatus && tc.status !== filterStatus) return false;
+  const { mutate: createTestcase, isPending: isSavingTestcase } =
+    useCreateTestcase(() => setModal(null));
 
-      if (filterPriority && tc.priority !== filterPriority) return false;
+  const { mutate: deleteTestcase } = useDeleteTestcase();
 
-      if (
-        search &&
-        !tc.title.toLowerCase().includes(search.toLowerCase()) &&
-        !tc.caseLabel.toLowerCase().includes(search.toLowerCase())
-      ) {
-        return false;
-      }
+  const { mutate: updateStatus, variables: statusVars, isPending: isUpdatingStatus } =
+    useUpdateTestcaseStatus();
 
-      return true;
+  const { mutate: createRun, isPending: isLoggingRun } = useCreateTestRun(
+    () => setRunTarget(null)
+  );
+
+  const updatingStatusId = isUpdatingStatus ? statusVars?.testCaseId ?? null : null;
+
+  const filtered = useMemo(
+    () =>
+      cases.filter((tc) => {
+        if (filterStatus && tc.status !== filterStatus) return false;
+        if (filterPriority && tc.priority !== filterPriority) return false;
+        if (
+          search &&
+          !tc.title.toLowerCase().includes(search.toLowerCase()) &&
+          !tc.caseLabel.toLowerCase().includes(search.toLowerCase())
+        ) {
+          return false;
+        }
+        return true;
+      }),
+    [cases, filterStatus, filterPriority, search]
+  );
+
+  const stats = useMemo(
+    () => ({
+      total: cases.length,
+      active: cases.filter((t) => t.status === "active").length,
+      draft: cases.filter((t) => t.status === "draft").length,
+      deprecated: cases.filter((t) => t.status === "deprecated").length,
     }),
-  [cases, filterStatus, filterPriority, search]
-);
+    [cases]
+  );
 
-const stats = {
-  total: cases.length,
-  passed: cases.filter((t) => t.status === TestStatus.Passed).length,
-  failed: cases.filter((t) => t.status === TestStatus.Failed).length,
-  pending: cases.filter((t) => t.status === TestStatus.Pending).length,
-};
   return (
     <div>
       <PageLayout title="Test Cases" showSearch={false}>
@@ -105,7 +130,11 @@ const stats = {
           </div>
 
           <div className="flex-1 min-w-0 flex flex-col gap-4">
-            <ProjectStatsHeader projectName={proj?.name} isLoading={projectsLoading} stats={stats} />
+            <ProjectStatsHeader
+              projectName={proj?.name}
+              isLoading={listLoading}
+              stats={stats}
+            />
 
             <TestCaseToolbar
               search={search} onSearchChange={setSearch}
@@ -116,11 +145,18 @@ const stats = {
             <TestCaseListPanel
               cases={cases}
               filtered={filtered}
+              isLoading={listLoading}
+              isRefreshing={casesFetching && !casesLoading}
               projectName={proj?.name}
               onAI={() => setModal("ai")}
               onManual={() => setModal("manual")}
               onDelete={id => deleteTestcase({ projectId: activeProjectId, testCaseId: id })}
               onOpen={id => setOpenTestCaseId(id)}
+              onRun={tc => setRunTarget(tc)}
+              onStatusChange={(id, status) =>
+                updateStatus({ projectId: activeProjectId, testCaseId: id, payload: { status } })
+              }
+              updatingStatusId={updatingStatusId}
             />
           </div>
         </div>
@@ -147,6 +183,22 @@ const stats = {
           projectId={activeProjectId}
           testCaseId={openTestCaseId}
           onClose={() => setOpenTestCaseId(null)}
+        />
+      )}
+
+      {runTarget && (
+        <LogRunModal
+          testCaseLabel={runTarget.caseLabel}
+          testCaseTitle={runTarget.title}
+          onClose={() => setRunTarget(null)}
+          isSaving={isLoggingRun}
+          onSave={payload =>
+            createRun({
+              projectId: activeProjectId,
+              testCaseId: runTarget.id,
+              payload,
+            })
+          }
         />
       )}
     </div>

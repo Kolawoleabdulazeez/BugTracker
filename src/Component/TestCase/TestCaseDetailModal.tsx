@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useEffect, useState } from "react";
-import { X, Pencil, Loader2, Plus, Trash2 } from "lucide-react";
-import { useGetTestcaseById, useUpdateTestcase } from "@/services/testcases/useTestcases";
+import { X, Pencil, Loader2, Plus, Trash2, Play } from "lucide-react";
+import { useCreateTestRun, useGetTestcaseById, useUpdateTestcase } from "@/services/testcases/useTestcases";
 import { Priority, Step } from "@/utils/types";
 import { PRIORITY_CONFIG } from "@/utils";
 import { CreateTestcaseParam } from "@/services/testcases/testcases.api";
 import { Chip } from "./Chip";
 import { PriBadge } from "./PriBadge";
+import { TestRunHistory } from "./TestRunHistory";
+import { LogRunModal } from "./LogRunModal";
 
 const inputCls =
   "w-full rounded-lg border border-slate-200 dark:border-white/[0.08] bg-slate-50 dark:bg-white/[0.03] px-3.5 py-2.5 text-[13px] text-slate-800 dark:text-[#e2e8f0] outline-none placeholder:text-slate-400 dark:placeholder:text-[#334155] focus:border-orange-500/50 transition-colors disabled:opacity-50";
@@ -26,6 +28,13 @@ export const TestCaseDetailModal = ({ projectId, testCaseId, onClose, startInEdi
   const { mutate: updateTestcase, isPending: isSaving } = useUpdateTestcase(() => setMode("view"));
 
   const [mode, setMode] = useState<"view" | "edit">(startInEditMode ? "edit" : "view");
+  const [tab, setTab] = useState<"details" | "runs">("details");
+  const [runOpen, setRunOpen] = useState(false);
+
+  const { mutate: createRun, isPending: isLoggingRun } = useCreateTestRun(() => {
+    setRunOpen(false);
+    setTab("runs");
+  });
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -35,6 +44,8 @@ export const TestCaseDetailModal = ({ projectId, testCaseId, onClose, startInEdi
   const [assignedToId, setAssignedToId] = useState("");
   const [steps, setSteps] = useState<Step[]>([{ ...emptyStep }]);
   const [tags, setTags] = useState<string[]>([]);
+
+  const isActive = String(tc?.status ?? "").toLowerCase() === "active";
 
   useEffect(() => {
     if (tc && mode === "view") {
@@ -110,6 +121,27 @@ export const TestCaseDetailModal = ({ projectId, testCaseId, onClose, startInEdi
           </div>
         </div>
 
+        {mode === "view" && tc && (
+          <div className="flex gap-1 border-b border-slate-100 dark:border-white/[0.06] px-6">
+            {([
+              ["details", "DETAILS"],
+              ["runs", "RUNS"],
+            ] as const).map(([key, label]) => (
+              <button
+                key={key}
+                onClick={() => setTab(key)}
+                className={`cursor-pointer bg-transparent border-0 border-b-2 px-3 py-2.5 text-[10px] font-bold tracking-[0.1em] transition-colors ${
+                  tab === key
+                    ? "border-orange-500 text-orange-600 dark:text-orange-400"
+                    : "border-transparent text-slate-400 dark:text-[#475569] hover:text-slate-600 dark:hover:text-[#94a3b8]"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
+
         {isLoading ? (
           <div className="flex items-center justify-center py-16">
             <Loader2 size={20} className="animate-spin text-slate-400 dark:text-slate-600" />
@@ -117,6 +149,24 @@ export const TestCaseDetailModal = ({ projectId, testCaseId, onClose, startInEdi
         ) : isError || !tc ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <p className="text-[13px] text-slate-400 dark:text-slate-500">Could not load this test case.</p>
+          </div>
+        ) : mode === "view" && tab === "runs" ? (
+          <div className="max-h-[65vh] overflow-y-auto">
+            <div className="flex items-center justify-between gap-3 px-6 py-3 border-b border-slate-100 dark:border-white/[0.04]">
+              <p className="m-0 text-[11px] text-slate-400 dark:text-[#475569]">
+                {isActive
+                  ? "Execution history for this test case"
+                  : "Set this test case to active to log runs"}
+              </p>
+              <button
+                onClick={() => setRunOpen(true)}
+                disabled={!isActive}
+                className="flex flex-shrink-0 items-center gap-1.5 cursor-pointer rounded-lg border border-orange-500/40 bg-orange-500 px-3 py-1.5 text-[11px] font-bold text-white hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <Play size={11} /> Log run
+              </button>
+            </div>
+            <TestRunHistory projectId={projectId} testCaseId={testCaseId} />
           </div>
         ) : mode === "view" ? (
           <div className="flex max-h-[65vh] flex-col gap-4 overflow-y-auto px-6 py-6">
@@ -244,6 +294,16 @@ export const TestCaseDetailModal = ({ projectId, testCaseId, onClose, startInEdi
           </>
         )}
       </div>
+
+      {runOpen && tc && (
+        <LogRunModal
+          testCaseLabel={(tc as any).caseLabel ?? ""}
+          testCaseTitle={tc.title}
+          onClose={() => setRunOpen(false)}
+          isSaving={isLoggingRun}
+          onSave={payload => createRun({ projectId, testCaseId, payload })}
+        />
+      )}
     </div>
   );
 };

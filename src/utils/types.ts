@@ -34,11 +34,12 @@ export interface TestCaseSummary {
   caseLabel: string;        
    title: string;
   priority: Priority;
-  status: TestStatus;
   stepCount: number;
   assignedTo: AssignedTo | null;
   tags: string[];
   createdAt: string;
+    status: TestCaseLifecycleStatus;
+
 }
 export interface AssignedTo {
   id: string;
@@ -84,3 +85,5 @@ export interface TestCase {
   createdAt: string;
   updatedAt: string;
 }
+
+export type TestCaseLifecycleStatus = "draft" | "active" | "deprecated";

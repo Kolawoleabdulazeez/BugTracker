@@ -10,6 +10,7 @@ import {
   FlaskConical,
   MessageSquare,
   type LucideIcon,
+  UsersRound,
 } from "lucide-react";
 
 import TestOrbitLogo from "../../public/UpdatedTestOrbitLogo.png";
@@ -32,6 +33,8 @@ const sections: Section[] = [
   { label: "Bugs", route: "/Bugs", icon: Bug },
   { label: "Testcases", route: "/Testcases", icon: FlaskConical },
   { label: "Chatroom", route: "/Chatroom", icon: MessageSquare },
+    { label: "Talent", route: "/Talent", icon: UsersRound },
+
 ];
 
 const Navbar = ({ onClose }: NavbarProps) => {

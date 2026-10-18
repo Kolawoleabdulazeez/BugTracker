@@ -1,5 +1,5 @@
 import { Activity } from "../services/project/project.api";
-import { Priority, TestStatus } from "./types";
+import { Priority, TestCaseLifecycleStatus, TestStatus } from "./types";
 
 export const EMAIL_VALIDATION = (value: string) => {
   if (!value) return "Email is required";
@@ -211,3 +211,156 @@ export const PRIORITY_CONFIG: Record<Priority, PriorityConfig> = {
 
 export const STATUS_FILTERS = [null, TestStatus.Passed, TestStatus.Failed, TestStatus.Pending, TestStatus.Blocked] as const;
 export const PRIORITY_FILTERS = [null, Priority.Critical, Priority.High, Priority.Medium, Priority.Low] as const;
+
+
+export const LIFECYCLE_CONFIG: Record<
+  TestCaseLifecycleStatus,
+  { label: string; barHex: string; chip: string; dot: string }
+> = {
+  draft: {
+    label: "Draft",
+    barHex: "#94a3b8",
+    chip: "text-slate-500 dark:text-secondary-400 bg-slate-500/[0.08] border-slate-500/20",
+    dot: "bg-slate-400",
+  },
+  active: {
+    label: "Active",
+    barHex: "#10b981",
+    chip: "text-emerald-600 dark:text-emerald-400 bg-emerald-500/[0.08] border-emerald-500/25",
+    dot: "bg-emerald-500",
+  },
+  deprecated: {
+    label: "Deprecated",
+    barHex: "#f59e0b",
+    chip: "text-amber-600 dark:text-amber-400 bg-amber-500/[0.08] border-amber-500/25",
+    dot: "bg-amber-500",
+  },
+};
+
+export const LIFECYCLE_FILTERS: (TestCaseLifecycleStatus | null)[] = [
+  null,
+  "draft",
+  "active",
+  "deprecated",
+];
+
+
+
+export const getLifecycleConfig = (status: unknown) =>
+  LIFECYCLE_CONFIG[String(status ?? "").toLowerCase() as TestCaseLifecycleStatus] ??
+  LIFECYCLE_CONFIG.draft;
+
+
+  export const RUN_RESULTS = ["passed", "failed", "blocked", "skipped"] as const;
+export type RunResult = (typeof RUN_RESULTS)[number];
+
+export const BUG_SEVERITIES = ["low", "medium", "high", "critical"] as const;
+export type BugSeverity = (typeof BUG_SEVERITIES)[number];
+
+export const BUG_PRIORITIES = ["low", "medium", "high", "critical"] as const;
+export type BugPriority = (typeof BUG_PRIORITIES)[number];
+
+export const RUN_RESULT_STYLE: Record<
+  RunResult,
+  { label: string; chip: string; dot: string }
+> = {
+  passed: {
+    label: "Passed",
+    chip: "text-emerald-600 dark:text-emerald-400 bg-emerald-500/[0.08] border-emerald-500/25",
+    dot: "bg-emerald-500",
+  },
+  failed: {
+    label: "Failed",
+    chip: "text-danger-600 dark:text-danger-400 bg-danger-500/[0.08] border-danger-500/25",
+    dot: "bg-danger-500",
+  },
+  blocked: {
+    label: "Blocked",
+    chip: "text-amber-600 dark:text-amber-400 bg-amber-500/[0.08] border-amber-500/25",
+    dot: "bg-amber-500",
+  },
+  skipped: {
+    label: "Skipped",
+    chip: "text-slate-500 dark:text-secondary-400 bg-slate-500/[0.08] border-slate-500/20",
+    dot: "bg-slate-400",
+  },
+};
+
+export const getRunStyle = (result: unknown) =>
+  RUN_RESULT_STYLE[String(result ?? "").toLowerCase() as RunResult] ??
+  RUN_RESULT_STYLE.skipped;
+
+
+
+  // src/utils/profile.ts
+
+// ---------- Enum values ----------
+// Taken from the Swagger descriptions for PUT /Profile and GET /Profile/jobs.
+// Note the camelCase "notLooking".
+
+export const AVAILABILITY_OPTIONS = ["open", "busy", "notLooking"] as const;
+export type AvailabilityStatus = (typeof AVAILABILITY_OPTIONS)[number];
+
+export const EMPLOYMENT_OPTIONS = ["permanent", "contract", "both"] as const;
+export type EmploymentTypePreference = (typeof EMPLOYMENT_OPTIONS)[number];
+
+export const WORK_TYPE_OPTIONS = ["remote", "onsite", "hybrid"] as const;
+export type WorkTypePreference = (typeof WORK_TYPE_OPTIONS)[number];
+
+// ---------- Display labels ----------
+
+export const AVAILABILITY_LABEL: Record<AvailabilityStatus, string> = {
+  open: "Open to work",
+  busy: "Busy",
+  notLooking: "Not looking",
+};
+
+export const EMPLOYMENT_LABEL: Record<EmploymentTypePreference, string> = {
+  permanent: "Permanent",
+  contract: "Contract",
+  both: "Permanent or contract",
+};
+
+export const WORK_TYPE_LABEL: Record<WorkTypePreference, string> = {
+  remote: "Remote",
+  onsite: "Onsite",
+  hybrid: "Hybrid",
+};
+
+// ---------- Styling ----------
+
+export const AVAILABILITY_DOT: Record<AvailabilityStatus, string> = {
+  open: "bg-emerald-500",
+  busy: "bg-amber-500",
+  notLooking: "bg-slate-400",
+};
+
+// Safe lookup for values that arrive from the API as plain strings
+export const getAvailabilityDot = (status: unknown) =>
+  AVAILABILITY_DOT[status as AvailabilityStatus] ?? "bg-slate-400";
+
+export const getAvailabilityLabel = (status: unknown) =>
+  AVAILABILITY_LABEL[status as AvailabilityStatus] ?? String(status ?? "");
+
+// ---------- Helpers ----------
+
+export const getInitials = (name?: string | null) =>
+  (name ?? "?")
+    .split(" ")
+    .filter(Boolean)
+    .map((n) => n[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+
+
+    export const parseDuration = (d?: string | null) => {
+  if (!d) return { start: "", end: "", current: false };
+  const [start = "", end = ""] = d.split(" - ");
+  const current = end.trim().toLowerCase() === "present";
+  return {
+    start: start.trim(),
+    end: current ? "" : end.trim(),
+    current,
+  };
+};

@@ -13,6 +13,16 @@ import {
   viewTestcaseById,
   updateTestcaseById,
   deleteTestcaseById,
+  UpdateTestcaseStatusParam,
+  updateTestcaseStatus,
+  getTestRuns,
+  TestRun,
+  CreateTestRunParam,
+  createTestRun,
+  deleteTestRun,
+  linkBugToRun,
+  getTestRunById,
+  GetTestRunsResponse,
 } from "./testcases.api";
 import { TestCase } from "@/utils/types";
 
@@ -125,7 +135,7 @@ export function useGenerateTestcase(onSuccessCallback?: () => void) {
   >({
     mutationFn: ({ projectId, payload }) =>
       generateTestcase(projectId, payload),
-
+    
     onSuccess: (_data, variables) => {
       toast.success("Testcases generated successfully");
 
@@ -173,5 +183,153 @@ export function useDeleteTestcase(onSuccessCallback?: () => void) {
           "Failed to delete test case"
       );
     },
+  });
+}
+
+
+export function useUpdateTestcaseStatus(onSuccessCallback?: () => void) {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    void,
+    AxiosError<ApiErrorResponse>,
+    {
+      projectId: string;
+      testCaseId: string;
+      payload: UpdateTestcaseStatusParam;
+    }
+  >({
+    mutationFn: ({ projectId, testCaseId, payload }) =>
+      updateTestcaseStatus(projectId, testCaseId, payload),
+
+    onSuccess: (_data, variables) => {
+      toast.success(`Status set to ${variables.payload.status}`);
+
+      // The prefix key covers the list; the detail key is a child of it,
+      // but we invalidate it explicitly for clarity.
+      queryClient.invalidateQueries({
+        queryKey: ["project-testcases", variables.projectId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [
+          "project-testcases",
+          variables.projectId,
+          variables.testCaseId,
+        ],
+      });
+
+      onSuccessCallback?.();
+    },
+
+    onError: (error) => {
+      toast.error(
+        error.response?.data?.details?.responseMessage ||
+          "Failed to update status"
+      );
+    },
+  });
+}
+
+const runsKey = (projectId: string, testCaseId: string) =>
+  ["test-runs", projectId, testCaseId] as const;
+
+const errMsg = (e: AxiosError<ApiErrorResponse>, fallback: string) =>
+  e.response?.data?.details?.responseMessage || fallback;
+
+export function useGetTestRuns(projectId: string, testCaseId: string) {
+  return useQuery<GetTestRunsResponse>({
+    queryKey: runsKey(projectId, testCaseId),
+    queryFn: () => getTestRuns(projectId, testCaseId),
+    enabled: !!projectId && !!testCaseId,
+  });
+}
+
+export function useGetTestRunById(
+  projectId: string,
+  testCaseId: string,
+  testRunId: string
+) {
+  return useQuery<TestRun>({
+    queryKey: [...runsKey(projectId, testCaseId), testRunId],
+    queryFn: () => getTestRunById(projectId, testCaseId, testRunId),
+    enabled: !!projectId && !!testCaseId && !!testRunId,
+  });
+}
+
+export function useCreateTestRun(onSuccessCallback?: () => void) {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    TestRun,
+    AxiosError<ApiErrorResponse>,
+    { projectId: string; testCaseId: string; payload: CreateTestRunParam }
+  >({
+    mutationFn: ({ projectId, testCaseId, payload }) =>
+      createTestRun(projectId, testCaseId, payload),
+
+    onSuccess: (_d, v) => {
+      toast.success("Test run logged");
+      queryClient.invalidateQueries({
+        queryKey: runsKey(v.projectId, v.testCaseId),
+      });
+      // In case the list endpoint starts returning the latest run result
+      queryClient.invalidateQueries({
+        queryKey: ["project-testcases", v.projectId],
+      });
+      onSuccessCallback?.();
+    },
+
+    onError: (e) => toast.error(errMsg(e, "Failed to log test run")),
+  });
+}
+
+export function useDeleteTestRun(onSuccessCallback?: () => void) {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    GetTestRunsResponse,
+    AxiosError<ApiErrorResponse>,
+    { projectId: string; testCaseId: string; testRunId: string }
+  >({
+    mutationFn: ({ projectId, testCaseId, testRunId }) =>
+      deleteTestRun(projectId, testCaseId, testRunId),
+
+    onSuccess: (data, v) => {
+      toast.success("Test run deleted");
+
+      if (data?.runs) {
+        queryClient.setQueryData(runsKey(v.projectId, v.testCaseId), data);
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: runsKey(v.projectId, v.testCaseId),
+        });
+      }
+
+      onSuccessCallback?.();
+    },
+
+    onError: (e) => toast.error(errMsg(e, "Failed to delete test run")),
+  });
+}
+export function useLinkBugToRun(onSuccessCallback?: () => void) {
+  const queryClient = useQueryClient();
+
+return useMutation<
+  TestRun,
+  AxiosError<ApiErrorResponse>,
+  { projectId: string; testCaseId: string; testRunId: string; bugId: string }
+>({
+    mutationFn: ({ projectId, testCaseId, testRunId, bugId }) =>
+      linkBugToRun(projectId, testCaseId, testRunId, bugId),
+
+    onSuccess: (_d, v) => {
+      toast.success("Bug linked to run");
+      queryClient.invalidateQueries({
+        queryKey: runsKey(v.projectId, v.testCaseId),
+      });
+      onSuccessCallback?.();
+    },
+
+    onError: (e) => toast.error(errMsg(e, "Failed to link bug")),
   });
 }

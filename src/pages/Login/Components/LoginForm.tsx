@@ -34,7 +34,7 @@ const LoginForm = ({ setAuthPage }: LoginFormProp) => {
 
   return (
     <div
-      className="glass-card relative z-10 flex w-full max-w-md flex-col items-center rounded-2xl border border-orange-200/70 p-6 sm:p-7 shadow-[0_12px_40px_rgba(237,98,20,0.08)]">
+      className="glass-card relative z-10 flex w-full max-w-md flex-col items-center rounded-2xl border border-orange-200/70 p-4 sm:p-4 shadow-[0_12px_40px_rgba(237,98,20,0.08)]">
       {/* Header */}
       <div className="mb-5 text-center">
         <p className="font-sans text-2xl font-semibold tracking-tight text-secondary-800">

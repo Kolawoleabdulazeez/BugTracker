@@ -25,6 +25,13 @@ interface SignupProp {
   setAuthPage: React.Dispatch<React.SetStateAction<AuthPage>>;
 }
 
+// Shared input styling so the six fields stay consistent and compact.
+const LABEL_CLASS = "!mb-1.5 !text-sm !font-medium !text-secondary-800";
+const INPUT_CLASS =
+  "!bg-white/80 !text-secondary-800 placeholder:!text-secondary-300 focus:!border-orange-500";
+const FIELD_CLASS =
+  "!h-11 w-full rounded-xl border border-secondary-200 font-normal shadow-sm transition-all hover:border-orange-300";
+
 const SignupForm = ({ setAuthPage }: SignupProp) => {
   const signupForm = useForm<signupFormData>({
     mode: "onChange",
@@ -60,8 +67,9 @@ const SignupForm = ({ setAuthPage }: SignupProp) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F7F5F2] font-sans">
-      <div className="flex min-h-screen">
+    // Page is locked to the viewport. Only the right pane scrolls, and only if it must.
+    <div className="h-dvh overflow-hidden bg-[#F7F5F2] font-sans">
+      <div className="flex h-full">
         {/* =====================================================
             LEFT SIDE — BRAND PANEL
         ====================================================== */}
@@ -143,11 +151,13 @@ const SignupForm = ({ setAuthPage }: SignupProp) => {
 
         {/* =====================================================
             RIGHT SIDE — SIGN UP FORM
+            m-auto on the inner wrapper centers the card when it fits and
+            lets it scroll from the top when it doesn't (no clipped header).
         ====================================================== */}
-        <div className="flex min-h-screen flex-1 items-center justify-center bg-[#F7F5F2] px-4 py-8 sm:px-6 lg:flex-[0.85] lg:px-10 xl:px-16">
-          <div className="w-full max-w-md">
+        <div className="flex h-full flex-1 overflow-y-auto bg-[#F7F5F2] px-4 py-4 sm:px-6 lg:flex-[0.85] lg:px-8 xl:px-12">
+          <div className="m-auto w-full max-w-lg">
             {/* Mobile logo */}
-            <div className="mb-7 flex items-center justify-center gap-3 md:hidden">
+            <div className="mb-4 flex items-center justify-center gap-3 md:hidden">
               <Image
                 src={TestOrbitLogo}
                 alt="TestOrbit Logo"
@@ -162,21 +172,24 @@ const SignupForm = ({ setAuthPage }: SignupProp) => {
             </div>
 
             {/* Form Card */}
-            <div className="glass-card w-full rounded-2xl border border-secondary-200/70 p-5 shadow-[0_12px_40px_rgba(17,23,42,0.08)] sm:p-7">
+            <div className="glass-card w-full rounded-2xl border border-secondary-200/70 p-5 shadow-[0_12px_40px_rgba(17,23,42,0.08)] sm:p-6">
               {/* Form heading */}
               <div className="text-center">
                 <p className="text-xl font-semibold tracking-tight text-secondary-800">
                   Create Account
                 </p>
-                <p className="mt-1 text-sm text-secondary-500 sm:text-base">
+                <p className="mt-1 text-sm text-secondary-500">
                   Sign up to start using TestOrbit
                 </p>
               </div>
 
               {/* Form */}
-              <form onSubmit={signupForm.handleSubmit(onSubmitSignUpForm)} className="mt-6 w-full">
+              <form
+                onSubmit={signupForm.handleSubmit(onSubmitSignUpForm)}
+                className="mt-4 w-full"
+              >
                 {/* First + Last Name */}
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <Input
                     {...signupForm.register("firstName", {
                       required: "First name is required",
@@ -184,10 +197,10 @@ const SignupForm = ({ setAuthPage }: SignupProp) => {
                     type="text"
                     label="First Name"
                     placeholder="Enter first name"
-                    labelClassName="!mb-2 !text-sm !font-medium !text-secondary-800"
+                    labelClassName={LABEL_CLASS}
                     parentClassName="my-0"
-                    inputClassName="!bg-white/80 !text-secondary-800 placeholder:!text-secondary-300 focus:!border-orange-500"
-                    className="!h-12 w-full rounded-xl border border-secondary-200 font-normal shadow-sm transition-all hover:border-orange-300"
+                    inputClassName={INPUT_CLASS}
+                    className={FIELD_CLASS}
                     errortxt={signupForm.formState.errors.firstName?.message}
                   />
 
@@ -198,16 +211,16 @@ const SignupForm = ({ setAuthPage }: SignupProp) => {
                     type="text"
                     label="Last Name"
                     placeholder="Enter last name"
-                    labelClassName="!mb-2 !text-sm !font-medium !text-secondary-800"
+                    labelClassName={LABEL_CLASS}
                     parentClassName="my-0"
-                    inputClassName="!bg-white/80 !text-secondary-800 placeholder:!text-secondary-300 focus:!border-orange-500"
-                    className="!h-12 w-full rounded-xl border border-secondary-200 font-normal shadow-sm transition-all hover:border-orange-300"
+                    inputClassName={INPUT_CLASS}
+                    className={FIELD_CLASS}
                     errortxt={signupForm.formState.errors.lastName?.message}
                   />
                 </div>
 
-                {/* Email */}
-                <div className="mt-4">
+                {/* Email + Phone */}
+                <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <Input
                     {...signupForm.register("email", {
                       validate: EMAIL_VALIDATION,
@@ -215,16 +228,13 @@ const SignupForm = ({ setAuthPage }: SignupProp) => {
                     type="email"
                     label="Email"
                     placeholder="user@email.com"
-                    labelClassName="!mb-2 !text-sm !font-medium !text-secondary-800"
+                    labelClassName={LABEL_CLASS}
                     parentClassName="my-0"
-                    inputClassName="!bg-white/80 !text-secondary-800 placeholder:!text-secondary-300 focus:!border-orange-500"
-                    className="!h-12 w-full rounded-xl border border-secondary-200 font-normal shadow-sm transition-all hover:border-orange-300"
+                    inputClassName={INPUT_CLASS}
+                    className={FIELD_CLASS}
                     errortxt={signupForm.formState.errors.email?.message}
                   />
-                </div>
 
-                {/* Phone */}
-                <div className="mt-4">
                   <Input
                     {...signupForm.register("phoneNmber", {
                       required: "Phone number is required",
@@ -232,16 +242,16 @@ const SignupForm = ({ setAuthPage }: SignupProp) => {
                     type="text"
                     label="Phone Number"
                     placeholder="Enter phone number"
-                    labelClassName="!mb-2 !text-sm !font-medium !text-secondary-800"
+                    labelClassName={LABEL_CLASS}
                     parentClassName="my-0"
-                    inputClassName="!bg-white/80 !text-secondary-800 placeholder:!text-secondary-300 focus:!border-orange-500"
-                    className="!h-12 w-full rounded-xl border border-secondary-200 font-normal shadow-sm transition-all hover:border-orange-300"
+                    inputClassName={INPUT_CLASS}
+                    className={FIELD_CLASS}
                     errortxt={signupForm.formState.errors.phoneNmber?.message}
                   />
                 </div>
 
-                {/* New Password */}
-                <div className="mt-4">
+                {/* New Password + Confirm Password */}
+                <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <Controller
                     name="password"
                     control={signupForm.control}
@@ -252,10 +262,10 @@ const SignupForm = ({ setAuthPage }: SignupProp) => {
                         type="password"
                         label="New Password"
                         placeholder="Enter new password"
-                        labelClassName="!mb-2 !text-sm !font-medium !text-secondary-800"
+                        labelClassName={LABEL_CLASS}
                         parentClassName="my-0"
-                        inputClassName="!bg-white/80 !text-secondary-800 placeholder:!text-secondary-300 focus:!border-orange-500"
-                        className="!h-12 w-full rounded-xl border border-secondary-200 font-normal shadow-sm transition-all hover:border-orange-300"
+                        inputClassName={INPUT_CLASS}
+                        className={FIELD_CLASS}
                         errortxt={
                           signupForm.formState.errors.password?.message as
                             | string
@@ -264,20 +274,7 @@ const SignupForm = ({ setAuthPage }: SignupProp) => {
                       />
                     )}
                   />
-                </div>
 
-                {/* Password Rules */}
-                {watchedNewPassword && !passRequirements && (
-                  <div className="mt-3 rounded-xl border border-orange-100 bg-orange-50/70 p-3">
-                    <CreatePasswordRules
-                      password={watchedNewPassword}
-                      isComplete={(val) => setPassRequirements(val)}
-                    />
-                  </div>
-                )}
-
-                {/* Confirm Password */}
-                <div className="mt-4">
                   <Controller
                     name="confirmPassword"
                     control={signupForm.control}
@@ -288,18 +285,28 @@ const SignupForm = ({ setAuthPage }: SignupProp) => {
                         type="password"
                         label="Confirm Password"
                         placeholder="Re-enter password"
-                        labelClassName="!mb-2 !text-sm !font-medium !text-secondary-800"
+                        labelClassName={LABEL_CLASS}
                         parentClassName="my-0"
-                        inputClassName="!bg-white/80 !text-secondary-800 placeholder:!text-secondary-300 focus:!border-orange-500"
-                        className="!h-12 w-full rounded-xl border border-secondary-200 font-normal shadow-sm transition-all hover:border-orange-300"
+                        inputClassName={INPUT_CLASS}
+                        className={FIELD_CLASS}
                         errortxt={signupForm.formState.errors.confirmPassword?.message}
                       />
                     )}
                   />
                 </div>
 
+                {/* Password Rules (full width, below the password pair) */}
+                {watchedNewPassword && !passRequirements && (
+                  <div className="mt-3 rounded-xl border border-orange-100 bg-orange-50/70 p-3">
+                    <CreatePasswordRules
+                      password={watchedNewPassword}
+                      isComplete={(val) => setPassRequirements(val)}
+                    />
+                  </div>
+                )}
+
                 {/* Submit */}
-                <div className="mt-6">
+                <div className="mt-4">
                   <Button
                     title={
                       isPending ? (
@@ -310,19 +317,17 @@ const SignupForm = ({ setAuthPage }: SignupProp) => {
                     }
                     type="submit"
                     disabled={isPending}
-                    className="!h-12 w-full !rounded-xl !border-0 !bg-gradient-to-r !from-orange-500 !to-orange-600 !text-base !font-semibold !text-white shadow-[0_8px_20px_rgba(237,98,20,0.22)] transition-all duration-200 hover:!from-orange-600 hover:!to-orange-700 hover:-translate-y-[1px] hover:shadow-[0_10px_25px_rgba(237,98,20,0.28)]"
+                    className="!h-11 w-full !rounded-xl !border-0 !bg-gradient-to-r !from-orange-500 !to-orange-600 !text-base !font-semibold !text-white shadow-[0_8px_20px_rgba(237,98,20,0.22)] transition-all duration-200 hover:!from-orange-600 hover:!to-orange-700 hover:-translate-y-[1px] hover:shadow-[0_10px_25px_rgba(237,98,20,0.28)]"
                   />
                 </div>
               </form>
 
               {/* Login */}
-              <div className="mt-5 flex items-center justify-center gap-1">
-                <p className="text-sm text-secondary-500 sm:text-base">
-                  Already have an account?
-                </p>
+              <div className="mt-3 flex items-center justify-center gap-1">
+                <p className="text-sm text-secondary-500">Already have an account?</p>
 
                 <Button
-                  className="!bg-transparent !p-1 !text-sm !font-semibold !text-orange-500 hover:!text-orange-600 sm:!text-base"
+                  className="!bg-transparent !p-1 !text-sm !font-semibold !text-orange-500 hover:!text-orange-600"
                   title="Login"
                   onClick={() => setAuthPage(AuthPage.Login)}
                 />
