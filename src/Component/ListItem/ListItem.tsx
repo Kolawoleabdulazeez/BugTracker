@@ -14,6 +14,7 @@ type ListItemProps = {
   noHover?: boolean;
   noTruncate?: boolean;
   dark?: boolean;
+  compact?: boolean;
 };
 
 const ListItem = ({
@@ -22,18 +23,19 @@ const ListItem = ({
   showArrow,
   subtitleComponent,
   onClick,
-  className,
+  className = "",
   endComponent,
   nameComponent,
   noHover,
   noTruncate,
   dark,
+  compact,
 }: ListItemProps) => {
   return (
     <div
-      className={`flex gap-3 my-3 ${
+      className={`flex gap-3 ${compact ? "my-0" : "my-3"} ${
         dark ? "bg-disabledBg dark:bg-darkGrayBg4" : "bg-disabledBg"
-      }  px-3 py-[0.3rem]  justify-between rounded-lg  ${
+      } px-3 py-[0.3rem] justify-between rounded-lg ${
         !noHover ? "hover:bg-primary hover:text-white cursor-pointer" : ""
       } group transition-all duration-300 ease-in-out items-center ${className}`}
       onClick={onClick}
@@ -45,9 +47,9 @@ const ListItem = ({
           <h1
             className={`font-semibold text-darkPrimary ${
               dark ? "dark:!text-white" : "text-darkPrimary"
-            }  text-[0.8rem] sm1:text-[0.9rem] transition-transform duration-300  ${
+            } text-[0.8rem] sm1:text-[0.9rem] transition-transform duration-300 ${
               !noHover ? "group-hover:text-white group-hover:scale-105" : ""
-            } `}
+            }`}
             data-testid="list-item-name"
           >
             {nameComponent ??
@@ -55,7 +57,7 @@ const ListItem = ({
           </h1>
           <div
             className={`flex text-[0.7rem] gap-1 text-labelBlue ${
-              dark ? "dark:!text-white" : "text-labelBlue "
+              dark ? "dark:!text-white" : "text-labelBlue"
             } ${
               !noHover ? "group-hover:text-white" : ""
             } text-[0.7rem] sm1:text-[0.9rem]`}

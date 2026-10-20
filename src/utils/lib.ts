@@ -49,10 +49,23 @@ export const authKeys = {
 };
 
 
+export const useCurrentUserId = (): string | undefined => {
+  const [userId, setUserId] = useState<string>();
+
+  useEffect(() => {
+    const id = getAuthFromStorage()?.user?.id;
+    setUserId(id !== undefined ? String(id) : undefined);
+  }, []);
+
+  return userId;
+};
+
+
 export const TABLE_ROWS_PER_PAGE = 20;
 
 
 import { AxiosError } from "axios";
+import { useEffect, useState } from "react";
 
 interface ErrorBody {
   message?: string;

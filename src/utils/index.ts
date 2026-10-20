@@ -364,3 +364,16 @@ export const getInitials = (name?: string | null) =>
     current,
   };
 };
+
+
+export type SortOrder = "newest" | "oldest";
+
+export const STATUS_DEFAULTS = ["Open", "InProgress", "Resolved", "Closed"];
+export const SEVERITY_DEFAULTS = ["Low", "Medium", "High", "Critical"];
+export const PRIORITY_DEFAULTS = ["Low", "Normal", "High"];
+
+export const mergeOptions = (defaults: string[], values: (string | undefined)[]) => [
+  ...defaults,
+  ...Array.from(new Set(values.filter((v): v is string => !!v && !defaults.includes(v)))),
+];
+

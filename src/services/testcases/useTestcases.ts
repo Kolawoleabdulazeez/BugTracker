@@ -23,6 +23,7 @@ import {
   linkBugToRun,
   getTestRunById,
   GetTestRunsResponse,
+  GeneratedTestCase,
 } from "./testcases.api";
 import { TestCase } from "@/utils/types";
 
@@ -125,14 +126,11 @@ export function useUpdateTestcase(onSuccessCallback?: () => void) {
 export function useGenerateTestcase(onSuccessCallback?: () => void) {
   const queryClient = useQueryClient();
 
-  return useMutation<
-    TestCase[],
-    AxiosError<ApiErrorResponse>,
-    {
-      projectId: string;
-      payload: GenerateTestcaseParam;
-    }
-  >({
+return useMutation<
+  GeneratedTestCase[],
+  AxiosError<ApiErrorResponse>,
+  { projectId: string; payload: GenerateTestcaseParam }
+>({
     mutationFn: ({ projectId, payload }) =>
       generateTestcase(projectId, payload),
     

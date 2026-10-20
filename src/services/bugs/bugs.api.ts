@@ -214,3 +214,20 @@ export async function postComment(
 }
 
 
+export type UpdateDeveloperStatusPayload = {
+  developerStatus: string;
+  comment?: string;
+};
+ 
+
+
+export async function updateDeveloperStatus(
+  bugId: string,
+  projectId: string,
+  payload: UpdateDeveloperStatusPayload
+): Promise<any> {
+  const res = await authInstance.patch(`/${bugId}/developer-status`, payload, {
+    params: { projectId },
+  });
+  return res.data;
+}

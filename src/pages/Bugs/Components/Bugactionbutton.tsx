@@ -71,7 +71,7 @@ const BugActionButton: React.FC<BugActionButtonProps> = ({
           e.stopPropagation();
           setActionModalOpen(true);
         }}
-        className="inline-flex items-center gap-1.5 rounded-lg bg-orange-500 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-orange-600"
+        className="inline-flex  data-no-row-click items-center gap-1.5 rounded-lg bg-orange-500 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-orange-600"
       >
         Action
         <ChevronDown size={13} />

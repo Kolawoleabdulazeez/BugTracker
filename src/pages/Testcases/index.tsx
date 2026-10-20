@@ -20,6 +20,8 @@ import { ManualModal } from "../../Component/TestCase/ManualModal";
 import { ProjectRailSkeleton } from "../../Component/TestCase/ProjectRailSkeleton";
 import { TestCaseDetailModal } from "../../Component/TestCase/TestCaseDetailModal";
 import { LogRunModal } from "../../Component/TestCase/LogRunModal";
+import { GeneratedTestCase } from "@/services/testcases/testcases.api";
+import { useCurrentUserId } from "@/utils/lib";
 
 const TestCases = () => {
   const [projectId, setProjectId] = useState<string | null>(null);
@@ -35,6 +37,8 @@ const TestCases = () => {
   const projects = projectData?.data ?? [];
   const proj = projects.find(p => p.id === projectId) ?? projects[0] ?? null;
   const activeProjectId = projectId ?? proj?.id ?? "";
+        const currentUserId = useCurrentUserId();
+
 
   const {
     data: casesData,
@@ -60,6 +64,24 @@ const TestCases = () => {
   const { mutate: createRun, isPending: isLoggingRun } = useCreateTestRun(
     () => setRunTarget(null)
   );
+
+      const handleAddGenerated = (items: GeneratedTestCase[]) => {
+  if (!items.length) return;
+
+  createTestcase({
+    projectId: activeProjectId,
+    payload: items.map((tc) => ({
+      title: tc.title,
+      description: tc.description,
+      preconditions: tc.preconditions,
+      steps: tc.steps, // see note below
+      expectedResult: tc.expectedResult,
+      priority: tc.priority.toLowerCase() as Priority,
+      assignedToId: currentUserId ?? "",
+      tags: tc.tags,
+    })),
+  });
+};
 
   const updatingStatusId = isUpdatingStatus ? statusVars?.testCaseId ?? null : null;
 
@@ -164,11 +186,12 @@ const TestCases = () => {
 
       {modal === "ai" && (
         <AIModal
-          onClose={() => setModal(null)}
-          onAdd={() => {}}
-          projectId={activeProjectId}
-          projectOverview={proj?.description ?? ""}
-        />
+  onClose={() => setModal(null)}
+  onAdd={handleAddGenerated}
+  isSaving={isSavingTestcase}
+  projectId={activeProjectId}
+  projectOverview={proj?.description ?? ""}
+/>
       )}
       {modal === "manual" && (
         <ManualModal

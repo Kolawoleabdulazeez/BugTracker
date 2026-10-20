@@ -29,6 +29,9 @@ type BugFormValues = {
   tags: { value: string }[];
 };
 
+// Readable in both themes (was hardcoded text-white, invisible in light mode)
+const INPUT_TEXT = "text-slate-900 dark:text-white";
+
 const PRIORITY_OPTIONS: {
   value: BugFormValues["priority"];
   label: string;
@@ -211,7 +214,7 @@ const AddBugModal: React.FC<AddBugModalProps> = ({
                 {...field}
                 errortxt={errors.title?.message}
                 parentClassName="w-full"
-                inputClassName="text-white"
+                inputClassName={INPUT_TEXT}
               />
             )}
           />
@@ -225,7 +228,7 @@ const AddBugModal: React.FC<AddBugModalProps> = ({
                 label="Description"
                 required
                 textarea
-                inputClassName="text-white"
+                inputClassName={INPUT_TEXT}
                 placeholder="Briefly describe what the bug is and its impact..."
                 {...field}
                 errortxt={errors.description?.message}
@@ -291,7 +294,7 @@ const AddBugModal: React.FC<AddBugModalProps> = ({
                   placeholder={"1. Go to...\n2. Click on...\n3. Observe..."}
                   {...field}
                   errortxt={errors.stepsToReproduce?.message}
-                  inputClassName=" text-xs text-white"
+                  inputClassName={`text-xs ${INPUT_TEXT}`}
                   parentClassName="w-full"
                 />
               )}
@@ -308,7 +311,7 @@ const AddBugModal: React.FC<AddBugModalProps> = ({
                   label="Expected Behavior"
                   required
                   textarea
-                  inputClassName="text-white"
+                  inputClassName={INPUT_TEXT}
                   placeholder="What should happen..."
                   {...field}
                   errortxt={errors.expectedBehavior?.message}
@@ -325,7 +328,7 @@ const AddBugModal: React.FC<AddBugModalProps> = ({
                   label="Actual Behavior"
                   required
                   textarea
-                  inputClassName="text-white"
+                  inputClassName={INPUT_TEXT}
                   placeholder="What actually happens..."
                   {...field}
                   errortxt={errors.actualBehavior?.message}
@@ -342,13 +345,14 @@ const AddBugModal: React.FC<AddBugModalProps> = ({
               lefticon={<Cpu size={16} className="text-slate-400" />}
               {...register("environment")}
               parentClassName="w-full"
-              inputClassName="text-white"
+              inputClassName={INPUT_TEXT}
             />
             <Input
               label="App Version"
               placeholder="e.g. v2.4.1"
               {...register("version")}
               parentClassName="w-full"
+              inputClassName={INPUT_TEXT}
             />
           </div>
 
@@ -377,6 +381,7 @@ const AddBugModal: React.FC<AddBugModalProps> = ({
                 {...register("newTag")}
                 onKeyDown={handleTagKeyDown}
                 parentClassName="flex-1"
+                inputClassName={INPUT_TEXT}
               />
               <button
                 type="button"
@@ -388,11 +393,11 @@ const AddBugModal: React.FC<AddBugModalProps> = ({
             </div>
 
             {tagFields.length > 0 && (
-              <div className="mt-2.5 text-white flex flex-wrap gap-2">
+              <div className="mt-2.5 flex flex-wrap gap-2">
                 {tagFields.map((field, index) => (
                   <span
                     key={field.id}
-                    className="inline-flex text-white items-center gap-1.5 rounded-full border border-orange-100 bg-orange-50 px-3 py-1 text-xs font-medium dark:border-orange-500/20 dark:bg-orange-500/10 dark:text-orange-300"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-orange-100 bg-orange-50 px-3 py-1 text-xs font-medium text-orange-700 dark:border-orange-500/20 dark:bg-orange-500/10 dark:text-orange-300"
                   >
                     {field.value}
                     <button

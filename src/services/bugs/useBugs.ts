@@ -2,6 +2,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
     assignDeveloper,
+  BugType,
   createBug,
   CreateBugPayload,
   deleteBug,
@@ -14,8 +15,10 @@ import {
   UpdateBugPayload,
   updateBugStatus,
   UpdateBugStatusPayload,
+  updateDeveloperStatus,
 } from "./bugs.api";
 import { toast } from "sonner";
+import { getApiErrorMessage } from "@/utils/lib";
 
 export const BUGS_QUERY_KEY = ["bugs"];
 
@@ -206,3 +209,45 @@ export function usePostComment(
   });
 }
  
+
+
+
+export function useUpdateDeveloperStatus(projectId?: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+  mutationFn: ({ bugId, developerStatus, comment }: { bugId: string; developerStatus: string; comment?: string }) => {
+  if (!projectId) throw new Error("No project selected");
+  return updateDeveloperStatus(bugId, projectId, {
+    developerStatus: developerStatus,
+    comment: comment?.trim() || `Developer status changed to ${status}`,
+  });
+},
+
+    onMutate: async ({ bugId, developerStatus }) => {
+      const key = [...SINGLE_BUG_QUERY_KEY, bugId, projectId];
+      await queryClient.cancelQueries({ queryKey: key });
+
+      const previous = queryClient.getQueryData<BugType>(key);
+      if (previous) {
+        queryClient.setQueryData<BugType>(key, { ...previous, developerStatus: developerStatus });
+      }
+      return { previous, key };
+    },
+
+    onError: (error, _vars, ctx) => {
+      if (ctx?.previous) queryClient.setQueryData(ctx.key, ctx.previous);
+      toast.error(getApiErrorMessage(error, "Failed to update developer status."));
+    },
+
+    onSuccess: () => {
+      toast.success("Developer status updated");
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: [...SINGLE_BUG_QUERY_KEY] });
+      queryClient.invalidateQueries({ queryKey: [...BUGS_QUERY_KEY, projectId] });
+    },
+  });
+}
+

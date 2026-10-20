@@ -18,12 +18,13 @@ import {
   useReassignTester,
 } from "../../services/bugs/useBugs";
 import { PRIORITY_COLORS, SEVERITY_COLORS, STATUS_COLORS } from "../../utils/helpers";
-import { formatLabel } from "../../utils";
 import EditBugModal from "./Components/EditBugModal";
 import Dropdown from "@/Component/Dropdown/Dropdown";
 import { useGetProjectMembers } from "../../services/project/useProject";
 import { InlineDropdown } from "@/Component/Dropdown/InlineDrop";
 import CommentsSection from "./Components/CommentsSection";
+import { useCurrentUserId } from "@/utils/lib";
+import DeveloperStatusPanel from "./Components/Developerstatuspanel";
 
 const Field = ({ label, value }: { label: string; value?: string }) => {
   if (!value) return null;
@@ -58,6 +59,13 @@ const BugDetailsPage = () => {
     useAssignDeveloper(safeProjectId);
   const { mutateAsync: reassignTester, isPending: isReassigningTester } =
     useReassignTester(safeProjectId);
+
+    const currentUserId = useCurrentUserId();
+
+    const canEditDeveloperStatus =
+  !!currentUserId &&
+  !!bug?.assignedDeveloper?.userId &&
+  String(bug.assignedDeveloper.userId).toLowerCase() === currentUserId.toLowerCase();
 
   const developerOptions =
     membersData
@@ -377,20 +385,14 @@ const BugDetailsPage = () => {
                 </div>
               </div>
 
-              {bug.developerStatus && (
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-sm font-semibold dark:text-white text-slate-900">
-                      Developer Status
-                    </p>
-                  </div>
-                  <div className="flex items-center justify-between rounded-xl bg-slate-100 dark:bg-white/10 px-4 py-2.5">
-                    <span className="text-sm font-medium dark:text-white text-slate-800">
-                      {formatLabel(bug.developerStatus)}
-                    </span>
-                  </div>
-                </div>
-              )}
+              <div className="border-t border-slate-200 pt-5 dark:border-white/10">
+  <DeveloperStatusPanel
+    bugId={bug.id}
+    projectId={safeProjectId ?? ""}
+    status={bug.developerStatus}
+    canEdit={canEditDeveloperStatus}
+  />
+</div>
             </div>
 
             <div className="glass-card rounded-2xl p-5">

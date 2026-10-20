@@ -12,12 +12,26 @@ import { useGetBugs } from "../../services/bugs/useBugs";
 import { BUG_HEADERS } from "../../utils/headers";
 import BugActionButton from "./Components/Bugactionbutton";
 import { RenderComponent } from "@/Component/RenderComponent";
+import { mergeOptions, PRIORITY_DEFAULTS, SEVERITY_DEFAULTS, SortOrder, STATUS_DEFAULTS } from "@/utils";
 
 const Bugs = () => {
   const router = useRouter();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showFilters, setShowFilters] = useState(false);
   const [showAddBugModal, setShowAddBugModal] = useState(false);
+  const [statusFilter, setStatusFilter] = useState("");
+const [severityFilter, setSeverityFilter] = useState("");
+const [priorityFilter, setPriorityFilter] = useState("");
+const [sortOrder, setSortOrder] = useState<SortOrder>("newest");
+
+const activeFilterCount = [statusFilter, severityFilter, priorityFilter].filter(Boolean).length;
+
+const clearFilters = () => {
+  setStatusFilter("");
+  setSeverityFilter("");
+  setPriorityFilter("");
+  setSortOrder("newest");
+};
 
   const { data, isLoading } = useGetAllProject();
   const [selectedProjectId, setSelectedProjectId] = useState<string>("");
@@ -35,6 +49,11 @@ const Bugs = () => {
     () => projects.find((p) => p.id === selectedProjectId),
     [projects, selectedProjectId]
   );
+
+  const toItems = (allLabel: string, options: string[]): DropdownItem[] => [
+  { id: "all", name: allLabel },
+  ...options.map((o) => ({ id: o, name: o })),
+];
 
   useEffect(() => {
     if (!projects.length) return;
@@ -63,23 +82,49 @@ const Bugs = () => {
     }
   }, [projects, router]);
 
-  const mappedBugs = useMemo(() => {
-    return (bugsData?.bugs ?? []).map((bug) => ({
-      ...bug,
-      action: RenderComponent(BugActionButton, {
-        item: bug,
-        projectId: selectedProjectId,
-        onActionSuccess: refetchBugs,
-      }),
-      viewMore: RenderComponent(Button, {
-        title: "View Detail",
-        className: "text-sm bg-transparent text-slate-900 dark:text-white underline hover:text-orange-500",
-        onClick: () => {
-          router.push(`/Bugs/${bug.id}?projectId=${selectedProjectId}`);
-        },
-      }),
-    }));
-  }, [bugsData, selectedProjectId, refetchBugs, router]);
+  const allBugs = useMemo(() => bugsData?.bugs ?? [], [bugsData]);
+
+const statusOptions = useMemo(() => mergeOptions(STATUS_DEFAULTS, allBugs.map((b) => b.status)), [allBugs]);
+const severityOptions = useMemo(() => mergeOptions(SEVERITY_DEFAULTS, allBugs.map((b) => b.severity)), [allBugs]);
+const priorityOptions = useMemo(() => mergeOptions(PRIORITY_DEFAULTS, allBugs.map((b) => b.priority)), [allBugs]);
+
+const statusItems = toItems("All Statuses", statusOptions);
+const severityItems = toItems("All Severities", severityOptions);
+const priorityItems = toItems("All Priorities", priorityOptions);
+
+const visibleBugs = useMemo(() => {
+  const filtered = allBugs.filter(
+    (b) =>
+      (!statusFilter || b.status === statusFilter) &&
+      (!severityFilter || b.severity === severityFilter) &&
+      (!priorityFilter || b.priority === priorityFilter)
+  );
+
+  return [...filtered].sort((a, b) => {
+    const diff = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+    return sortOrder === "newest" ? -diff : diff;
+  });
+}, [allBugs, statusFilter, severityFilter, priorityFilter, sortOrder]);
+
+
+const mappedBugs = useMemo(() => {
+  return visibleBugs.map((bug) => ({
+    ...bug,
+    action: (
+      <div data-no-row-click>
+        {RenderComponent(BugActionButton, {
+          item: bug,
+          projectId: selectedProjectId,
+          onActionSuccess: refetchBugs,
+        })}
+      </div>
+    ),
+  }));
+}, [visibleBugs, selectedProjectId, refetchBugs]);
+
+const handleRowClick = (bug: { id: string }) => {
+  router.push(`/Bugs/${bug.id}?projectId=${selectedProjectId}`);
+};
 
   const handleAddBugClick = () => {
     if (!selectedProjectId) {
@@ -88,6 +133,38 @@ const Bugs = () => {
     }
     setShowAddBugModal(true);
   };
+
+  type DropdownItem = { id: string; name: string };
+
+
+
+const SORT_ITEMS: DropdownItem[] = [
+  { id: "newest", name: "Recent First" },
+  { id: "oldest", name: "Oldest First" },
+];
+
+const FilterDropdown = ({
+  list,
+  value,
+  placeholder,
+  onChange,
+}: {
+  list: DropdownItem[];
+  value: string;
+  placeholder: string;
+  onChange: (id: string) => void;
+}) => (
+  <Dropdown
+    list={list}
+    labelParam="name"
+    valueParam="id"
+    selectedValue={value}
+    placeholder={placeholder}
+    parentClassName="rounded-lg h-11"
+    dropdownClassName="!h-auto max-h-72"
+    onValChange={(item) => onChange(item.id)}
+  />
+);
 
   return (
     <div>
@@ -179,17 +256,28 @@ const Bugs = () => {
               />
             </div>
             <div className="flex items-center gap-3">
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className={`flex items-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition-all ${
-                  showFilters
-                    ? "border-orange-500 bg-orange-500 text-white"
-                    : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10"
-                }`}
-              >
-                <Filter size={18} />
-                Filters
-              </button>
+          <button
+  onClick={() => setShowFilters(!showFilters)}
+  className={`flex items-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition-all ${
+    showFilters
+      ? "border-orange-500 bg-orange-500 text-white"
+      : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10"
+  }`}
+>
+  <Filter size={18} />
+  Filters
+  {activeFilterCount > 0 && (
+    <span
+      className={`rounded-full px-1.5 text-[10px] font-bold ${
+        showFilters
+          ? "bg-white text-orange-600"
+          : "bg-orange-500 text-white"
+      }`}
+    >
+      {activeFilterCount}
+    </span>
+  )}
+</button>
 
               <div className="flex items-center rounded-lg border border-slate-200 bg-slate-50 p-1 dark:border-white/10 dark:bg-white/5">
                 <button
@@ -225,40 +313,57 @@ const Bugs = () => {
             </p>
           )}
 
-          {showFilters && (
-            <div className="mt-4 grid grid-cols-1 gap-3 border-t border-slate-200 pt-4 md:grid-cols-2 xl:grid-cols-4 dark:border-white/10">
-              <select className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-orange-500/40 dark:border-white/10 dark:bg-white/5 dark:text-gray-200">
-                <option>All Statuses</option>
-                <option>Open</option>
-                <option>In Progress</option>
-                <option>Resolved</option>
-                <option>Closed</option>
-              </select>
-              <select className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-orange-500/40 dark:border-white/10 dark:bg-white/5 dark:text-gray-200">
-                <option>All Severities</option>
-                <option>Critical</option>
-                <option>Major</option>
-                <option>Minor</option>
-              </select>
-              <select className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-orange-500/40 dark:border-white/10 dark:bg-white/5 dark:text-gray-200">
-                <option>All Priorities</option>
-                <option>High</option>
-                <option>Medium</option>
-                <option>Low</option>
-              </select>
-              <select className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-orange-500/40 dark:border-white/10 dark:bg-white/5 dark:text-gray-200">
-                <option>Recent First</option>
-                <option>Oldest First</option>
-              </select>
-            </div>
-          )}
+         {showFilters && (
+  <div className="mt-4 border-t border-slate-200 pt-4 dark:border-white/10">
+    <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
+      <FilterDropdown
+        list={statusItems}
+        value={statusFilter || "all"}
+        placeholder="Status"
+        onChange={(id) => setStatusFilter(id === "all" ? "" : id)}
+      />
+      <FilterDropdown
+        list={severityItems}
+        value={severityFilter || "all"}
+        placeholder="Severity"
+        onChange={(id) => setSeverityFilter(id === "all" ? "" : id)}
+      />
+      <FilterDropdown
+        list={priorityItems}
+        value={priorityFilter || "all"}
+        placeholder="Priority"
+        onChange={(id) => setPriorityFilter(id === "all" ? "" : id)}
+      />
+      <FilterDropdown
+        list={SORT_ITEMS}
+        value={sortOrder}
+        placeholder="Sort"
+        onChange={(id) => setSortOrder(id as SortOrder)}
+      />
+    </div>
 
+    <div className="mt-3 flex items-center justify-between text-xs text-slate-500 dark:text-secondary-400">
+      <span>
+        Showing {visibleBugs.length} of {allBugs.length} bugs
+      </span>
+      {(activeFilterCount > 0 || sortOrder !== "newest") && (
+        <button
+          onClick={clearFilters}
+          className="cursor-pointer border-none bg-transparent font-medium text-orange-600 hover:underline dark:text-orange-400"
+        >
+          Clear filters
+        </button>
+      )}
+    </div>
+  </div>
+)}
           <div className="mt-5">
             <PaginatedTable
-              data={mappedBugs}
-              headers={BUG_HEADERS}
-              loading={bugsLoading}
-            />
+          data={mappedBugs}
+          headers={BUG_HEADERS}
+          loading={bugsLoading}
+          onRowClick={handleRowClick}
+          />
           </div>
         </div>
       </PageLayout>

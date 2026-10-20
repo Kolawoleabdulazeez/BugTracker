@@ -105,8 +105,4 @@ export const BUG_HEADERS = [
         formatTimestamp(value)
     ),
   },
-  {
-  key: "View Detail",
-  propertyName: "viewMore",
-},
 ];

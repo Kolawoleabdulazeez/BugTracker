@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { SortAsc, Square } from "lucide-react";
 
 import NoRecord from "../NoRecord/NoRecord";
@@ -49,12 +49,28 @@ const PaginatedTable = ({
     return data.slice(start, end);
   }, [data, page, rowsPerPage]);
 
+  useEffect(() => {
+  setPage(1); // filtering can leave you on a page that no longer exists
+}, [data.length]);
+
   const renderCellContent = (header: TableHeader, item: any) => {
     if (header.render) {
       return header.render(item[header.propertyName], item);
     }
     return item[header.propertyName];
   };
+
+  const handleRowClick = (e: React.MouseEvent<HTMLTableRowElement>, item: any) => {
+  if (!onRowClick) return;
+  const target = e.target as HTMLElement;
+
+
+  if (!e.currentTarget.contains(target)) return;
+
+  if (target.closest("[data-no-row-click]")) return;
+
+  onRowClick(item);
+};
 
   return loading ? (
     <div className="p-4 space-y-3 animate-pulse">
@@ -104,14 +120,18 @@ const PaginatedTable = ({
               <tbody className="divide-y divide-slate-100 dark:divide-white/5">
                 {currentItems.map((item, index) => (
                   <tr
-                    key={item.Id || index}
-                    onClick={() => onRowClick?.(item)}
-                    className={`transition-colors ${
-                      onRowClick
-                        ? "cursor-pointer hover:bg-slate-50 dark:hover:bg-white/5"
-                        : ""
-                    }`}
-                  >
+ key={item.id ?? item.Id ?? index}
+  onClick={(e) => handleRowClick(e, item)}
+  onKeyDown={(e) => {
+    if (onRowClick && e.key === "Enter" && e.target === e.currentTarget) onRowClick(item);
+  }}
+  tabIndex={onRowClick ? 0 : undefined}
+  className={`transition-colors ${
+    onRowClick
+      ? "cursor-pointer hover:bg-orange-500/[0.04] focus:bg-orange-500/[0.06] focus:outline-none dark:hover:bg-orange-500/[0.06]"
+      : ""
+  }`}
+>
                     {onBulkSelect && (
                       <td className="px-6 py-[0.4rem] whitespace-nowrap text-sm font-semibold text-slate-900 dark:text-white">
                         <Checkbox

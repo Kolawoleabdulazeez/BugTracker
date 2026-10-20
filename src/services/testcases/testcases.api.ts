@@ -3,11 +3,7 @@ import { BugPriority, BugSeverity, RunResult } from "@/utils";
 import { createApiInstance } from "@/utils/api";
 import { Priority, Step, TestCase, TestCaseSummary } from "@/utils/types";
 
-export interface GenerateTestcaseParam {
-  projectOverview: string;
-  isDocUpload: boolean;
-  fileUpload: FileUpload;
-}
+
 
 export interface FileUpload {
   base64File: string;
@@ -92,16 +88,32 @@ export interface GetTestRunsResponse {
   totalPages: number;
 }
 
+export interface GeneratedTestCase {
+  title: string;
+  description: string;
+  preconditions: string;
+  steps: { action: string; expectedOutcome: string }[];
+  expectedResult: string;
+  priority: string; 
+  tags: string[];
+}
+
+export interface GenerateTestcaseParam {
+  projectOverview: string;
+  isDocUpload: boolean;
+  fileUpload?: FileUpload;
+}
+
 export const testcasesInstance = createApiInstance("TESTCASES");
+
+
 
 export async function generateTestcase(
   projectId: string,
   payload: GenerateTestcaseParam
-): Promise<TestCase[]> {
-        console.log(payload, 'this is payload**********')
-
+): Promise<GeneratedTestCase[]> {
   const res = await testcasesInstance.post(`/${projectId}/generate`, payload);
-  return res.data;
+  return res.data.data ?? [];
 }
 
 export async function getTestcases(projectId: string): Promise<GetTestcasesResponse> {
