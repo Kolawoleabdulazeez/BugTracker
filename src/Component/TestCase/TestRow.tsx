@@ -186,19 +186,24 @@ export const TestRow = ({
       </div>
 
       <div className="flex-shrink-0 flex items-center gap-3 mt-0.5">
-        {tc.assignedTo && (
-          <div className="flex items-center gap-1.5">
-            <div className="w-6 h-6 rounded-full bg-info-500/15 border border-info-500/30 flex items-center justify-center text-[8px] font-bold text-info-600 dark:text-info-400 flex-shrink-0">
-              {tc.assignedTo.name
-                .split(" ")
-                .map((n) => n[0])
-                .join("")}
-            </div>
-            <span className="hidden md:block text-[10px] text-slate-400 dark:text-secondary-500">
-              {tc.assignedTo.name}
-            </span>
+        
+      {tc.assignedTo && (
+        <div className="flex items-center gap-1.5">
+          <div className="w-6 h-6 rounded-full bg-info-500/15 border border-info-500/30 flex items-center justify-center text-[8px] font-bold text-info-600 dark:text-info-400 flex-shrink-0">
+            {tc.assignedTo.fullName
+              .trim()
+              .split(/\s+/)
+              .filter(Boolean)
+              .map((n) => n[0])
+              .join("")
+              .toUpperCase()}
           </div>
-        )}
+          <span className="hidden md:block text-[10px] text-slate-400 dark:text-secondary-500">
+            {tc.assignedTo.fullName}
+          </span>
+        </div>
+      )}
+
 
         {/* Always visible on touch, revealed on hover/focus on desktop */}
         <div

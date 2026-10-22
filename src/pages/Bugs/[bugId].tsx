@@ -25,6 +25,7 @@ import { InlineDropdown } from "@/Component/Dropdown/InlineDrop";
 import CommentsSection from "./Components/CommentsSection";
 import { useCurrentUserId } from "@/utils/lib";
 import DeveloperStatusPanel from "./Components/Developerstatuspanel";
+import { AssigneeRow } from "./Components/AssigneeRow";
 
 const Field = ({ label, value }: { label: string; value?: string }) => {
   if (!value) return null;
@@ -62,30 +63,24 @@ const BugDetailsPage = () => {
 
     const currentUserId = useCurrentUserId();
 
+    
+
     const canEditDeveloperStatus =
   !!currentUserId &&
   !!bug?.assignedDeveloper?.userId &&
   String(bug.assignedDeveloper.userId).toLowerCase() === currentUserId.toLowerCase();
 
-  const developerOptions =
-    membersData
-      ?.filter((m: any) => m.role === "Developer")
-      .map((member: any) => ({
-        id: member.userId,
-        label: member.fullName,
-        name: member.fullName,
-        email: member.email,
-      })) ?? [];
 
-  const testerOptions =
-    membersData
-      ?.filter((m: any) => m.role === "Tester")
-      .map((member: any) => ({
-        id: member.userId,
-        label: member.fullName,
-        name: member.fullName,
-        email: member.email,
-      })) ?? [];
+
+
+
+      const toOptions = (role: string) =>
+  (membersData ?? [])
+    .filter((m: any) => m.role === role)
+    .map((m: any) => ({ id: m.userId, name: m.fullName, email: m.email }));
+
+const developerOptions = toOptions("Developer");
+const testerOptions = toOptions("Tester");
 
   const handleAssignDeveloper = async (item: any) => {
     if (!safeBugId) return;
@@ -275,125 +270,60 @@ const BugDetailsPage = () => {
           <div className="space-y-4">
 
             <div className="glass-card rounded-2xl p-5 space-y-5">
-              <div className="flex items-center justify-between">
-                <p className="text-base font-semibold dark:text-white text-slate-900">
-                  Assignment
-                </p>
-                <button className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10">
-                  <MoreHorizontal size={16} className="text-slate-400 dark:text-secondary-500" />
-                </button>
-              </div>
+  <p className="m-0 text-base font-semibold text-slate-900 dark:text-white">Assignment</p>
 
-              {bug.reportedBy && (
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-full bg-orange-500 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
-                      {bug.reportedBy.fullName?.charAt(0)}
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold dark:text-white text-slate-800">
-                        {bug.reportedBy.fullName}
-                      </p>
-                      <p className="text-xs text-slate-400 dark:text-secondary-500">Reporter</p>
-                    </div>
-                  </div>
-                  <span className="text-xs text-slate-400 dark:text-secondary-500">
-                    {new Date(bug.createdAt).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
-                  </span>
-                </div>
-              )}
+  {bug.reportedBy && (
+    <div className="flex items-center justify-between gap-3">
+      <div className="flex min-w-0 items-center gap-3">
+        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-orange-500 text-xs font-bold text-white">
+          {bug.reportedBy.fullName?.charAt(0)}
+        </div>
+        <div className="min-w-0">
+          <p className="m-0 truncate text-sm font-semibold text-slate-800 dark:text-white">
+            {bug.reportedBy.fullName}
+          </p>
+          <p className="m-0 text-xs text-slate-400 dark:text-secondary-500">Reporter</p>
+        </div>
+      </div>
+      <span className="flex-shrink-0 text-xs text-slate-400 dark:text-secondary-500">
+        {new Date(bug.createdAt).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        })}
+      </span>
+    </div>
+  )}
 
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-full bg-info-500 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
-                      {bug.assignedTester?.fullName?.charAt(0) ?? "?"}
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold dark:text-white text-slate-800">
-                        {bug.assignedTester?.fullName ?? "No tester assigned"}
-                      </p>
-                      <p className="text-xs text-slate-400 dark:text-secondary-500">Tester</p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => {
-                      setShowTesterDropdown((prev) => !prev);
-                      setShowDeveloperDropdown(false);
-                    }}
-                    className="text-xs px-3 py-1 rounded-lg border border-slate-200 dark:border-white/20 dark:text-white text-slate-600 hover:bg-slate-50 dark:hover:bg-white/10"
-                  >
-                    {isReassigningTester ? "Saving..." : "Edit"}
-                  </button>
-                </div>
-                <div ref={testerAnchorRef}>
-                  <InlineDropdown anchorRef={testerAnchorRef} isOpen={showTesterDropdown}>
-                    <Dropdown
-                      hasSearch
-                      list={testerOptions}
-                      labelParam="label"
-                      valueParam="id"
-                      placeholder={membersLoading ? "Loading testers..." : "Select tester"}
-                      onValChange={handleReassignTester}
-                      parentClassName="border rounded-xl border-lightgray px-2 h-[40px] flex items-center w-full bg-white dark:bg-secondary-800"
-                      dropdownClassName="!h-60"
-                    />
-                  </InlineDropdown>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-full bg-success-500 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
-                      {bug.assignedDeveloper?.fullName?.charAt(0) ?? "?"}
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold dark:text-white text-slate-800">
-                        {bug.assignedDeveloper?.fullName ?? "No developer assigned"}
-                      </p>
-                      <p className="text-xs text-slate-400 dark:text-secondary-500">Developer</p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => {
-                      setShowDeveloperDropdown((prev) => !prev);
-                      setShowTesterDropdown(false);
-                    }}
-                    className="text-xs px-3 py-1 rounded-lg border border-slate-200 dark:border-white/20 dark:text-white text-slate-600 hover:bg-slate-50 dark:hover:bg-white/10"
-                  >
-                    {isAssigningDeveloper ? "Saving..." : "Edit"}
-                  </button>
-                </div>
-                <div ref={developerAnchorRef}>
-                  <InlineDropdown anchorRef={developerAnchorRef} isOpen={showDeveloperDropdown}>
-                    <Dropdown
-                      hasSearch
-                      list={developerOptions}
-                      labelParam="label"
-                      valueParam="id"
-                      placeholder={membersLoading ? "Loading developers..." : "Select developer"}
-                      onValChange={handleAssignDeveloper}
-                      parentClassName="border rounded-xl border-lightgray px-2 h-[40px] flex items-center w-full bg-white dark:bg-secondary-800"
-                      dropdownClassName="!h-60"
-                    />
-                  </InlineDropdown>
-                </div>
-              </div>
-
-              <div className="border-t border-slate-200 pt-5 dark:border-white/10">
-  <DeveloperStatusPanel
-    bugId={bug.id}
-    projectId={safeProjectId ?? ""}
-    status={bug.developerStatus}
-    canEdit={canEditDeveloperStatus}
+  <AssigneeRow
+    role="Tester"
+    person={bug.assignedTester}
+    options={testerOptions}
+    loading={membersLoading}
+    saving={isReassigningTester}
+    accent="bg-info-500"
+    onSelect={(id) => reassignTester({ bugId: bug.id, newTesterId: id })}
   />
+
+  <AssigneeRow
+    role="Developer"
+    person={bug.assignedDeveloper}
+    options={developerOptions}
+    loading={membersLoading}
+    saving={isAssigningDeveloper}
+    accent="bg-success-500"
+    onSelect={(id) => assignDeveloper({ bugId: bug.id, developerId: id })}
+  />
+
+  <div className="border-t border-slate-200 pt-5 dark:border-white/10">
+    <DeveloperStatusPanel
+      bugId={bug.id}
+      projectId={safeProjectId ?? ""}
+      status={bug.developerStatus}
+      canEdit={canEditDeveloperStatus}
+    />
+  </div>
 </div>
-            </div>
 
             <div className="glass-card rounded-2xl p-5">
               <div className="flex items-center justify-between mb-4">

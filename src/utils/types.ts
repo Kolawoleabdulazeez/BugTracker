@@ -15,7 +15,6 @@ export enum TestStatus {
 }
 
 export enum Priority {
-  Critical = "critical",
   High = "high",
   Medium = "medium",
   Low = "low",
@@ -42,8 +41,9 @@ export interface TestCaseSummary {
 
 }
 export interface AssignedTo {
-  id: string;
-  name: string;
+  userId: string
+  fullName: string
+  email: string
 }
 
 

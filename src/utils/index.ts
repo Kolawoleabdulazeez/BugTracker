@@ -183,12 +183,6 @@ export const STATUS_CONFIG: Record<TestStatus, StatusConfig> = {
 };
 
 export const PRIORITY_CONFIG: Record<Priority, PriorityConfig> = {
-  [Priority.Critical]: {
-    label: "CRIT",
-    border: "border-danger-500/20",
-    bg: "bg-danger-500/[0.08]",
-    text: "text-danger-600 dark:text-danger-400",
-  },
   [Priority.High]: {
     label: "HIGH",
     border: "border-orange-500/20",
@@ -210,7 +204,7 @@ export const PRIORITY_CONFIG: Record<Priority, PriorityConfig> = {
 };
 
 export const STATUS_FILTERS = [null, TestStatus.Passed, TestStatus.Failed, TestStatus.Pending, TestStatus.Blocked] as const;
-export const PRIORITY_FILTERS = [null, Priority.Critical, Priority.High, Priority.Medium, Priority.Low] as const;
+export const PRIORITY_FILTERS = [null,  Priority.High, Priority.Medium, Priority.Low] as const;
 
 
 export const LIFECYCLE_CONFIG: Record<
@@ -377,3 +371,9 @@ export const mergeOptions = (defaults: string[], values: (string | undefined)[])
   ...Array.from(new Set(values.filter((v): v is string => !!v && !defaults.includes(v)))),
 ];
 
+
+
+export const dmHref = (p: { userId: string; fullName?: string; email?: string }) =>
+  `/Chatroom?dmUserId=${encodeURIComponent(p.userId)}&dmName=${encodeURIComponent(
+    p.fullName ?? ""
+  )}&dmEmail=${encodeURIComponent(p.email ?? "")}`;

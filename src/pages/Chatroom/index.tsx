@@ -1,17 +1,29 @@
 import PageLayout from "@/Component/Layout/PageLayout";
-
-import { useChatSocket } from "@/services/socket/useSignal";
-import { GroupChatResponse, GroupMessages, UserChats } from "@/services/chat/chat.api";
+import { useRouter } from "next/router";
+import { useChatSocket, useDmSocket } from "@/services/socket/useSignal";
+import {
+  GroupChatResponse,
+  GroupMessages,
+  OtherParticipant,
+  UserChats,
+} from "@/services/chat/chat.api";
 import { EmptyState } from "./Components/Shared";
-import { useRef, useState } from "react";
-import { useGetChatMessages, useGetDMMessages, useGetGroupChats, useGetUserChats } from "@/services/chat/useChat";
+import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useGetChatMessages,
+  useGetDMMessages,
+  useGetGroupChats,
+  useGetUserChats,
+} from "@/services/chat/useChat";
 import ChatSidebar from "./Components/ChatSidebar";
 import ChatWindow from "./Components/ChatWindow";
 import DMWindow from "./Components/DMWindow";
 
 const Chats = () => {
+  const router = useRouter();
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
   const [activeDmId, setActiveDmId] = useState<string | null>(null);
+  const [draftPeer, setDraftPeer] = useState<OtherParticipant | null>(null);
 
   const [input, setInput] = useState("");
   const [search, setSearch] = useState("");
@@ -19,17 +31,75 @@ const Chats = () => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const { data: groupChats = [], isLoading: chatLoading } = useGetGroupChats();
-  const { data: chatMessages = [], isLoading: messagesLoading } = useGetChatMessages(activeProjectId ?? undefined);
-  const { sendMessage, isSending, typingUsers, handleTypingKeystroke } = useChatSocket(activeProjectId ?? undefined);
-  const { data: userChats = [], isLoading: userChatLoading } = useGetUserChats();
-  const activeDm = (userChats as UserChats[]).find((c) => c.id === activeDmId);
+  const { data: chatMessages = [], isLoading: messagesLoading } = useGetChatMessages(
+    activeProjectId ?? undefined
+  );
+  const { sendMessage, isSending, typingUsers, handleTypingKeystroke } = useChatSocket(
+    activeProjectId ?? undefined
+  );
+
+  const { data: userChatsData, isLoading: userChatLoading } = useGetUserChats();
+  const userChats = useMemo(() => (userChatsData ?? []) as UserChats[], [userChatsData]);
+
   const { data: dmsData, isLoading: dmsLoading } = useGetDMMessages(activeDmId ?? undefined);
   const dmsMessages = dmsData?.messages ?? [];
 
-  const activeChat = (groupChats as GroupChatResponse[]).find((c) => c.projectId === activeProjectId);
+  const activeChat = (groupChats as GroupChatResponse[]).find(
+    (c) => c.projectId === activeProjectId
+  );
+
+  const activeDm: UserChats | undefined =
+    userChats.find((c) => c.id === activeDmId) ??
+    (draftPeer
+      ? {
+          id: "",
+          otherParticipant: draftPeer,
+          sender: draftPeer,
+          lastMessageSnippet: "",
+          lastMessageAt: "",
+          lastMessageIsMine: false,
+        }
+      : undefined);
+
+  // Must come after activeDm, because the hook joins that conversation
+  const { sendDm, isSendingDm, dmTypingUsers, emitTyping } = useDmSocket(
+    activeDm?.id || null
+  );
+
+  // Arrive from a profile: /Chatroom?dmUserId=...&dmName=...&dmEmail=...
+  const { dmUserId, dmName, dmEmail } = router.query;
+  useEffect(() => {
+    if (!router.isReady || typeof dmUserId !== "string" || userChatLoading) return;
+    const existing = userChats.find((c) => c.otherParticipant.userId === dmUserId);
+    if (existing) {
+      setActiveDmId(existing.id);
+      setDraftPeer(null);
+    } else {
+      setActiveDmId(null);
+      setDraftPeer({
+        userId: dmUserId,
+        fullName: typeof dmName === "string" ? dmName : "New chat",
+        email: typeof dmEmail === "string" ? dmEmail : "",
+      });
+    }
+    setActiveProjectId(null);
+    setShowMobileSidebar(false);
+    router.replace("/Chatroom", undefined, { shallow: true });
+  }, [router.isReady, dmUserId, dmName, dmEmail, userChatLoading, userChats, router]);
+
+  // Once the first message creates the conversation, swap the draft for the real one
+  useEffect(() => {
+    if (!draftPeer) return;
+    const created = userChats.find((c) => c.otherParticipant.userId === draftPeer.userId);
+    if (created) {
+      setActiveDmId(created.id);
+      setDraftPeer(null);
+    }
+  }, [userChats, draftPeer]);
 
   const handleSelectDm = (id: string) => {
     setActiveDmId(id);
+    setDraftPeer(null);
     setActiveProjectId(null);
     setShowMobileSidebar(false);
     setInput("");
@@ -38,6 +108,7 @@ const Chats = () => {
   const handleSelectProject = (id: string) => {
     setActiveProjectId(id);
     setActiveDmId(null);
+    setDraftPeer(null);
     setShowMobileSidebar(false);
     setInput("");
   };
@@ -49,17 +120,19 @@ const Chats = () => {
       el.style.height = "auto";
       el.style.height = Math.min(el.scrollHeight, 120) + "px";
     }
-    handleTypingKeystroke();
+    if (activeProjectId) handleTypingKeystroke();
+    else if (activeDm?.id) emitTyping();
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     const trimmed = input.trim();
-    if (!trimmed || isSending) return;
+    if (!trimmed || isSending || isSendingDm) return;
 
     if (activeProjectId) {
       sendMessage(trimmed);
-    } else if (activeDmId) {
-      console.log("DM send:", trimmed);
+    } else if (activeDm) {
+      const ok = await sendDm(activeDm.otherParticipant.userId, trimmed);
+      if (!ok) return; // keep the text so the user can retry
     }
 
     setInput("");
@@ -78,11 +151,11 @@ const Chats = () => {
       <div className="flex h-[calc(100vh-64px)] overflow-hidden">
         <ChatSidebar
           chats={groupChats as GroupChatResponse[]}
-          userChats={userChats as UserChats[]}
+          userChats={userChats}
           isLoading={chatLoading}
           userChatLoading={userChatLoading}
           activeProjectId={activeProjectId}
-          activeDmId={activeDmId}
+          activeDmId={activeDm?.id || null}
           search={search}
           onSearchChange={setSearch}
           onSelectProject={handleSelectProject}
@@ -108,10 +181,10 @@ const Chats = () => {
           <DMWindow
             activeDm={activeDm}
             messages={dmsMessages}
-            isLoading={dmsLoading}
+            isLoading={!!activeDmId && dmsLoading}
             input={input}
-            isSending={isSending}
-            typingUsers={typingUsers}
+            isSending={isSendingDm}
+            typingUsers={dmTypingUsers}
             show={!showMobileSidebar}
             onBack={() => setShowMobileSidebar(true)}
             onInputChange={handleInputChange}
@@ -125,4 +198,5 @@ const Chats = () => {
     </PageLayout>
   );
 };
+
 export default Chats;

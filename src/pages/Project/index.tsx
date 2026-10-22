@@ -42,7 +42,7 @@ function hasActiveFilters(filters: Filters): boolean {
 
 const Project = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("list");
   const [showFilters, setShowFilters] = useState(false);
   const [showNewProjectModal, setShowNewProjectModal] = useState(false);
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);

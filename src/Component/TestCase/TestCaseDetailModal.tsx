@@ -53,7 +53,7 @@ export const TestCaseDetailModal = ({ projectId, testCaseId, onClose, startInEdi
       setDescription(tc.description ?? "");
       setPreconditions((tc as any).preconditions ?? "");
       setExpectedResult(tc.expectedResult ?? "");
-      setPriority(tc.priority);
+      setPriority(tc.priority as Priority);
       setAssignedToId((tc as any).assignedToId ?? "");
       setSteps(tc.steps?.length ? tc.steps : [{ ...emptyStep }]);
       setTags(tc.tags ?? []);
@@ -66,7 +66,7 @@ export const TestCaseDetailModal = ({ projectId, testCaseId, onClose, startInEdi
     setDescription(tc.description ?? "");
     setPreconditions((tc as any).preconditions ?? "");
     setExpectedResult(tc.expectedResult ?? "");
-    setPriority(tc.priority);
+    setPriority(tc.priority as Priority);
     setAssignedToId((tc as any).assignedToId ?? "");
     setSteps(tc.steps?.length ? tc.steps : [{ ...emptyStep }]);
     setTags(tc.tags ?? []);
@@ -172,7 +172,7 @@ export const TestCaseDetailModal = ({ projectId, testCaseId, onClose, startInEdi
           <div className="flex max-h-[65vh] flex-col gap-4 overflow-y-auto px-6 py-6">
             <div className="flex items-center gap-1.5 flex-wrap">
               <Chip status={tc.status} />
-              <PriBadge priority={tc.priority} />
+              <PriBadge priority={tc.priority as Priority} />
               {tc.tags?.map(t => (
                 <span key={t} className="text-[9px] text-orange-600 dark:text-orange-400 bg-orange-500/[0.07] border border-orange-500/[0.15] px-[7px] py-0.5 rounded-full">#{t}</span>
               ))}

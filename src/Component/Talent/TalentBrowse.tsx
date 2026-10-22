@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Briefcase, Loader2, MapPin, Search, X } from "lucide-react";
+import { Briefcase, Loader2, MapPin, MessageCircle, Search, X } from "lucide-react";
 import { useGetProfileById, useSearchProfiles } from "@/services/profile/useProfile";
 import {
   AVAILABILITY_LABEL,
@@ -13,10 +13,13 @@ import {
   WORK_TYPE_LABEL,
   WORK_TYPE_OPTIONS,
   WorkTypePreference,
+  dmHref,
   getAvailabilityDot,
   getAvailabilityLabel,
   getInitials,
 } from "@/utils";
+import { useRouter } from "next/router";
+import { getAuthFromStorage } from "@/utils/lib";
 
 function FilterRow<T extends string>({
   label,
@@ -57,6 +60,8 @@ function FilterRow<T extends string>({
 
 function ProfileDetailModal({ userId, onClose }: { userId: string; onClose: () => void }) {
   const { data: p, isLoading, isError } = useGetProfileById(userId);
+  const router = useRouter();
+  const myId = getAuthFromStorage()?.user?.id;
 
   return (
     <div
@@ -68,12 +73,22 @@ function ProfileDetailModal({ userId, onClose }: { userId: string; onClose: () =
           <p className="m-0 text-[13px] font-bold text-slate-900 dark:text-[#e2e8f0]">
             {p?.fullName ?? "Profile"}
           </p>
-          <button
-            onClick={onClose}
-            className="flex cursor-pointer items-center rounded-[7px] border border-slate-200 bg-slate-50 p-[5px_7px] text-slate-400 dark:border-white/[0.06] dark:bg-white/[0.04] dark:text-[#475569]"
-          >
-            <X size={14} />
-          </button>
+          <div className="flex items-center gap-2">
+            {p && p.userId !== myId && (
+              <button
+                onClick={() => router.push(dmHref(p))}
+                className="flex cursor-pointer items-center gap-1.5 rounded-[7px] border border-orange-500/40 bg-orange-500 px-3 py-1.5 text-[11px] font-bold text-white hover:bg-orange-600"
+              >
+                <MessageCircle size={12} /> Message
+              </button>
+            )}
+            <button
+              onClick={onClose}
+              className="flex cursor-pointer items-center rounded-[7px] border border-slate-200 bg-slate-50 p-[5px_7px] text-slate-400 dark:border-white/[0.06] dark:bg-white/[0.04] dark:text-[#475569]"
+            >
+              <X size={14} />
+            </button>
+          </div>
         </div>
 
         {isLoading ? (
@@ -193,6 +208,8 @@ export const TalentBrowse = () => {
   const [workType, setWorkType] = useState<WorkTypePreference | null>(null);
   const [search, setSearch] = useState("");
   const [openUserId, setOpenUserId] = useState<string | null>(null);
+  const router = useRouter();
+  const myId = getAuthFromStorage()?.user?.id;
 
   const { data, isLoading, isError, isFetching } = useSearchProfiles({
     availabilityStatus: availability,
@@ -284,9 +301,12 @@ export const TalentBrowse = () => {
           {profiles.map((p, i) => {
             const id = p.userId ?? p.id;
             return (
-              <button
+              <div
+                role="button"
+                tabIndex={0}
                 key={id ?? i}
                 onClick={() => id && setOpenUserId(id)}
+                onKeyDown={(e) => e.key === "Enter" && id && setOpenUserId(id)}
                 className="glass-card flex cursor-pointer flex-col gap-3 rounded-2xl p-4 text-left transition-colors hover:border-orange-500/30"
               >
                 <div className="flex items-center gap-3">
@@ -339,7 +359,19 @@ export const TalentBrowse = () => {
                     .filter(Boolean)
                     .join(" · ")}
                 </p>
-              </button>
+
+                {id && id !== myId && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push(dmHref({ userId: id, fullName: p.fullName, email: p.email }));
+                    }}
+                    className="flex w-fit cursor-pointer items-center gap-1.5 rounded-lg border border-orange-500/30 bg-orange-500/10 px-2.5 py-1 text-[10px] font-bold text-orange-600 dark:text-orange-400"
+                  >
+                    <MessageCircle size={11} /> Message
+                  </button>
+                )}
+              </div>
             );
           })}
         </div>

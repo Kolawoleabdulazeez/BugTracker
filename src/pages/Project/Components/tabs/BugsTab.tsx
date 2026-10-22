@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useMemo, useState } from "react";
 import {
   Bug,
   CheckCircle2,
@@ -16,6 +16,8 @@ import {
 import { useGetBugs } from "@/services/bugs/useBugs";
 import { BugType } from "@/services/bugs/bugs.api";
 import Button from "@/Component/Button/Button";
+import { mergeOptions, PRIORITY_DEFAULTS, STATUS_DEFAULTS } from "@/utils";
+import { FilterDropdown, toFilterItems } from "@/pages/Bugs/Components/FilterDropdown";
 
 type BugStatus = "open" | "in_progress" | "resolved" | "closed";
 
@@ -228,58 +230,58 @@ const BugRow: React.FC<{ bug: BugType }> = ({ bug }) => {
 
 const BugsTab: React.FC<BugsTabProps> = ({ projectId, onAddBug }) => {
   const { data: bugsData } = useGetBugs(projectId);
-  const bugs = bugsData?.bugs ?? [];
-  const [filterStatus, setFilterStatus] = useState<BugStatus | "all">("all");
-  const [filterPriority, setFilterPriority] = useState<string>("all");
+  const bugs = useMemo(() => bugsData?.bugs ?? [], [bugsData]);
 
-  const filtered = bugs.filter((b) => {
-    const matchStatus = filterStatus === "all" || b.status === filterStatus;
-    const matchPriority = filterPriority === "all" || b.priority === filterPriority;
-    return matchStatus && matchPriority;
-  });
+  const [filterStatus, setFilterStatus] = useState("");
+  const [filterPriority, setFilterPriority] = useState("");
+
+  const statusItems = useMemo(
+    () => toFilterItems("All Status", mergeOptions(STATUS_DEFAULTS, bugs.map((b) => b.status))),
+    [bugs]
+  );
+  const priorityItems = useMemo(
+    () => toFilterItems("All Priority", mergeOptions(PRIORITY_DEFAULTS, bugs.map((b) => b.priority))),
+    [bugs]
+  );
+
+  const filtered = useMemo(
+    () =>
+      bugs.filter(
+        (b) =>
+          (!filterStatus || b.status === filterStatus) &&
+          (!filterPriority || b.priority === filterPriority)
+      ),
+    [bugs, filterStatus, filterPriority]
+  );
 
   return (
     <div className="space-y-4">
       <div className="glass-card rounded-xl p-4 sm:p-6">
         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <h3 className="font-semibold text-slate-900 dark:text-white">
-            Bug Tracker
-          </h3>
+          <h3 className="font-semibold text-slate-900 dark:text-white">Bug Tracker</h3>
 
           <div className="flex flex-wrap items-center gap-2">
-            <div className="relative">
-              <Filter size={12} className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
-              <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value as BugStatus | "all")}
-                className="h-8 rounded-lg border border-slate-200 bg-white py-0 pl-7 pr-3 text-xs text-slate-700 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-gray-300"
-              >
-                <option value="all">All Status</option>
-                <option value="open">Open</option>
-                <option value="in_progress">In Progress</option>
-                <option value="resolved">Resolved</option>
-                <option value="closed">Closed</option>
-              </select>
-            </div>
-
-            <select
+            <FilterDropdown
+              className="!w-40"
+              list={statusItems}
+              value={filterStatus}
+              placeholder="Status"
+              onChange={setFilterStatus}
+            />
+            <FilterDropdown
+              className="!w-40"
+              list={priorityItems}
               value={filterPriority}
-              onChange={(e) => setFilterPriority(e.target.value as string | "all")}
-              className="h-8 rounded-lg border border-slate-200 bg-white px-3 text-xs text-slate-700 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-gray-300"
-            >
-              <option value="all">All Priority</option>
-              <option value="critical">Critical</option>
-              <option value="high">High</option>
-              <option value="medium">Medium</option>
-              <option value="low">Low</option>
-            </select>
+              placeholder="Priority"
+              onChange={setFilterPriority}
+            />
 
             {onAddBug && (
               <Button
                 title="Add Bug"
                 icon={<Plus size={13} />}
                 onClick={onAddBug}
-                className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-orange-500 px-3 text-xs font-medium text-white transition hover:bg-orange-600"
+                className="inline-flex h-10 items-center gap-1.5 rounded-lg bg-orange-500 px-3 text-xs font-medium text-white transition hover:bg-orange-600"
               />
             )}
           </div>
@@ -293,9 +295,7 @@ const BugsTab: React.FC<BugsTabProps> = ({ projectId, onAddBug }) => {
               <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 dark:bg-white/5">
                 <Bug size={22} className="text-slate-400 dark:text-secondary-500" />
               </div>
-              <p className="text-sm font-medium text-slate-700 dark:text-gray-300">
-                No bugs found
-              </p>
+              <p className="text-sm font-medium text-slate-700 dark:text-gray-300">No bugs found</p>
               <p className="mt-1 text-xs text-slate-400 dark:text-secondary-500">
                 Try adjusting your filters or add a new bug.
               </p>
@@ -312,5 +312,4 @@ const BugsTab: React.FC<BugsTabProps> = ({ projectId, onAddBug }) => {
     </div>
   );
 };
-
 export default BugsTab;
