@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
 import {
   LayoutDashboard,
   FolderKanban,
@@ -14,8 +13,7 @@ import {
 } from "lucide-react";
 
 import TestOrbitLogo from "../../public/UpdatedTestOrbitLogo.png";
-import { setActiveSection } from "@/features/Sectionslice";
-import type { RootState } from "@/store";
+
 
 type Section = {
   label: string;
