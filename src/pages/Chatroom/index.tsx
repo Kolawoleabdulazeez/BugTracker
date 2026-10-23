@@ -15,7 +15,7 @@ import {
   useGetGroupChats,
   useGetUserChats,
 } from "@/services/chat/useChat";
-import ChatSidebar from "./Components/ChatSidebar";
+import ChatSidebar, { Tab } from "./Components/ChatSidebar";
 import ChatWindow from "./Components/ChatWindow";
 import DMWindow from "./Components/DMWindow";
 
@@ -24,6 +24,7 @@ const Chats = () => {
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
   const [activeDmId, setActiveDmId] = useState<string | null>(null);
   const [draftPeer, setDraftPeer] = useState<OtherParticipant | null>(null);
+  const [sidebarTab, setSidebarTab] = useState<Tab>("group");
 
   const [input, setInput] = useState("");
   const [search, setSearch] = useState("");
@@ -76,6 +77,7 @@ const Chats = () => {
       setDraftPeer(null);
     } else {
       setActiveDmId(null);
+      setSidebarTab("dm");
       setDraftPeer({
         userId: dmUserId,
         fullName: typeof dmName === "string" ? dmName : "New chat",
@@ -99,6 +101,8 @@ const Chats = () => {
 
   const handleSelectDm = (id: string) => {
     setActiveDmId(id);
+      setSidebarTab("dm");
+
     setDraftPeer(null);
     setActiveProjectId(null);
     setShowMobileSidebar(false);
@@ -107,6 +111,7 @@ const Chats = () => {
 
   const handleSelectProject = (id: string) => {
     setActiveProjectId(id);
+    setSidebarTab("group");
     setActiveDmId(null);
     setDraftPeer(null);
     setShowMobileSidebar(false);
@@ -161,6 +166,8 @@ const Chats = () => {
           onSelectProject={handleSelectProject}
           onSelectDm={handleSelectDm}
           show={showMobileSidebar}
+            activeTab={sidebarTab}
+  onTabChange={setSidebarTab}
         />
 
         {activeChat ? (

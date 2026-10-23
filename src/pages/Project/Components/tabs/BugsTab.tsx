@@ -6,7 +6,6 @@ import {
   CheckCircle2,
   Clock,
   ChevronDown,
-  Filter,
   Plus,
   Circle,
   Flame,
@@ -17,9 +16,8 @@ import { useGetBugs } from "@/services/bugs/useBugs";
 import { BugType } from "@/services/bugs/bugs.api";
 import Button from "@/Component/Button/Button";
 import { mergeOptions, PRIORITY_DEFAULTS, STATUS_DEFAULTS } from "@/utils";
-import { FilterDropdown, toFilterItems } from "@/pages/Bugs/Components/FilterDropdown";
+import { FilterDropdown, toFilterItems } from "@/Component/Bugs/FilterDropdown";
 
-type BugStatus = "open" | "in_progress" | "resolved" | "closed";
 
 type BugsTabProps = {
   projectId?: string;

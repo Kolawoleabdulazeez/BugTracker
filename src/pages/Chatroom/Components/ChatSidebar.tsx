@@ -1,10 +1,9 @@
 import { Search, Loader2, Users, MessageCircle } from "lucide-react";
-import { useState } from "react";
 import { GroupChatResponse, UserChats } from "@/services/chat/chat.api";
 import { GroupListItem } from "./Shared";
 import { getAvatarColor, getInitials, relativeTime } from "@/utils/helpers";
 
-type Tab = "group" | "dm";
+export type Tab = "group" | "dm";
 
 type Props = {
   chats: GroupChatResponse[];
@@ -18,6 +17,8 @@ type Props = {
   onSelectProject: (id: string) => void;
   onSelectDm: (id: string) => void;
   show: boolean;
+    activeTab: Tab;
+  onTabChange: (tab: Tab) => void;
 };
 
 const DmListItem = ({
@@ -80,8 +81,9 @@ const DmListItem = ({
   onSelectProject,
   onSelectDm,
   show,
+    activeTab,
+  onTabChange,
 }: Props) => {
-  const [activeTab, setActiveTab] = useState<Tab>("group");
 
   const filteredGroups = chats.filter((c) =>
     c.projectName.toLowerCase().includes(search.toLowerCase())
@@ -109,8 +111,8 @@ const DmListItem = ({
         <div className="flex items-center gap-1 bg-slate-100 dark:bg-white/[0.05] rounded-lg p-1 mb-3">
           <button
             type="button"
-            onClick={() => { setActiveTab("group"); onSearchChange(""); }}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-semibold transition-all ${
+onClick={() => { onTabChange("group"); onSearchChange(""); }}  
+          className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-semibold transition-all ${
               activeTab === "group"
                 ? "bg-white dark:bg-white/10 text-slate-800 dark:text-white shadow-sm"
                 : "text-slate-400 dark:text-secondary-500 hover:text-slate-600 dark:hover:text-secondary-300"
@@ -131,7 +133,7 @@ const DmListItem = ({
 
           <button
             type="button"
-            onClick={() => { setActiveTab("dm"); onSearchChange(""); }}
+            onClick={() => { onTabChange("dm"); onSearchChange(""); }}
             className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-semibold transition-all ${
               activeTab === "dm"
                 ? "bg-white dark:bg-white/10 text-slate-800 dark:text-white shadow-sm"

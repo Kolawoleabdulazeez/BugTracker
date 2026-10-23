@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import {
   LayoutDashboard,
@@ -38,21 +38,20 @@ const sections: Section[] = [
 ];
 
 const Navbar = ({ onClose }: NavbarProps) => {
-  const dispatch = useDispatch();
   const router = useRouter();
+    const pathname = usePathname();
 
-  const activeSection = useSelector(
-    (state: RootState) => state.section.activeSection
-  );
+
+
 
   const handleClick = (section: Section) => {
-    dispatch(setActiveSection(section.label));
     router.push(section.route);
     onClose?.();
   };
 
   const NavButton = ({ section }: { section: Section }) => {
-    const isActive = activeSection === section.label;
+      const isActive =
+    pathname === section.route || pathname.startsWith(section.route + "/");
     const Icon = section.icon;
 
     return (

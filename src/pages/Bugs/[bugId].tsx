@@ -2,7 +2,7 @@
 import Button from "@/Component/Button/Button";
 import PageLayout from "@/Component/Layout/PageLayout";
 import { useRouter } from "next/router";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   ArrowLeft,
   Tag,
@@ -19,13 +19,11 @@ import {
 } from "../../services/bugs/useBugs";
 import { PRIORITY_COLORS, SEVERITY_COLORS, STATUS_COLORS } from "../../utils/helpers";
 import EditBugModal from "./Components/EditBugModal";
-import Dropdown from "@/Component/Dropdown/Dropdown";
 import { useGetProjectMembers } from "../../services/project/useProject";
-import { InlineDropdown } from "@/Component/Dropdown/InlineDrop";
 import CommentsSection from "./Components/CommentsSection";
 import { useCurrentUserId } from "@/utils/lib";
 import DeveloperStatusPanel from "./Components/Developerstatuspanel";
-import { AssigneeRow } from "./Components/AssigneeRow";
+import { AssigneeRow } from "../../Component/Bugs/AssigneeRow";
 
 const Field = ({ label, value }: { label: string; value?: string }) => {
   if (!value) return null;
@@ -45,10 +43,7 @@ const BugDetailsPage = () => {
   const router = useRouter();
   const { bugId, projectId } = router.query;
   const [showEditModal, setShowEditModal] = useState(false);
-  const [showDeveloperDropdown, setShowDeveloperDropdown] = useState(false);
-  const [showTesterDropdown, setShowTesterDropdown] = useState(false);
-  const testerAnchorRef = useRef<HTMLDivElement>(null);
-  const developerAnchorRef = useRef<HTMLDivElement>(null);
+
 
   const safeBugId = typeof bugId === "string" ? bugId : undefined;
   const safeProjectId = typeof projectId === "string" ? projectId : undefined;
@@ -82,17 +77,8 @@ const BugDetailsPage = () => {
 const developerOptions = toOptions("Developer");
 const testerOptions = toOptions("Tester");
 
-  const handleAssignDeveloper = async (item: any) => {
-    if (!safeBugId) return;
-    await assignDeveloper({ bugId: safeBugId, developerId: item.id });
-    setShowDeveloperDropdown(false);
-  };
 
-  const handleReassignTester = async (item: any) => {
-    if (!safeBugId) return;
-    await reassignTester({ bugId: safeBugId, newTesterId: item.id });
-    setShowTesterDropdown(false);
-  };
+
 
   if (isLoading) {
     return (
